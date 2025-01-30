@@ -1,8 +1,8 @@
 import './App.css';
 import{BrowserRouter, Routes, Route} from 'react-router-dom'
-import LoginSignup from './LoginSignup';
-import Header from './Header';
-import Footer from './Footer';
+import LoginSignup from './components/LoginSignup';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
   return (
