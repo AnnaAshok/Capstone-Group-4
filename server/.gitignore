@@ -4,3 +4,4 @@
 /node_modules
 /.pnp
 .pnp.js
+#mongodb+srv://AnnaAshok:Aparna%401997@cluster0.g2jmq0q.mongodb.net/edusphere?retryWrites=true&w=majority&appName=Cluster0
