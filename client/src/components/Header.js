@@ -1,5 +1,5 @@
 import React from 'react'
-import Navbar from './Navbar'
+// import Navbar from './Navbar';
 import "../index.css";
 
 const Header = () => {
@@ -11,7 +11,7 @@ const Header = () => {
    </section>
    <section className='head-top_navbar'>
     <section className='head-top_navigation'>
-         <Navbar/>
+         {/* <Navbar/> */}
     </section>
     <hr className='head-top_seperator'/>
     </section>
