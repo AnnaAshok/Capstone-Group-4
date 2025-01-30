@@ -1,15 +1,23 @@
 import './App.css';
 import{BrowserRouter, Routes, Route} from 'react-router-dom'
-import LoginSignup from './LoginSignup';
+import LoginSignup from './components/LoginSignup';
 import Header from './Header';
 import Footer from './Footer';
+import Forgotpassword from './components/Forgotpassword';
+import Home from './components/Home'
 
 function App() {
   return (
-    < div className='App'>
-    <Header/>
-    <LoginSignup/>
-    <Footer/>
+    <div className='App'>
+    {/* <Header/>
+    <Footer/> */}
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<LoginSignup/>}></Route>
+        <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
+        <Route path='/home' element={<Home />}></Route>
+      </Routes>
+    </BrowserRouter>
     </div>
  
   );
@@ -17,14 +25,3 @@ function App() {
 
 export default App;
 
-
-
- // <div className="App">
-    //  {/* EduSphere */}
-    //  <Signup/>
-    // </div>
- //  <BrowserRouter>
-  //  <Routes>
-  //   <Route path='/' element={<LoginSignup/>}></Route>
-  //  </Routes>
-  //  </BrowserRouter>
