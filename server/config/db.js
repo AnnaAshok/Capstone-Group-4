@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
     const conn = await mongoose.connect(
-        "mongodb+srv://rajnisandhu487:hKfb01TFbTAMnJwm@cluster0.tqmrt1s.mongodb.net/edusphere?retryWrites=true&w=majority&appName=Cluster0"  
+        "mongodb+srv://susmi0008:Y5SJ8Ou9ChANxBUf@clustersusmi.2kxo8lf.mongodb.net/edusphere?retryWrites=true&w=majority&appName=ClusterSusmi"  
     );
+    
 
     console.log(`MongoDB connected ${conn.connection.host}`);
 };

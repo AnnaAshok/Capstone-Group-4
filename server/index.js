@@ -1,66 +1,23 @@
 const express = require("express");
-const { graphqlHTTP } = require("express-graphql");
-// const schema = require("../schema/schema");
 const connectDB = require("./config/db");
 const cors = require("cors");
-const app = express();
-const user = require("./models/users")
+const authController = require("./controller/authController");
 
+const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 
-
+// Connect Database
 connectDB();
 
-app.post("/login",(req,res)=>{
-    const {email, password} = req.body
-    user.findOne({email: email})
-    .then(user => {
-        if(user.password === password){
-            res.json("Success")
-        }
-        else{
-            res.json("Wrong Password")
-        }
-    })
-    .catch(error => error.json(error))
-}) 
-
-app.post("/register",(req,res)=>{
-   user.findOne({email: req.body.email})
-   .then(result =>{ 
-        if(result == null){
-            user.create(req.body)
-                .then(user=> res.json("Account created Successfully"))
-                .catch(error => res.json(error))
-        }else{
-            res.json("User Already exists.Please Login!")
-        }
-   })
-   
-})
-
-app.post("/getEmail",(req,res) =>{
-    const {email} = req.body
-    user.findOne({email:email})
-    .then(result => {
-        if(result){
-            res.json("Success")
-        }else{
-            res.json("Email not found.Create an account!")
-        }
-    })
-})
-
-app.post("/resetpassword",(req, res)=>{
-    const {email, password} = req.body
-    user.findOneAndUpdate({email:email},{ password:password},{
-        new: true
-    }).then(result => {
-        res.json("Success")
-    })
-})
+// Routes using controllers directly
+app.post("/login", authController.login);
+app.post("/register", authController.register);
+app.post("/getEmail", authController.getEmail);
+app.post("/resetpassword", authController.resetPassword);
 
 app.listen(5000, () => {
     console.log('App listening on port 5000')

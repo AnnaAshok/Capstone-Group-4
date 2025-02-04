@@ -7,7 +7,9 @@
   height: 40vmin;
   pointer-events: none;
 }
-
+a{
+  cursor: pointer;
+}
 h1{
   color: #f7c221 !important;
 }
@@ -118,8 +120,13 @@ h1{
   transform: translateX(200%);
 }
 #login ,#signup{
-  border: 1px solid #f7c221;
-  color: #f7c221;
+  border: 1px solid #f7c221 !important;
+  color: #f7c221 !important;
+}
+
+.input-group> .form-control:focus{
+  border-color: #f7c221;
+  box-shadow: unset;
 }
 
 /* footer */

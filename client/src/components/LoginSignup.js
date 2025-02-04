@@ -13,46 +13,80 @@ export default function LoginSignup() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmpassword,setConfirmPassword]= useState("")
-  const [validate,setValidate] = useState(false)
   const [message, setMessage]= useState("")
+  const [errors, setErrors] = useState({});
+
 
   function SwitchContent() {
     setActiveLogin(!activeLogin)
     setMessage("")
-    setValidate(false)
+    setErrors({});
   }
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
 
-  const handleSignup = (e) => {
+  const validateForm = () => {
+    let errors = {};
+    if (!firstName.trim()) errors.firstName = "First name is required";
+    if (!lastName.trim()) errors.lastName = "Last name is required";
+    if (!email.trim()) errors.email = "Email is required";
+    else if (!isValidEmail(email)) errors.email = "Invalid email format";
+
+    if (!password) errors.password = "Password is required";
+    else if (password.length < 6) errors.password = "Password must be at least 6 characters";
+
+    if (!confirmpassword) errors.confirmpassword = "Confirm password is required";
+    else if (password !== confirmpassword) errors.confirmpassword = "Passwords must match";
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    if((firstName && lastName && email && password && confirmpassword) !== "" && (password === confirmpassword)){
-      setValidate(false)
-      axios.post('http://localhost:5000/register', { firstName, lastName, email, password })
-        .then(result => {
-          setMessage(result.data)
-        })
-        .catch(err => console.log(err))
-    }else{
-      if(password !== confirmpassword){
-        setMessage("Passwords must match")
-      }else{
-        setValidate(true)
+    if (validateForm()) {
+      try {
+          const response = await axios.post('http://localhost:5000/register', { firstName, lastName, email, password })
+          setMessage(response.data.message);
+          if (response.status === 201) {
+            // Clear form fields after successful signup
+            setFirstName("");
+            setLastName("");
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+          }
+        }catch (error) {
+          setMessage(error.response?.data?.message || "An error occurred");
       }
     }
   }
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if((email && password) !== ""){
-      axios.post('http://localhost:5000/login', { email, password })
-      .then(result => {
-        navigate("/home")
-      })
-      .catch(err => console.log(err))
-    }else{
-        setValidate(true)
-      
+
+    // Validate input fields
+    if (!email || !password) {
+        setErrors({
+            email: !email ? "Email is required" : "",
+            password: !password ? "Password is required" : ""
+        });
+        return;
     }
-  }
+    try {
+        const response = await axios.post('http://localhost:5000/login', { email, password });
+        if (response.data.message === "Success") {
+          localStorage.setItem("token", response.data.token); // Store token
+            navigate("/home");
+        } else {
+            setErrors({ general: response.data.message });
+        }
+    } catch (error) {
+        setErrors({ general: error.response?.data?.message ||"Something went wrong. Please try again later." });
+    }
+};
+
   return (
     <div className='container'>
       <div className={`content justify-content-center align-items-center d-flex shadow-lg ${activeLogin ? "" : "active"}`} id="content">
@@ -63,16 +97,18 @@ export default function LoginSignup() {
             <div className='header-text mb-4'>
               <h1>Signup</h1>
             </div>
-            <p className='text-danger'>{validate ? "Please fill the required fields": ""}</p>
-            <p className={`${message == "Account created Successfully" ? "text-success": "text-danger"}`}>{message}</p>
+           {message && <p className={`${message == "Account created successfully" ? "text-success": "text-danger"}`}>{message}</p> } 
             <div className='input-group mb-3'>
               <input type='text'
                 placeholder='Enter Your Firstname'
                 name='firstname'
                 id='firstname'
                 className='form-control bg-light'
+                value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
+              {errors.firstName && <p className="text-danger small m-0 w-100">{errors.firstName}</p>}
+
             </div>
             <div className='input-group mb-3'>
               <input type='text'
@@ -80,35 +116,43 @@ export default function LoginSignup() {
                 name='lastname'
                 id='lastname'
                 className='form-control bg-light'
+                value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
+              {errors.lastName && <p className="text-danger small m-0 w-100">{errors.lastName}</p>}
             </div>
             <div className='input-group mb-3'>
               <input type='email'
                 placeholder='Enter Your Email'
                 name="email"
                 id="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className='form-control bg-light'
               />
+              {errors.email && <p className="text-danger small m-0 w-100">{errors.email}</p>}
             </div>
             <div className='input-group mb-3'>
               <input type='password'
                 placeholder='Enter Your Password'
                 name="password"
                 id="password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className='form-control bg-light'
               />
+              {errors.password && <p className="text-danger small m-0 w-100">{errors.password}</p>}
             </div>
             <div className='input-group mb-3'>
               <input type='password'
                 placeholder='Confirm Password'
                 id='confirmpassword'
                 name="confirmpassword"
+                value={confirmpassword}
                 onChange={(e)=>setConfirmPassword(e.target.value)}
                 className='form-control bg-light'
               />
+              {errors.confirmpassword && <p className="text-danger small m-0 w-100">{errors.confirmpassword}</p>}
             </div>
             <div className='input-group mb-3 justify-content-center'>
               <input className='butn fs-6 custombtn' type='submit' value="Register" />
@@ -122,19 +166,21 @@ export default function LoginSignup() {
             <div className='header-text mb-4'>
               <h1>Login</h1>
             </div>
-            <p className='text-danger'>{validate ? "Please fill the required fields": ""}</p>
+            {errors.general && <p className="text-danger small w-100">{errors.general}</p>}
 
             <div className='input-group mb-3'>
               <input type='email'
                 name="email"
                 onChange={e => setEmail(e.target.value)}
                 placeholder='Enter Your Email' className='form-control bg-light' />
+                {errors.email && <p className="text-danger small m-0 w-100">{errors.email}</p>}
             </div>
             <div className='input-group mb-3'>
               <input type='password'
                 name="password"
                 onChange={e => setPassword(e.target.value)}
                 placeholder='Enter Your Password' className='form-control bg-light' />
+                {errors.password && <p className="text-danger small m-0 w-100">{errors.password}</p>}
             </div>
             <div className='input-group justify-content-end'>
               <div className='forgot'>

@@ -11,27 +11,55 @@ const navigate = useNavigate()
 const [password, setPassword] = useState('')
 const [ cpassword, setCpassword] = useState('')
 const [activeLogin, setActiveLogin] = useState(true)
-const [validate,setValidate] = useState("")
+const [errorMessage, setErrorMessage] = useState('');
 
-const handleUpdatePassword= (e)=>{
+function SwitchContent() {
+  setActiveLogin(!activeLogin)
+  setErrorMessage('');
+}
+const handleUpdatePassword = async (e) => {
   e.preventDefault();
-  axios.post('http://localhost:5000/resetpassword',{email,password})
-  .then(result => {
-    if(result.data == "Success"){
+  // Check if passwords match
+  if (password !== cpassword) {
+    setErrorMessage("Passwords don't match");
+    return;
+  }else if(!password.trim() || (password.length < 6)){
+    setErrorMessage("Password must be at least 6 characters");
+    return;
+  }
+  try {
+    const result = await axios.post('http://localhost:5000/resetpassword', { email, password });
+    if (result.status === 200) {
       console.log(result)
+      setErrorMessage(result.data.message)
+      navigate('/'); 
     }
-  })
-}
+  } catch (error) {
+    console.error("Error resetting password", error.response?.data.message);
+    setErrorMessage(error.response?.data.message || "Something went wrong. Please try again.");
+  }
+};
 
-const handleCheckEmail= (e)=>{
+const handleCheckEmail = async (e) => {
   e.preventDefault();
-  axios.post('http://localhost:5000/getEmail',{email})
-  .then(result => {
-    if(result.data == "Success"){
-      setActiveLogin(false)
+
+  try {
+    if(!email.trim()){
+      setErrorMessage("Email is required !")
+      return
     }
-  })
-}
+    const result = await axios.post('http://localhost:5000/getEmail', { email });
+    if (result.data === "Success") {
+      setActiveLogin(false); // Show password reset form
+      setErrorMessage("");
+    } else {
+      setErrorMessage(result.data); // Show error message from server
+    }
+  } catch (error) {
+    console.error("Error checking email", error);
+    setErrorMessage("Something went wrong. Please try again.");
+  }
+};
 
   return (
     <div className='container'>
@@ -63,6 +91,15 @@ const handleCheckEmail= (e)=>{
             onChange={e=>setCpassword(e.target.value)}
             placeholder='Confirm password' className='form-control bg-light'/>
           </div>
+           {/* Validation error */}
+
+            {/* Error message */}
+            {errorMessage && <div className="text-danger mb-3">{errorMessage}</div>}
+            <div className='input-group justify-content-end'>
+              <div className='forgot'>
+                <a className='hidden fs-6 pe-auto' onClick={SwitchContent}>Find another email?</a>
+              </div>
+            </div>
           <div className='input-group mb-3 justify-content-center'>
             <input className='butn border-white text-white fs-6 custombtn' value="Reset Password" type='submit'/>
           </div>
@@ -79,6 +116,7 @@ const handleCheckEmail= (e)=>{
             onChange={e=>setEmail(e.target.value)}
             placeholder='Enter Your Email' className='form-control bg-light'/>
           </div>
+          {errorMessage && <div className='text-danger mb-3'>{errorMessage}</div>}
           <div className='input-group justify-content-end'>
               <div className='forgot'>
                 <Link to="/">Back to Login?</Link>
@@ -96,12 +134,11 @@ const handleCheckEmail= (e)=>{
             <div className='switch-panel switch-left'>
               <h1>Hello, Again</h1>
               <p>We are happy to see you back</p>
-              {/* <button className='hidden btn border-white text-white w-50 fs-6' id='login' onClick={SwitchContent}>Login</button> */}
+              <Link to="/" className='hidden btn border-white text-white w-50 fs-6' id='signup'>Back to Login?</Link>
             </div>
             <div className='switch-panel switch-right'>
               <h1>Welcome</h1>
               <p>Join our platform</p>
-              {/* <button className='hidden btn border-white text-white w-50 fs-6' id='signup' onClick={SwitchContent}>Signup</button> */}
             </div>
           </div>
         </div>
