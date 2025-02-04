@@ -1,0 +1,92 @@
+import React from "react";
+import { useSpring, animated } from "@react-spring/web";
+import "../index.css";
+import logoimage from "../Assets/Edu_Logo.png";
+
+const Footer = () => {
+
+  const animationProps = useSpring({
+    opacity: 1,
+    transform: "translateY(0px)",
+    from: { opacity: 0, transform: "translateY(20px)" },
+    config: { tension: 170, friction: 26 }
+  });
+
+  return (
+    <div className="footer">
+          <hr className="foot-seperator" />
+      {/* Floating Box */}
+      <animated.div style={animationProps} className="floating-box">
+        <p className="text-lg font-medium">Let’s talk about the courses</p>
+        <button className="contact-btn">Contact us</button>
+        </animated.div>
+
+      {/* Footer Main Section */}
+      <div className="footer-container text-center">
+        <div className="footer-info">
+          {/* Left Section */}
+          <div className="footer-info-left">
+            
+            <h3><img src={logoimage} className="footer-info__logo" alt="Logo" /><span>Edu</span>Sphere</h3>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur eius architecto error 
+              incidunt quas est quos, suscipit iure in, doloribus autem recusandae libero nihil voluptate vel quidem modi nulla illo?
+            </p>
+            <div className="social-icons">
+            <i class="fa-brands fa-facebook"></i>
+            <i class="fa-brands fa-twitter"></i>
+            <i class="fa-brands fa-instagram"></i>
+            <i class="fa-brands fa-linkedin-in"></i>
+            </div>
+           
+          </div>
+
+           {/* <div >Logo</div> */}
+
+          {/* Center Section */}
+          <div className="footer-info-center text-center">
+            <h5 className="mb-3">Quick Links</h5>
+            <ul className="list-unstyled">
+              <li>
+                <a href="#" className="text-decoration-none">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-decoration-none">
+                  Course
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-decoration-none">
+                  About us
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-decoration-none">
+                  Contact Us
+                </a>
+              </li>
+            </ul>
+          </div>
+
+
+          {/* Right Section */}
+          <div className="footer-info-right">
+            <h5 className="footer-info__header">Contact Info</h5>
+            <p className="footer-info__number"><i class="fa-solid fa-phone-volume"></i>1234567890</p>
+            <p className="footer-info__email"><i class="fa-solid fa-envelope"></i>edusphere@gmail.com</p>
+            <p className="footer-info__address"><i class="fa-solid fa-location-dot"></i>abcsfhj, Ontario</p>
+          </div>
+        </div>
+      </div>
+
+      {/* <hr className="foot-seperator" /> */}
+      <div  className="footer-info__copyright">
+      <p>@copyright Group4</p>
+      </div>
+    </div>
+  );
+};
+
+export default Footer;
+
