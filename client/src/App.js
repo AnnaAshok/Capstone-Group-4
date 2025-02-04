@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Forgotpassword from './components/Forgotpassword';
 import Home from './components/Home'
+import 'tailwindcss/index.css';
 
 function App() {
   return (

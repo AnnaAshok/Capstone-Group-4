@@ -16,6 +16,8 @@ const Header = () => {
           marginBottom: "0", // Remove space between header-top and navbar
         }}
       >
+      
+
         <div className="contact-info d-flex align-items-center gap-3">
           <p className="contact-link mb-0">
             <i className="fa-solid fa-phone-volume"></i> 123-456-7890
