@@ -39,7 +39,7 @@ const Header = () => {
       <Navbar
         expand="lg"
         style={{
-          //backgroundColor: "#e6e9ec", // Grey background
+          // backgroundColor: "#e6e9ec", // Grey background
           marginTop: "0", // Remove space between header-top and navbar
           paddingTop: "0", 
         }}
