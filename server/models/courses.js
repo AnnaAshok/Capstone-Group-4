@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const duration = ["2 weeks","1 month","3 month"];
+const duration = ["2 weeks","1 month","3 months"];
 
 const CoursesModel = new mongoose.Schema({
     title: { type: String, required: true},

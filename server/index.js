@@ -1,10 +1,12 @@
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
-// const schema = require("../schema/schema");
 const connectDB = require("./config/db");
 const cors = require("cors");
 const app = express();
+
 const user = require("./models/users")
+const Courses = require("./models/courses"); 
+const Categories = require('./models/categories');
 
 app.use(cors());
 app.use(express.json()); 
@@ -61,6 +63,29 @@ app.post("/resetpassword",(req, res)=>{
         res.json("Success")
     })
 })
+
+
+// API Route to Fetch Courses
+app.get("/courses", async (req, res) => {
+    try {
+        const courses = await Courses.find();
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching courses", error });
+    }
+});
+
+// API Route to fetch categories
+app.get("/categories", async (req, res) => {
+    try {
+      const categories = await Categories.find();
+      console.log("Fetched Categories:", categories);
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  })
 
 app.listen(5000, () => {
     console.log('App listening on port 5000')
