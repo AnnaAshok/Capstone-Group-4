@@ -24,6 +24,11 @@ export default function LoginSignup({ show, handleClose,setModalShow }) {
     setActiveLogin(!activeLogin)
     setMessage("")
     setErrors({});
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
   }
   const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
@@ -197,6 +202,7 @@ useEffect(()=>{
             <div className='input-group mb-3'>
               <input type='email'
                 name="email"
+                value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder='Enter Your Email' className='form-control bg-light' />
                 {errors.email && <p className="text-danger small m-0 w-100">{errors.email}</p>}
@@ -204,6 +210,7 @@ useEffect(()=>{
             <div className='input-group mb-3'>
               <input type='password'
                 name="password"
+                value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder='Enter Your Password' className='form-control bg-light' />
                 {errors.password && <p className="text-danger small m-0 w-100">{errors.password}</p>}

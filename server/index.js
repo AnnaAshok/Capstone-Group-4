@@ -41,7 +41,6 @@ app.get("/courses", async (req, res) => {
 app.get("/categories", async (req, res) => {
     try {
       const categories = await Categories.find();
-      console.log("Fetched Categories:", categories);
       res.json(categories);
     } catch (error) {
       console.error("Error fetching categories:", error);

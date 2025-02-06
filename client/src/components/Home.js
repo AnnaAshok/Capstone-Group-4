@@ -22,7 +22,6 @@ const Home = () => {
       .then(response => (response.json())
     )
       .then(data => {
-        console.log("Fetched Categories:", data);
         if (Array.isArray(data)) {
           setCategories(data); // Set categories only if it's an array
         } else {
