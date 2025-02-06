@@ -245,7 +245,7 @@ h1{
 .contact-btn {
   margin-left: auto;
   padding: 0.5rem 1rem;
-  background-color: #fad25b;
+  background-color: #f7c221;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -278,7 +278,7 @@ h1{
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #fff;
 }
 
@@ -291,7 +291,14 @@ h1{
 .login-signup-link {
   text-decoration: none;
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  margin: 0px;
+  cursor: pointer;
+}
+.link-custom{
+  cursor: pointer;
+  text-decoration: underline;
+  color: #0f3460;
 }
 
 .login-signup-link i {
@@ -301,7 +308,21 @@ h1{
 .login-signup-link:hover {
   color: #f7c221;
 }
+.logout-link {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0px;
+}
 
+.logout-link i {
+  margin-right: 0.3rem;
+}
+
+.logout-link:hover {
+  color: #f7c221;
+}
 .home-banner {
   position: relative;
   display: flex;
@@ -337,6 +358,16 @@ h1{
   color: #61dafb;
 }
 
+.custom-modal.modal-dialog {
+  max-width: 50vw !important; /* Adjust width */
+  width: 90%; /* Make it responsive */
+}
+.custom-modal .modal-content{
+  border-radius: 60px;
+}
+.custom-modal .modal-content .modal-body{
+  padding: 0px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import '../index.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { Modal, Button, Form } from "react-bootstrap";
+import LoginSignup from "./LoginSignup";
 
 
-const Forgotpassword = () => {
+const Forgotpassword = ({show, handleClose,setModalShow }) => {
 const [email, setEmail] = useState('')
 const navigate = useNavigate()
 const [password, setPassword] = useState('')
@@ -13,9 +15,11 @@ const [ cpassword, setCpassword] = useState('')
 const [activeLogin, setActiveLogin] = useState(true)
 const [errorMessage, setErrorMessage] = useState('');
 
+
 function SwitchContent() {
   setActiveLogin(!activeLogin)
   setErrorMessage('');
+  setEmail('')
 }
 const handleUpdatePassword = async (e) => {
   e.preventDefault();
@@ -60,9 +64,26 @@ const handleCheckEmail = async (e) => {
     setErrorMessage("Something went wrong. Please try again.");
   }
 };
-
+const handleBacktologin=()=>{
+  handleClose();
+  setModalShow(true)
+  setActiveLogin(true); // Show password reset form
+  setErrorMessage("");
+  setEmail('')
+}
+useEffect(()=>{
+  if(!show){
+    setEmail("");
+    setPassword("");
+    setCpassword('')
+    setActiveLogin(true)
+    setErrorMessage('');
+  }
+},[show])
   return (
-    <div className='container'>
+    <>
+    <Modal show={show} onHide={handleClose} centered dialogClassName="custom-modal">
+    <Modal.Body>
     <div className={`content justify-content-center align-items-center d-flex shadow-lg ${activeLogin ? "" : "active"}`} id='content'>
     <div className='col-md-6 d-flex justify-content-center'>
     <form onSubmit={handleUpdatePassword}>
@@ -75,6 +96,7 @@ const handleCheckEmail = async (e) => {
             id="email"
             readOnly
             value={email}
+            placeholder='Email id'
             className='form-control bg-light'/>
           </div>
           <div className='input-group mb-3'>
@@ -97,7 +119,7 @@ const handleCheckEmail = async (e) => {
             {errorMessage && <div className="text-danger mb-3">{errorMessage}</div>}
             <div className='input-group justify-content-end'>
               <div className='forgot'>
-                <a className='hidden fs-6 pe-auto' onClick={SwitchContent}>Find another email?</a>
+                <a className='hidden fs-6 pe-auto link-custom' onClick={SwitchContent}>Find another email?</a>
               </div>
             </div>
           <div className='input-group mb-3 justify-content-center'>
@@ -113,13 +135,14 @@ const handleCheckEmail = async (e) => {
           <div className='input-group mb-3'>
             <input type='email' 
             name="email"
+            value={email}
             onChange={e=>setEmail(e.target.value)}
             placeholder='Enter Your Email' className='form-control bg-light'/>
           </div>
           {errorMessage && <div className='text-danger mb-3'>{errorMessage}</div>}
           <div className='input-group justify-content-end'>
               <div className='forgot'>
-                <Link to="/">Back to Login?</Link>
+                <span onClick={handleBacktologin} className='link-custom'>Back to Login?</span>
               </div>
             </div>
           <div className='input-group mb-3 justify-content-center'>
@@ -134,7 +157,7 @@ const handleCheckEmail = async (e) => {
             <div className='switch-panel switch-left'>
               <h1>Hello, Again</h1>
               <p>We are happy to see you back</p>
-              <Link to="/" className='hidden btn border-white text-white w-50 fs-6' id='signup'>Back to Login?</Link>
+              <span className='hidden btn border-white text-white w-50 fs-6' id='signup' onClick={handleBacktologin}>Back to Login?</span>
             </div>
             <div className='switch-panel switch-right'>
               <h1>Welcome</h1>
@@ -143,7 +166,9 @@ const handleCheckEmail = async (e) => {
           </div>
         </div>
     </div>
-  </div>
+  </Modal.Body>
+  </Modal>
+  </>
   )
 }
 
