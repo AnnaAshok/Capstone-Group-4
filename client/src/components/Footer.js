@@ -34,10 +34,10 @@ const Footer = () => {
                 quidem modi nulla illo?
               </p>
               <div className="social-icons">
-                <i class="fa-brands fa-facebook"></i>
-                <i class="fa-brands fa-twitter"></i>
-                <i class="fa-brands fa-instagram"></i>
-                <i class="fa-brands fa-linkedin-in"></i>
+                <i className="fa-brands fa-facebook"></i>
+                <i className="fa-brands fa-twitter"></i>
+                <i className="fa-brands fa-instagram"></i>
+                <i className="fa-brands fa-linkedin-in"></i>
               </div>
             </div>
 
@@ -69,13 +69,13 @@ const Footer = () => {
             <div className="col-md-6 col-lg-4 col-12 footer-3">
               <h4>Contact Info</h4>
               <p>
-                <i class="fa-solid fa-phone-volume"></i>1234567890
+                <i className="fa-solid fa-phone-volume"></i>1234567890
               </p>
               <p>
-                <i class="fa-solid fa-envelope"></i>edusphere@gmail.com
+                <i className="fa-solid fa-envelope"></i>edusphere@gmail.com
               </p>
               <p>
-                <i class="fa-solid fa-location-dot"></i>abcsfhj, Ontario
+                <i className="fa-solid fa-location-dot"></i>abcsfhj, Ontario
               </p>
             </div>
           </div>

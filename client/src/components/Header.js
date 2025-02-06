@@ -1,9 +1,20 @@
-import React from "react";
+import React,{useState} from "react";
 import { Navbar, Nav, Container, Form, Button } from "react-bootstrap";
 import "../index.css";
 import logoimage from "../Assets/Edu_Logo.png";
+import { useNavigate } from "react-router-dom";
+import LoginSignup from "./LoginSignup";
 
 const Header = () => {
+  const loggedIn = localStorage.getItem("token")
+  const navigate = useNavigate()
+  const [modalShow, setModalShow] = useState(false);
+
+  const handleLogout=() =>{
+    localStorage.clear();
+    navigate(0); 
+  }
+
   return (
     <header>
       {/* Contact Info & Login/Signup Section */}
@@ -12,7 +23,7 @@ const Header = () => {
         style={{
           backgroundColor: "#0f3460",
           color: "white",
-          padding: "8px 20px",
+          padding: "10px 20px",
           marginBottom: "0", // Remove space between header-top and navbar
         }}
       >
@@ -26,12 +37,12 @@ const Header = () => {
         </div>
 
         <div className="login_signup d-flex align-items-center gap-3">
-          <a href="/login" className="login-signup-link">
-            <i className="fa-solid fa-sign-in-alt"></i> Login
-          </a>
-          <a href="/signup" className="login-signup-link">
-            <i className="fa-solid fa-user-plus"></i> Signup
-          </a>
+          {!loggedIn ? <p className="login-signup-link" onClick={() => setModalShow(true)}>
+            <i className="fa-solid fa-sign-in-alt"></i> Login/Signup
+          </p>: 
+           <p className="logout-link" onClick={handleLogout}>
+            <i className="fa-solid fa-sign-out"></i> Logout
+          </p>}
         </div>
       </div>
 
@@ -133,6 +144,7 @@ const Header = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <LoginSignup show={modalShow} handleClose={() => setModalShow(false)} setModalShow={setModalShow}/>
     </header>
   );
 };

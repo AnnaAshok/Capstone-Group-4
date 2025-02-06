@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../index.css';
 import axios from 'axios';
-import { Link, Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { Modal, Button, Form } from "react-bootstrap";
+import Forgotpassword from './Forgotpassword';
 
 
-export default function LoginSignup() {
+export default function LoginSignup({ show, handleClose,setModalShow }) {
   const navigate = useNavigate()
   const [activeLogin, setActiveLogin] = useState(true)
   const [firstName, setFirstName] = useState("")
@@ -15,6 +16,8 @@ export default function LoginSignup() {
   const [confirmpassword,setConfirmPassword]= useState("")
   const [message, setMessage]= useState("")
   const [errors, setErrors] = useState({});
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [loginModalShow, setLoginModalShow] = useState(false);
 
 
   function SwitchContent() {
@@ -56,6 +59,8 @@ export default function LoginSignup() {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
+            // setActiveLogin(true)
+
           }
         }catch (error) {
           setMessage(error.response?.data?.message || "An error occurred");
@@ -78,7 +83,9 @@ export default function LoginSignup() {
         const response = await axios.post('http://localhost:5000/login', { email, password });
         if (response.data.message === "Success") {
           localStorage.setItem("token", response.data.token); // Store token
-            navigate("/home");
+            handleClose();
+            setLoginModalShow(false)
+            navigate("/");
         } else {
             setErrors({ general: response.data.message });
         }
@@ -87,8 +94,27 @@ export default function LoginSignup() {
     }
 };
 
+const handleForgotpassword = ()=>{
+  handleClose();
+  setShowForgotModal(true)
+  setMessage("")
+}
+useEffect(()=>{
+  if(!show){
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setMessage("")
+    setActiveLogin(true)
+    setErrors({});
+  }
+},[show])
   return (
-    <div className='container'>
+    <>
+      <Modal show={show} onHide={handleClose} centered dialogClassName="custom-modal">
+      <Modal.Body>
       <div className={`content justify-content-center align-items-center d-flex shadow-lg ${activeLogin ? "" : "active"}`} id="content">
         {/*---------------------------- SIGNUP form ---------------------------------------*/}
         <div className='col-md-6 login-box'>
@@ -184,7 +210,7 @@ export default function LoginSignup() {
             </div>
             <div className='input-group justify-content-end'>
               <div className='forgot'>
-                <Link to="/forgotpassword">Forgot Password?</Link>
+                <p onClick={handleForgotpassword} className='link-custom'>Forgot Password?</p>
               </div>
             </div>
             <div className='input-group mb-3 justify-content-center'>
@@ -208,6 +234,13 @@ export default function LoginSignup() {
           </div>
         </div>
       </div>
-    </div>
-  )
+      </Modal.Body>
+      </Modal>
+      <Forgotpassword 
+        show={showForgotModal} 
+        handleClose={() => setShowForgotModal(false)} 
+        setModalShow={setModalShow}
+      />
+      </>
+        )
 }

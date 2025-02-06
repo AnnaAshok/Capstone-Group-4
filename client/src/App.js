@@ -13,9 +13,9 @@ function App() {
     <Footer/> */}
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<LoginSignup/>}></Route>
+        <Route path='/login' element={<LoginSignup/>}></Route>
         <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
-        <Route path='/home' element={<Home />}></Route>
+        <Route path='/' element={<Home />}></Route>
       </Routes>
     </BrowserRouter>
     </div>
