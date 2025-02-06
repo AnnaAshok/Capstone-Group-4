@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Forgotpassword from './components/Forgotpassword';
 import Home from './components/Home'
 
+
 function App() {
   return (
     <div className='App'>
