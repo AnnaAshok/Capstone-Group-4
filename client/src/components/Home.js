@@ -5,11 +5,13 @@ import '../home.css';
 import CourseList from './CourseList';
 import { useEffect, useState } from 'react';
 
-import course_icon from "../images/course-icon.png"
-import quiz_icon from "../images/quiz-icon.png"
-import certificate_icon from "../images/certificate-icon.png"
-import about_img from "../images/about-img-3.png"
-import newsletter_img from "../images/newsletter-image.png"
+import course_icon from "../Assets/course-icon.png"
+import quiz_icon from "../Assets/quiz-icon.png"
+import certificate_icon from "../Assets/certificate-icon.png"
+import about_img from "../Assets/about-img-3.png"
+import newsletter_img from "../Assets/newsletter-image.png"
+import sample_img from "../Assets/data-sci.jpg"
+import Main from './Main'
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
@@ -37,16 +39,8 @@ const Home = () => {
 
   return (
     <>
-      <Header />
-
-      {/* Banner Section */}
-      <section className="text-center banner-image">
-        <div className='banner-section-overlay'>
-          <h1 className='text-white font-bold mt-5'>We Help You Learn</h1>
-          <h1 className='text-white font-bold mt-4'>What You Love</h1>
-        </div>
-      </section>
-
+        <Header />
+        <Main/>
       {/* Our Services */}
       <section className="text-center services">
         <div className='service-title-image'>
@@ -128,15 +122,25 @@ const Home = () => {
       </section>
 
       {/* categories  */}
-      <section className='category-section'>
-        <div className="carousel-container">
+      <section className='category-section text-center'>
+      <div className='category-title-image'>
+          <p className='category-subtitle mt-5'>Our Features</p>
+          <h2 className="category-title">Our Course Categories</h2>
+        </div>
+        <p className='category-heading-desc mt-3'>Explore a diverse range of categories, each showcasing exciting courses tailored to enhance your skills and knowledge.</p>
+
+        <div className="carousel-container container mt-5">
           <div className="carousel-track">
             {categories?.map((category, index) => (// Duplicate for smooth looping
               <div key={index} className="category-card">
-                <img src={category.categoryImage} alt={category.categoryName} className="category-image" />
+                <div className='category-image'>
+                  {/* <img src={category.categoryImage} alt={category.categoryName} className="category-image" /> */}
+                  <img src={sample_img} alt="sample image" className='category-image' />
+                </div>
+                
                 <div className="category-info">
                   <p className="category-name">
-                    {category.categoryName}
+                    <strong>{category.categoryName}</strong>
                     {/* <span className="course-count"> ({category.courseCount} courses)</span> */}
                   </p>
                 </div>
@@ -146,7 +150,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* <Footer /> */}
+
+        <Footer />
     </>
   )
 }

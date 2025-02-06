@@ -1,25 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Cherish&family=Gilda+Display&family=Inconsolata:wght@200..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Kalnia+Glaze:wght@100..700&family=Kumar+One&family=Meddon&family=Merienda:wght@300..900&family=Monoton&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Smooch+Sans:wght@100..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
-.banner-image {
-    /* background-image: url('../public/banner-image-3.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
-    height: 30rem; */
-}
-
-.banner-section-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    height: 30rem;
-}
-
-.banner-section-overlay h1 {
-    font-family: "Kumar One", serif;
-    font-size: clamp(2rem, 5vw, 4rem) !important;
-}
-
 /********* Service Section ***********/
 .services {
     padding-top: 3rem;
@@ -32,7 +12,7 @@
 }
 
 .service-title-image {
-    background-image: url("../src/images/service-text-4.png");
+    background-image: url("../src/Assets/service-text-4.png");
     /* background-size: cover; */
     background-position: center;
     background-repeat: no-repeat;
@@ -40,7 +20,8 @@
 }
 
 .service-subtitle,
-.courses-subtitle {
+.courses-subtitle,
+.category-subtitle {
     color: #f7c221 !important;
     font-size: larger;
     margin-bottom: 0px;
@@ -48,12 +29,14 @@
 }
 
 .serivce-title,
-.courses-title {
+.courses-title,
+.category-title {
     font-size: 3rem !important;
 }
 
 .service-description,
-.course-title-description {
+.course-title-description,
+.category-heading-desc {
     color: #6c706f;
     line-height: 28px;
 }
@@ -72,14 +55,13 @@
     padding: 1.5rem;
     border-radius: 0.75rem;
     text-align: center;
-    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  */
-    /* border: 1px solid black; */
 }
 
 .service-card img {
     width: 50px;
     height: 50px;
     transition: transform 0.3s ease;
+    margin: auto;
 }
 
 .service-card img:hover {
@@ -106,7 +88,7 @@
 /********* About Our Flatform Section ***********/
 
 .about-our-platform {
-    background-image: url("../src/images/about-our-platform-bg-2.png"),
+    background-image: url("../src/Assets/bg-1.png"),
         linear-gradient(to bottom, #c3ecfe57, rgba(0, 0, 0, 0.1));
     background-blend-mode: normal;
     background-position: left;
@@ -182,7 +164,7 @@
 
 /*************** ad offer section ************/
 .ad-section {
-    background-image: url('../src/images/ad-offer.png');
+    background-image: url('../src/Assets/ad-offer.png');
     height: 35rem;
     background-size: cover;
     background-position: center;
@@ -261,7 +243,7 @@
 }
 
 .courses-title-image {
-    background-image: url("../src/images/explore-our-courses-text-2.png");
+    background-image: url("../src/Assets/explore-our-courses-text-2.png");
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
@@ -295,6 +277,7 @@
 
 .course-image {
     width: 14rem;
+    margin: auto;
 }
 
 .course-title {
@@ -361,18 +344,19 @@
 
 /************ Newsletter Section *************/
 .newsletter-section {
-    background-color: #0F3460;
+    /* background-color: #0F3460; */
     padding: 5rem 5rem;
+    background-image: linear-gradient(to bottom, #021b38, rgb(247 194 33 / 55%));
 }
 
 .newsletter-grid {
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 1fr;
     gap: 4rem;
 }
 
-.newsletter-grid img {
-    width: 38rem;
+.newsletter-image {
+    display: flex;
 }
 
 .newsletter-content-subtitle {
@@ -386,7 +370,7 @@
 }
 
 .newsletter-content p {
-    color: #6c706f;
+    color: white;
     line-height: 28px;
 }
 
@@ -401,8 +385,7 @@
     max-width: 250px;
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid #666;
-    ;
+    border: 2px solid white;
     border-radius: 7px;
     font-size: 16px;
     outline: none;
@@ -410,7 +393,7 @@
 }
 
 .newsletter-input::placeholder {
-    color: #666;
+    color: white;
 }
 
 .newsletter-input:focus {
@@ -455,49 +438,58 @@
 
 
 /********** categories section ************/
+.category-section {
+    height: 30rem;
+    padding: 2rem 3rem;
+    margin-bottom: 13rem;
+}
+
+.category-title-image {
+    background-image: url("../src/Assets/course-categories-text.png");
+    /* background-size: cover; */
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
 .carousel-container {
     width: 100%;
     overflow: hidden;
     position: relative;
     margin: 20px 0;
+    height: fit-content;
 }
 
 .carousel-track {
     display: flex;
-    gap: 15px;
-    animation: scroll 15s linear infinite;
-    /* Continuous scroll */
+    gap: 3rem;
+    animation: scroll 25s linear infinite;
+    height: 20rem;
 }
 
 .category-card {
     flex: 0 0 calc(25% - 15px);
-    /* 4 items per row */
     text-align: center;
     position: relative;
-    transition: transform 0.3s ease-in-out;
-}
-
-.category-card:hover {
-    transform: scale(1.1);
-    /* Slight zoom effect on hover */
 }
 
 .category-image {
+    display: flex;
     width: 100%;
-    height: 200px;
-    /* Adjust height */
+    height: 100%;
     object-fit: cover;
-    border-radius: 15px;
+    border-radius: 7px;
 }
 
 .category-info {
+    width: 85%;
     position: absolute;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    padding: 8px 12px;
+    background: white;
+    color: black;
+    padding: 1rem;
     border-radius: 10px;
     font-size: 16px;
     transition: all 0.3s ease-in-out;
@@ -505,10 +497,7 @@
 
 .category-name {
     cursor: pointer;
-}
-
-.category-name:hover .course-count {
-    display: inline-block;
+    margin-bottom: 0 !important;
 }
 
 .course-count {
@@ -526,6 +515,17 @@
     to {
         transform: translateX(-50%);
     }
+}
 
-    /* Scroll left infinitely */
+/* 2 items per row */
+@media (max-width: 1024px) {
+    .category-card {
+        flex: 0 0 calc(33.33% - 15px);
+    }
+}
+
+@media (max-width: 768px) {
+    .category-card {
+        flex: 0 0 100%;
+    }
 }
