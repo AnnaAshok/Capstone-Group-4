@@ -1,15 +1,11 @@
 const express = require("express");
-
-
-
-
 const connectDB = require("./config/db");
 const cors = require("cors");
-const authController = require("./controller/authController");
 
-const user = require("./models/users")
-const Courses = require("./models/courses"); 
-const Categories = require('./models/categories');
+const authController = require("./controller/authController");
+const courseListController = require("./controller/courseListController"); 
+const categoryListController = require("./controller/categoryListController");
+
 const app = express();
 
 // Middleware
@@ -26,27 +22,8 @@ app.post("/register", authController.register);
 app.post("/getEmail", authController.getEmail);
 app.post("/resetpassword", authController.resetPassword);
 
-
-// API Route to Fetch Courses
-app.get("/courses", async (req, res) => {
-    try {
-        const courses = await Courses.find();
-        res.json(courses);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching courses", error });
-    }
-});
-
-// API Route to fetch categories
-app.get("/categories", async (req, res) => {
-    try {
-      const categories = await Categories.find();
-      res.json(categories);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  })
+app.use("/courses", courseListController);
+app.use("/categories", categoryListController);
 
 app.listen(5000, () => {
     console.log('App listening on port 5000')

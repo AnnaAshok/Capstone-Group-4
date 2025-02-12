@@ -92,7 +92,7 @@ const Home = () => {
         </div>
       </section>
 
-      <CourseList />
+      <CourseList limit={3} /> {/* Pass limit as 3 to show only 3 courses */}
 
       {/* Subscribe our Newsletter */}
       <section className='newsletter-section'>
@@ -149,8 +149,7 @@ const Home = () => {
         </div>
       </section>
 
-
-        <Footer />
+      <Footer />
     </>
   )
 }

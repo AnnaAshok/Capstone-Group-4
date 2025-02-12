@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import '../home.css';
 import sample_img from "../Assets/Python-logo.png"
 
-const CourseList = () => {
+const CourseList = ({ limit }) => {
     const [courses, setCourses] = useState([]);
 
     // Fetch courses from MongoDB
     useEffect(() => {
         fetch("http://localhost:5000/courses")
             .then(response => response.json())
-            .then(data => setCourses(data))
+            .then(data => {
+                // If a limit is provided, slice the courses array accordingly
+                const coursesToDisplay = limit ? data.slice(0, limit) : data;
+                setCourses(coursesToDisplay);
+            })
             .catch(error => console.error("Error fetching courses:", error));
-    }, []);
+    }, [limit]);
 
     return (
         <section className='courses-section'>
