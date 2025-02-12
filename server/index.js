@@ -6,6 +6,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
 const authController = require("./controller/authController");
+const categoryController =  require("./controller/categoryController")
 
 const user = require("./models/users")
 const Courses = require("./models/courses"); 
@@ -26,6 +27,11 @@ app.post("/register", authController.register);
 app.post("/getEmail", authController.getEmail);
 app.post("/resetpassword", authController.resetPassword);
 
+// Routes of category
+app.post("/getCategory",categoryController.getCategories)
+app.post("/addCategory",categoryController.addCategory)
+app.post("/updateCategory/:id",categoryController.updateCategory)
+app.post("/categories/:id", categoryController.getCategoryById); 
 
 // API Route to Fetch Courses
 app.get("/courses", async (req, res) => {

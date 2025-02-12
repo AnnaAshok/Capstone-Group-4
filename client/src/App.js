@@ -1,10 +1,9 @@
 import './App.css';
 import{BrowserRouter, Routes, Route} from 'react-router-dom'
-import LoginSignup from './components/LoginSignup';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Forgotpassword from './components/Forgotpassword';
-import Home from './components/Home'
+import LoginSignup from './components/user/LoginSignup';
+import Forgotpassword from './components/user/Forgotpassword';
+import Home from './components/user/Home'
+import CustomTable from './components/admin/CustomTable';
 
 
 function App() {
@@ -17,6 +16,7 @@ function App() {
         <Route path='/login' element={<LoginSignup/>}></Route>
         <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
         <Route path='/' element={<Home />}></Route>
+        <Route path='/tables' element={<CustomTable />}></Route>
       </Routes>
     </BrowserRouter>
     </div>

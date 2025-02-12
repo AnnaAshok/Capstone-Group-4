@@ -12,7 +12,7 @@
 }
 
 .service-title-image {
-    background-image: url("../src/Assets/service-text-4.png");
+    background-image: url("../src/Assets/images/service-text-4.png");
     /* background-size: cover; */
     background-position: center;
     background-repeat: no-repeat;
@@ -88,7 +88,7 @@
 /********* About Our Flatform Section ***********/
 
 .about-our-platform {
-    background-image: url("../src/Assets/bg-1.png"),
+    background-image: url("../src/Assets/images/bg-1.png"),
         linear-gradient(to bottom, #c3ecfe57, rgba(0, 0, 0, 0.1));
     background-blend-mode: normal;
     background-position: left;
@@ -164,7 +164,7 @@
 
 /*************** ad offer section ************/
 .ad-section {
-    background-image: url('../src/Assets/ad-offer.png');
+    background-image: url('../src/Assets/images/ad-offer.png');
     height: 35rem;
     background-size: cover;
     background-position: center;
@@ -243,7 +243,7 @@
 }
 
 .courses-title-image {
-    background-image: url("../src/Assets/explore-our-courses-text-2.png");
+    background-image: url("../src/Assets/images/explore-our-courses-text-2.png");
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
@@ -445,7 +445,7 @@
 }
 
 .category-title-image {
-    background-image: url("../src/Assets/course-categories-text.png");
+    background-image: url("../src/Assets/images/course-categories-text.png");
     /* background-size: cover; */
     background-position: center;
     background-repeat: no-repeat;
