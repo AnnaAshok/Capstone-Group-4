@@ -1,7 +1,7 @@
 import React from "react";
 import { useSpring, animated } from "@react-spring/web";
-import "../index.css";
-import logoimage from "../Assets/Edu_Logo.png";
+import "../../index.css";
+import logoimage from "../../Assets/images/Edu_Logo.png";
 
 const Footer = () => {
   const animationProps = useSpring({

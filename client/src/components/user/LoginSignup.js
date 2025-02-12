@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import '../index.css';
+import '../../index.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button, Form } from "react-bootstrap";
-import Forgotpassword from './Forgotpassword';
+import Forgotpassword from '././Forgotpassword';
 
 
 export default function LoginSignup({ show, handleClose,setModalShow }) {

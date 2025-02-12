@@ -1,17 +1,17 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
-import '../home.css';
+import '../../home.css';
 import CourseList from './CourseList';
 import { useEffect, useState } from 'react';
 
-import course_icon from "../Assets/course-icon.png"
-import quiz_icon from "../Assets/quiz-icon.png"
-import certificate_icon from "../Assets/certificate-icon.png"
-import about_img from "../Assets/about-img-3.png"
-import newsletter_img from "../Assets/newsletter-image.png"
-import sample_img from "../Assets/data-sci.jpg"
-import Main from './Main'
+import course_icon from "../../Assets/images/course-icon.png"
+import quiz_icon from "../../Assets/images/quiz-icon.png"
+import certificate_icon from "../../Assets/images/certificate-icon.png"
+import about_img from "../../Assets/images/about-img-3.png"
+import newsletter_img from "../../Assets/images/newsletter-image.png"
+import sample_img from "../../Assets/images/data-sci.jpg"
+import Main from '././Main'
 
 const Home = () => {
   const [categories, setCategories] = useState([]);

@@ -1,9 +1,9 @@
 import React,{useState} from "react";
 import { Navbar, Nav, Container, Form, Button } from "react-bootstrap";
-import "../index.css";
-import logoimage from "../Assets/Edu_Logo.png";
+import "../../index.css";
+import logoimage from "../../Assets/images/Edu_Logo.png";
 import { useNavigate } from "react-router-dom";
-import LoginSignup from "./LoginSignup";
+import LoginSignup from "././LoginSignup";
 
 const Header = () => {
   const loggedIn = localStorage.getItem("token")
