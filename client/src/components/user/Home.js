@@ -14,13 +14,14 @@ import sample_img from "../../Assets/images/data-sci.jpg"
 import Main from '././Main'
 
 const Home = () => {
+
   const [categories, setCategories] = useState([]);
 
   // Fetch categories from backend
   useEffect(() => {
     fetch("http://localhost:5000/categories")
       .then(response => (response.json())
-    )
+      )
       .then(data => {
         if (Array.isArray(data)) {
           setCategories(data); // Set categories only if it's an array
@@ -33,13 +34,13 @@ const Home = () => {
         console.error("Error fetching categories:", error);
         setCategories([]); // Ensure categories is always an array
       });
-  },[]);
+  }, []);
 
 
   return (
     <>
-        <Header />
-        <Main/>
+      <Header />
+      <Main />
       {/* Our Services */}
       <section className="text-center services">
         <div className='service-title-image'>
@@ -92,7 +93,7 @@ const Home = () => {
         </div>
       </section>
 
-      <CourseList />
+      <CourseList categories={categories.slice(0, 3)} selectedCategory="All" limit={3} />
 
       {/* Subscribe our Newsletter */}
       <section className='newsletter-section'>
@@ -122,7 +123,7 @@ const Home = () => {
 
       {/* categories  */}
       <section className='category-section text-center'>
-      <div className='category-title-image'>
+        <div className='category-title-image'>
           <p className='category-subtitle mt-5'>Our Features</p>
           <h2 className="category-title">Our Course Categories</h2>
         </div>
@@ -136,7 +137,7 @@ const Home = () => {
                   {/* <img src={category.categoryImage} alt={category.categoryName} className="category-image" /> */}
                   <img src={sample_img} alt="sample image" className='category-image' />
                 </div>
-                
+
                 <div className="category-info">
                   <p className="category-name">
                     <strong>{category.categoryName}</strong>
@@ -149,8 +150,7 @@ const Home = () => {
         </div>
       </section>
 
-
-        <Footer />
+      <Footer />
     </>
   )
 }
