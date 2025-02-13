@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
-import '../home.css';
+import '../../home.css';
 import CourseList from './CourseList';
 import { useEffect, useState } from 'react';
 
