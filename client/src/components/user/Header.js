@@ -24,7 +24,7 @@ const Header = () => {
           backgroundColor: "#0f3460",
           color: "white",
           padding: "10px 20px",
-          marginBottom: "0", // Remove space between header-top and navbar
+          marginBottom: "0", 
         }}
       >
       

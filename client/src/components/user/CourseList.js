@@ -2,16 +2,39 @@ import React, { useEffect, useState } from 'react';
 import '../../home.css';
 import sample_img from "../../Assets/images/Python-logo.png"
 
-const CourseList = () => {
+const CourseList = ({ selectedCategory, categories, limit }) => {
     const [courses, setCourses] = useState([]);
 
-    // Fetch courses from MongoDB
+    const selectedCategoryID = categories.find(cat => cat.categoryName === selectedCategory)?._id || null;
+
+    // Fetch courses from backend
     useEffect(() => {
-        fetch("http://localhost:5000/courses")
-            .then(response => response.json())
-            .then(data => setCourses(data))
-            .catch(error => console.error("Error fetching courses:", error));
-    }, []);
+        const fetchCourses = async () => {
+            try {
+                const categoryParam = selectedCategory === "All" ? "" : `?categoryID=${selectedCategoryID}`;
+                const response = await fetch(`http://localhost:5000/courses${categoryParam}`);
+                const data = await response.json();
+                console.log("Fetched courses:", data);
+                setCourses(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+                setCourses([]);
+            }
+        };
+        // ✅ Only fetch if selectedCategoryID is valid
+        if (selectedCategoryID !== null || selectedCategory === "All") {
+            fetchCourses();
+        }
+    }, [selectedCategoryID, selectedCategory]);
+
+
+    // ✅ Ensure filtering is based on categoryID
+    const filteredCourses = selectedCategory === "All"
+        ? courses
+        : courses.filter(course => course.categoryID === selectedCategoryID);
+
+
+    const displayedCourses = limit ? filteredCourses.slice(0, limit) : filteredCourses;
 
     return (
         <section className='courses-section'>
@@ -26,32 +49,37 @@ const CourseList = () => {
 
                 {/* Courses Section */}
                 <div className="courses-grid">
-                    {courses.map((course) => (
-                        <div key={course._id} className="course-card">
-                            <img src={sample_img} alt="sample image" className='course-image' />
+                    {displayedCourses.length > 0 ? (
+                        displayedCourses.map(course => (
+                            <div key={course._id} className="course-card">
+                                <img src={sample_img} alt="sample image" className='course-image' />
 
-                            <div className="course-content">
-                                <h3 className="course-title">{course.title}</h3>
-                                <p className="course-description">{course.description}</p>
+                                <div className="course-content">
+                                    <h3 className="course-title">{course.title}</h3>
+                                    <p className="course-description">{course.description}</p>
 
-                                {/* Duration and Stars */}
-                                <div className="course-duration-rating mt-4">
-                                    <p className="course-duration"><strong>Duration:</strong> {course.duration}</p>
-                                    {/* <div className="stars">
-                                        {"\u2605 \u2605 \u2605 \u2605 \u2606"} 
-                                    </div>  */}
-                                </div>
+                                    {/* Duration and Stars */}
+                                    <div className="course-duration-rating mt-4">
+                                        <p className="course-duration"><strong>Duration:</strong> {course.duration}</p>
+                                        {/* <div className="stars">
+                                            {"\u2605 \u2605 \u2605 \u2605 \u2606"} 
+                                        </div>  */}
+                                    </div>
 
-                                <hr className="divider" />
+                                    <hr className="divider" />
 
-                                {/* Price and Button Row */}
-                                <div className="course-price-button">
-                                    <p className="course-price">${course.price}</p>
-                                    <button className="view-details-btn">View Details</button>
+                                    {/* Price and Button Row */}
+                                    <div className="course-price-button">
+                                        <p className="course-price">${course.price}</p>
+                                        <button className="view-details-btn">View Details</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    ) : (
+                        <p>No courses available for this category.</p>
+                    )}
+
                 </div>
             </div>
         </section>
