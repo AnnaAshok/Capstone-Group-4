@@ -4,6 +4,7 @@ import LoginSignup from './components/user/LoginSignup';
 import Forgotpassword from './components/user/Forgotpassword';
 import Home from './components/user/Home'
 import CustomTable from './components/admin/CustomTable';
+import AdminRoutes from './components/admin/AdminRoutes';
 
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
         <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
         <Route path='/' element={<Home />}></Route>
         <Route path='/tables' element={<CustomTable />}></Route>
+        {/* Admin routes */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
     </BrowserRouter>
     </div>
