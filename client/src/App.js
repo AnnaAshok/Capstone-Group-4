@@ -6,6 +6,7 @@ import Forgotpassword from './components/user/Forgotpassword';
 import Home from './components/user/Home'
 import CoursePage  from './components/user/CoursePage';
 import CustomTable from './components/admin/CustomTable';
+import AdminRoutes from './components/admin/AdminRoutes';
 
 
 
@@ -19,6 +20,8 @@ function App() {
         <Route path='/' element={<Home />}></Route>
         <Route path="/courses" element={<CoursePage />}></Route>
         <Route path='/tables' element={<CustomTable />}></Route>
+        {/* Admin routes */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
     </BrowserRouter>
     </div>

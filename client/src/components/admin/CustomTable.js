@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import {
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,6 +47,14 @@ const CustomTable = () => {
             console.error("Error fetching categories:", error);
           });
       }, []);
+
+      const handleEdit = (id) => {
+        console.log("Edit category:", id);
+      };
+    
+      const handleDelete = (id) => {
+        console.log("Delete category:", id);
+      };
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -65,7 +78,14 @@ const CustomTable = () => {
                   style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                 />
               </StyledTableCell>
-              <StyledTableCell></StyledTableCell>
+              <StyledTableCell>
+              <IconButton color="primary" onClick={() => handleEdit(category._id)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton color="error" onClick={() => handleDelete(category._id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>

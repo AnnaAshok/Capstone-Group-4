@@ -33,6 +33,6 @@ app.post("/addCategory", categoryController.addCategory)
 app.post("/updateCategory/:id", categoryController.updateCategory)
 app.post("/categories/:id", categoryController.getCategoryById);
 
-app.listen(5000, () => {
+app.listen(2222, () => {
   console.log('App listening on port 5000')
 })
