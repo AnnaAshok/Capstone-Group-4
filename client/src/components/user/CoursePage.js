@@ -40,6 +40,7 @@ const CoursePage = () => {
         setSelectedCategory={setSelectedCategory}
         categories={categories}
         hideCategoryButtons={false}
+        hidePagination={false}
       />
       <Footer />
     </>
