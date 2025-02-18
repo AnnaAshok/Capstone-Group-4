@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import '../../home.css';
 import sample_img from "../../Assets/images/Python-logo.png"
 
-const CourseList = ({ selectedCategory, categories, limit }) => {
+const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, hideCategoryButtons }) => {
     const [courses, setCourses] = useState([]);
 
-    const selectedCategoryID = categories.find(cat => cat.categoryName === selectedCategory)?._id || null;
+    const selectedCategoryID = categories?.find(cat => cat.categoryName === selectedCategory)?._id || null;
 
     // Fetch courses from backend
     useEffect(() => {
@@ -13,6 +13,7 @@ const CourseList = ({ selectedCategory, categories, limit }) => {
             try {
                 const categoryParam = selectedCategory === "All" ? "" : `?categoryID=${selectedCategoryID}`;
                 const response = await fetch(`http://localhost:5000/courses${categoryParam}`);
+                // http://localhost:5000/courses?categoryID=67a0245f92e926b0ecf1e3c8
                 const data = await response.json();
                 console.log("Fetched courses:", data);
                 setCourses(Array.isArray(data) ? data : []);
@@ -21,18 +22,16 @@ const CourseList = ({ selectedCategory, categories, limit }) => {
                 setCourses([]);
             }
         };
-        // ✅ Only fetch if selectedCategoryID is valid
+        // Only fetch if selectedCategoryID is valid
         if (selectedCategoryID !== null || selectedCategory === "All") {
             fetchCourses();
         }
     }, [selectedCategoryID, selectedCategory]);
 
-
-    // ✅ Ensure filtering is based on categoryID
+    // Ensure filtering is based on categoryID
     const filteredCourses = selectedCategory === "All"
         ? courses
         : courses.filter(course => course.categoryID === selectedCategoryID);
-
 
     const displayedCourses = limit ? filteredCourses.slice(0, limit) : filteredCourses;
 
@@ -46,6 +45,26 @@ const CourseList = ({ selectedCategory, categories, limit }) => {
                 </div>
                 <p className="course-title-description mt-2">Explore our wide range of courses designed to help you excel.</p>
 
+                {/* Conditionally show category buttons */}
+                {!hideCategoryButtons && (
+                    <div className="category-buttons mt-4 mb-2">
+                        <button
+                            className={`category-btn ${selectedCategory === "All" ? "active" : ""}`}
+                            onClick={() => setSelectedCategory("All")}
+                        >
+                            All
+                        </button>
+                        {categories.map(category => (
+                            <button
+                                key={category._id}
+                                className={`category-btn ${selectedCategory === category.categoryName ? "active" : ""}`}
+                                onClick={() => setSelectedCategory(category.categoryName)}
+                            >
+                                {category.categoryName}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 {/* Courses Section */}
                 <div className="courses-grid">

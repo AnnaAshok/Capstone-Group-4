@@ -513,20 +513,41 @@
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
-    height: 20rem;
+    background-size: cover;
+    height: 25rem;
 }
 
 .category-buttons {
-    display: flex !important;
-    flex-wrap: wrap;
+    display: flex;
+    justify-content: center; /* Centering buttons */
     gap: 10px;
-    padding: 10px;
-    border: 1px solid red; /* Just for debugging */
+    margin-top: 20px; /* Space below the title */
+    flex-wrap: wrap;
 }
 
 .category-btn {
-    display: block !important;
-    visibility: visible !important;
-    background-color: lightblue;
-    padding: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    /* background-color: #007bff; */
+    border: 1px solid #f7c221 ;
+    /* background-color: #f7c221; */
+    color: #f7c221;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.category-btn:hover {
+    /* background-color: #0f3460; */
+    /* border: 1px solid #0f3460 ; */
+    color: white;
+    background-color: #f7c221;
+}
+
+.category-btn.active {
+    /* background-color: #0f3460; */
+    /* border: 1px solid #0f3460 ; */
+    color: white;
+    background-color: #f7c221;
 }

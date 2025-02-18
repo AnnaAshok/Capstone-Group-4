@@ -3,7 +3,6 @@ const router = express.Router();
 const Courses = require("../models/courses");
 
 // API Route to Fetch Courses with category filtering
-
 router.get("/", async (req, res) => {
     try {
         const { categoryID } = req.query;
