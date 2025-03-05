@@ -68,7 +68,7 @@ function Home() {
           <h1>42</h1>
         </div>
       </div>
-{/* 
+
       <div className="charts">
        
         <div className="chart-item">
@@ -119,7 +119,7 @@ function Home() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div> */}
+      </div>
     </main>
   );
 }

@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = require("path");
 
 const categoryController = require("./controller/categoryController")
-
+const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const courseListController = require("./controller/courseListController");
 const categoryListController = require("./controller/categoryListController");
@@ -41,6 +41,10 @@ app.post("/addCategory",categoryController.uploads.single("categoryImage"), cate
 app.post("/updateCategory/:id", categoryController.uploads.single("categoryImage"),categoryController.updateCategory)
 app.post("/getCategoryById/:id", categoryController.getCategoryById);
 app.post("/deleteCategory/:id",categoryController.deleteCategory)
+
+// Routes of course
+// app.get("/getCategory", categoryController.getCategories);
+app.post("/addCourse", courseController.addCourse);
 
 app.listen(5000, () => {
   console.log('App listening on port 5000')
