@@ -4,12 +4,13 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const AddCategory = () => {
+const UpdateCategory = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
   const navigate = useNavigate();
   const location = useLocation(); 
   const [isEditMode, setIsEditMode] = useState(false); 
+  const [existingImage, setExistingImage] = useState("");
 
 
   useEffect(() => {
@@ -20,7 +21,7 @@ const AddCategory = () => {
         .then((response) => {
           const { categoryName, categoryImage } = response.data;
           setCategoryName(categoryName);
-          setCategoryImage(categoryImage); 
+          setExistingImage(categoryImage.replace("\\", "/")); // Replacing backslash with forward slash
           setIsEditMode(true); 
         })
         .catch((error) => {
@@ -30,28 +31,38 @@ const AddCategory = () => {
     }
   }, [location.state]);
 
+  const handleImageChange = (e) => {
+    setCategoryImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!categoryName || !categoryImage) {
+    if (!categoryName) {
       alert("Please fill in all fields before submitting.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("categoryName", categoryName);
-    formData.append("categoryImage", categoryImage);
-  
+    if (categoryImage) {
+      formData.append("categoryImage", categoryImage);
+    }
+
     try {
-      const response = await axios.post("http://localhost:5000/addCategory", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
-      setCategoryName("");
-      setCategoryImage(null);
+      const response = await axios.post(
+        `http://localhost:5000/updateCategory/${location.state.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      alert("Category updated successfully!");
       navigate("/admin/Category");
     } catch (error) {
-      console.error("Error adding category:", error);
-      alert("Failed to add category. Please try again.");
+      console.error("Error updating category:", error);
+      alert("Failed to update category. Please try again.");
     }
   };
 
@@ -78,7 +89,7 @@ const AddCategory = () => {
     <main className="main-container">
       <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
         <div className="list-category">
-          <h3>Add new category</h3>
+          <h3>Update category</h3>
         </div>
         <form onSubmit={handleSubmit}>
           <Box marginBottom={2}>
@@ -111,19 +122,36 @@ const AddCategory = () => {
             }}
             marginBottom={2}
           >
-            <input {...getInputProps()} />
+            <input {...getInputProps()} onChange={handleImageChange} />
             <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
               Drag & drop an image here, or click to upload
             </Typography>
-            {categoryImage && (
-              <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>
-                {categoryImage.name}
-              </Typography>
+             {/* Show Existing or New Image */}
+             {categoryImage && (
+              <div>
+                <img
+                  src={URL.createObjectURL(categoryImage)}
+                  alt="New Category"
+                  style={{ width: "100px", marginTop: "10px" }}
+                />
+                <p>New Image Selected</p>
+              </div>
+            )}
+
+            {existingImage && !categoryImage && (
+              <div>
+                <img
+                  src={`http://localhost:5000/${existingImage}`}
+                  alt="Existing Category"
+                  style={{ width: "100px", marginTop: "10px" }}
+                />
+                <p>Existing Image</p>
+              </div>
             )}
           </Box>
           <Box display="flex" gap={2} marginTop={2}>
             <Button type="submit" variant="contained">
-              Save
+              Update
             </Button>
             <Button variant="outlined" sx={{ border: "1px solid #0F3460", color: "#0F3460" }} onClick={handleCancel}>
               Cancel
@@ -135,4 +163,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default UpdateCategory;
