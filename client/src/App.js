@@ -22,6 +22,8 @@ function App() {
         <Route path='/tables' element={<CustomTable />}></Route>
         {/* Admin routes */}
         <Route path="/admin/*" element={<AdminRoutes />} />
+        {/* <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />}></Route> */}
+
       </Routes>
     </BrowserRouter>
     </div>

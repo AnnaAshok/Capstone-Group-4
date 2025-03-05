@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { styled } from '@mui/material/styles';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import {
@@ -10,14 +9,21 @@ import {
   TableRow,
   Paper,
   IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // import useNavigate
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: "#0F3460",
+    color: "#ffffff",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -34,28 +40,47 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-const CustomTable = () => {
-    const [categories, setCategories] = useState([]);
+const CustomTable = (props) => {
+  const [category, setCategory] = useState([]);
+  const navigate = useNavigate(); // initialize navigate
+  const [openDialog, setOpenDialog] = useState(false); // State to control the dialog
+  const [categoryToDelete, setCategoryToDelete] = useState(null); // Track the category to delete
 
-    useEffect(() => {
-        axios
-          .post("http://localhost:5000/getCategory")
-          .then((response) => {
-            setCategories(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching categories:", error);
-          });
-      }, []);
+  const categories = props.categories
 
-      const handleEdit = (id) => {
-        console.log("Edit category:", id);
-      };
-    
-      const handleDelete = (id) => {
-        console.log("Delete category:", id);
-      };
+  const handleEdit = (id) => {
+    console.log("Edit category ID:", id);
+    navigate("/admin/UpdateCategory", { state: { id } }); // Pass id via state
+  };
+      
+    const handleDelete = async (id) => {
+      try {
+        if (categoryToDelete) {
+          const deletedCategory = await axios.post(
+            `http://localhost:5000/deleteCategory/${categoryToDelete._id}`
+          );
+          console.log(deletedCategory);
+          props.setCategories((prevCategories) =>
+            prevCategories.filter((category) => category._id !== categoryToDelete._id)
+          );
+          console.log("Category deleted successfully");
+        }
+      } catch (error) {
+        console.error("Error deleting category:", error);
+      } finally {
+        setOpenDialog(false); // Close the dialog after the action is complete
+      }       
+    };
+    const handleDialogClose = () => {
+      setOpenDialog(false); // Close the dialog without deleting
+    };
+  
+    const handleDialogOpen = (category) => {
+      setCategoryToDelete(category); // Set the category to delete
+      setOpenDialog(true); // Open the dialog
+    };
   return (
+    <>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
@@ -73,7 +98,7 @@ const CustomTable = () => {
               <StyledTableCell>{category.categoryName}</StyledTableCell>
               <StyledTableCell>
                 <img
-                  src={category.categoryImage}
+                  src={`http://localhost:5000/${category.categoryImage}`} 
                   alt={category.categoryName}
                   style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                 />
@@ -82,8 +107,8 @@ const CustomTable = () => {
               <IconButton color="primary" onClick={() => handleEdit(category._id)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton color="error" onClick={() => handleDelete(category._id)}>
-                  <DeleteIcon />
+                <IconButton color="error" onClick={() => handleDialogOpen(category)}>
+                <DeleteIcon />
                 </IconButton>
               </StyledTableCell>
             </StyledTableRow>
@@ -91,6 +116,27 @@ const CustomTable = () => {
         </TableBody>
       </Table>
     </TableContainer>
+{/* Confirmation Dialog */}
+<Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this category? 
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="warning" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
 
