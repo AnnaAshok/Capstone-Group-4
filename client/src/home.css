@@ -259,7 +259,7 @@
 .course-title {
     font-size: 1.5rem;
     margin: 10px 0;
-    color: #0F3460;
+    color: #0F3460 !important;
 }
 
 .course-description {
@@ -513,20 +513,98 @@
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
-    height: 20rem;
+    background-size: cover;
+    height: 25rem;
 }
 
 .category-buttons {
-    display: flex !important;
-    flex-wrap: wrap;
+    display: flex;
+    justify-content: center; /* Centering buttons */
     gap: 10px;
-    padding: 10px;
-    border: 1px solid red; /* Just for debugging */
+    margin-top: 20px; /* Space below the title */
+    flex-wrap: wrap;
 }
 
 .category-btn {
-    display: block !important;
-    visibility: visible !important;
-    background-color: lightblue;
-    padding: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    /* background-color: #007bff; */
+    border: 1px solid #f7c221 ;
+    /* background-color: #f7c221; */
+    color: #f7c221;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.category-btn:hover {
+    /* background-color: #0f3460; */
+    /* border: 1px solid #0f3460 ; */
+    color: white;
+    background-color: #f7c221;
+}
+
+.category-btn.active {
+    /* background-color: #0f3460; */
+    /* border: 1px solid #0f3460 ; */
+    color: white;
+    background-color: #f7c221;
+}
+
+.no-course-available-heading {
+    grid-column: span 3;
+    margin: 0; 
+    font-size: 1.2rem;
+    color: #0f3460; 
+}
+
+/* Pagination Container */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Pagination Button */
+.pagination-btn {
+    background-color: #0f3460;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover Effect for Pagination Buttons */
+.pagination-btn:hover {
+    background-color: #f7c221;
+    transform: translateY(-2px);
+}
+
+/* Disabled Pagination Button */
+.pagination-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Pagination Info (Page Number Info) */
+.pagination-info {
+    font-size: 16px;
+    margin: 0 10px;
+    color: #333;
+}
+
+/* Optional styling for the Prev and Next buttons to make them stand out */
+.pagination-btn:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.pagination-btn:last-child {
+    border-radius: 0 5px 5px 0;
 }

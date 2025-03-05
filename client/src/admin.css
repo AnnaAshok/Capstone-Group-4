@@ -24,7 +24,7 @@ body {
   }
   
   .close_icon {
-    color: red;
+    color: rgb(0, 0, 0);
     margin-left: 30px;
     margin-top: 10px;
     cursor: pointer;
@@ -214,6 +214,32 @@ body {
   
   /* End Main  */
   
+   
+  @media screen and (max-width: 1024px) {
+    .grid-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: 0.2fr 3fr;
+      grid-template-areas:
+        'header'
+        'main';
+    }
+    .logo{
+      width: 50%;
+    }
+  
+    #sidebar {
+      width: 28%;
+      display: none;
+    }
+  
+    .menu-icon {
+      display: inline;
+    }
+  
+    .sidebar-title > span {
+      display: inline;
+    }
+  }
   
   /* Medium <= 992px */
     
@@ -225,8 +251,12 @@ body {
         'header'
         'main';
     }
+    .logo{
+      width: 50%;
+    }
   
     #sidebar {
+      width: 32%;
       display: none;
     }
   

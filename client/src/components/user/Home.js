@@ -93,7 +93,14 @@ const Home = () => {
         </div>
       </section>
 
-      <CourseList categories={categories.slice(0, 3)} selectedCategory="All" limit={3} />
+      <CourseList
+        categories={categories.slice(0, 3)}
+        selectedCategory="All"
+        limit={3}
+        hideCategoryButtons={true}
+        hidePagination={true} 
+      />
+
 
       {/* Subscribe our Newsletter */}
       <section className='newsletter-section'>

@@ -35,29 +35,13 @@ const CoursePage = () => {
         <div className='course-page-banner-bg'></div>
       </section>
 
-      {/* Category Buttons */}
-      <div className="category-buttons">
-        <button
-          className={`category-btn ${selectedCategory === "All" ? "active" : ""}`}
-          onClick={() => setSelectedCategory("All")}
-        >
-          All
-        </button>
-        {categories.map(category => (
-          <button
-            key={category._id}
-            className={`category-btn ${selectedCategory === category.categoryName ? "active" : ""}`}
-            onClick={() => {
-              console.log("Selected category:", category.categoryName);
-              setSelectedCategory(category.categoryName)
-            }}
-          >
-            {category.categoryName}
-          </button>
-        ))}
-      </div>
-
-      <CourseList selectedCategory={selectedCategory} categories={categories} />
+      <CourseList
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        categories={categories}
+        hideCategoryButtons={false}
+        hidePagination={false}
+      />
       <Footer />
     </>
   )

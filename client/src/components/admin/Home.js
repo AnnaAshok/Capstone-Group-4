@@ -68,9 +68,9 @@ function Home() {
           <h1>42</h1>
         </div>
       </div>
-
+{/* 
       <div className="charts">
-        {/* Bar Chart */}
+       
         <div className="chart-item">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -93,7 +93,6 @@ function Home() {
           </ResponsiveContainer>
         </div>
 
-        {/* Line Chart */}
         <div className="chart-item">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
@@ -120,7 +119,7 @@ function Home() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }

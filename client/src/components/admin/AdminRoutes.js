@@ -12,19 +12,15 @@ import UpdateCategory from './CategoryManagement/UpdateCategory';
 function AdminRoutes() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
-  const OpenSidebar = () => {
+  const toggleSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
 
   return (
     <div className="grid-container">
-      {/* Pass OpenSidebar function to Header */}
-      <Header OpenSidebar={OpenSidebar} />
+      <Header toggleSidebar={toggleSidebar} />
+      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={toggleSidebar} />
       
-      {/* Pass sidebar toggle state and OpenSidebar function to Sidebar */}
-      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar} />
-      
-      {/* Admin Routes */}
       <Routes>
         <Route path="/" element={<Home />} /> 
         {/* <Route path="home" element={<Home />} />  */}

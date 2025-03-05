@@ -1,18 +1,12 @@
 import React from "react";
-import {
-  BsFillBellFill,
-  BsFillEnvelopeFill,
-  BsPersonCircle,
-  BsSearch,
-  BsJustify,
-} from "react-icons/bs";
+import { BsJustify, BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle, BsSearch } from "react-icons/bs";
 
 function Header({ toggleSidebar }) {
   return (
     <header className="header">
       {/* Sidebar Toggle Button */}
-      <div className="menu-icon">
-        <BsJustify className="icon" onClick={toggleSidebar} />
+      <div className="menu-icon" onClick={toggleSidebar}>
+        <BsJustify className="icon" />
       </div>
 
       {/* Search Icon */}
