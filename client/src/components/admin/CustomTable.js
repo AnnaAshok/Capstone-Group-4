@@ -40,19 +40,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-const CustomTable = (props) => {
+const CustomTable = ({ categories, setCategories }) => {
   const [category, setCategory] = useState([]);
   const navigate = useNavigate(); // initialize navigate
   const [openDialog, setOpenDialog] = useState(false); // State to control the dialog
   const [categoryToDelete, setCategoryToDelete] = useState(null); // Track the category to delete
-
-  const categories = props.categories
+// console.log(props)
+  // const categories = props.categories
 
   const handleEdit = (id) => {
     console.log("Edit category ID:", id);
     navigate("/admin/UpdateCategory", { state: { id } }); // Pass id via state
   };
-      
+
     const handleDelete = async (id) => {
       try {
         if (categoryToDelete) {
@@ -60,7 +60,7 @@ const CustomTable = (props) => {
             `http://localhost:5000/deleteCategory/${categoryToDelete._id}`
           );
           console.log(deletedCategory);
-          props.setCategories((prevCategories) =>
+          setCategories((prevCategories) =>
             prevCategories.filter((category) => category._id !== categoryToDelete._id)
           );
           console.log("Category deleted successfully");
