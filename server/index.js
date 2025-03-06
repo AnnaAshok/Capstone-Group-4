@@ -8,6 +8,8 @@ const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const courseListController = require("./controller/courseListController");
 const categoryListController = require("./controller/categoryListController");
+const userController = require('./controller/userController')
+const roleConroller = require('./controller/roleController')
 
 const app = express();
 
@@ -41,6 +43,16 @@ app.post("/addCategory",categoryController.uploads.single("categoryImage"), cate
 app.post("/updateCategory/:id", categoryController.uploads.single("categoryImage"),categoryController.updateCategory)
 app.post("/getCategoryById/:id", categoryController.getCategoryById);
 app.post("/deleteCategory/:id",categoryController.deleteCategory)
+
+//routes of users
+app.post("/getUsers", userController.getUsers)
+app.post("/addUser", userController.addUser)
+app.post("/updateUser/:id",userController.updateUser)
+app.post("/getUserById/:id", userController.getUserById);
+app.post("/deleteUser/:id",userController.deleteUser)
+
+// Routes for role
+app.get("/roles",roleConroller.getRoles);
 
 // Routes of course
 // app.get("/getCategory", categoryController.getCategories);

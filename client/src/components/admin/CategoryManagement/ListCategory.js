@@ -10,13 +10,12 @@ const ListCategory = () => {
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate()
 
-    const limit = 1;
+    const limit = 10;
 
   useEffect(() => {
     fetchCategories();
   }, [currentPage]);
 
-console.log(currentPage)
   const fetchCategories = async () => {
     try {
       const response = await axios.post('http://localhost:5000/getCategory', {

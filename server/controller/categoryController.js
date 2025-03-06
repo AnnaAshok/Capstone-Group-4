@@ -27,7 +27,7 @@ const uploads = multer({ storage, fileFilter });
 // get paginated categories
 exports.getCategories = async (req, res) => {
   try {
-    const { page = 1, limit = 1 } = req.body; 
+    const { page = 1, limit = 10 } = req.body; 
     const skip = (page - 1) * limit;
 
       // Fetch paginated categories

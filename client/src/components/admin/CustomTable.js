@@ -49,7 +49,6 @@ const CustomTable = (props) => {
 
   // Handle editing a category
   const handleEdit = (id) => {
-    console.log("Edit category ID:", id);
     navigate("/admin/UpdateCategory", { state: { id } }); // Pass id via state
   };
 
@@ -60,14 +59,12 @@ const CustomTable = (props) => {
         const deletedCategory = await axios.post(
           `http://localhost:5000/deleteCategory/${categoryToDelete._id}`
         );
-        console.log(deletedCategory);
 
         // Remove deleted category from the list in the parent component
         props.setCategories((prevCategories) =>
           prevCategories.filter((category) => category._id !== categoryToDelete._id)
         );
 
-        console.log("Category deleted successfully");
       }
     } catch (error) {
       console.error("Error deleting category:", error);
@@ -109,7 +106,7 @@ const CustomTable = (props) => {
                     <img
                       src={`http://localhost:5000/${category.categoryImage}`} 
                       alt={category.categoryName}
-                      style={{ width: "50px", height: "50px", borderRadius: "5px" }}
+                      style={{ width: "80px", height: "80px", borderRadius: "5px" }}
                     />
                   </StyledTableCell>
                   <StyledTableCell>

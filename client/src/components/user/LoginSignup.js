@@ -64,7 +64,6 @@ export default function LoginSignup({ show, handleClose,setModalShow }) {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
-            // setActiveLogin(true)
 
           }
         }catch (error) {
@@ -90,7 +89,13 @@ export default function LoginSignup({ show, handleClose,setModalShow }) {
           localStorage.setItem("token", response.data.token); // Store token
             handleClose();
             setLoginModalShow(false)
-            navigate("/");
+
+              // Redirect based on role
+              if (response.data.user.role === "Admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
         } else {
             setErrors({ general: response.data.message });
         }

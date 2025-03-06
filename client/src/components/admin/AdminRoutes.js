@@ -11,6 +11,9 @@ import UpdateCategory from './CategoryManagement/UpdateCategory';
 import ListCourses from './CourseManagement/ListCourses';
 import AddCourse from './CourseManagement/AddCourse';
 import UpdateCourse from './CourseManagement/UpdateCourse';
+import ListUser from './UserManagement/ListUser';
+import AddUser from './UserManagement/AddUser';
+import UpdateUser from './UserManagement/UpdateUser';
 
 function AdminRoutes() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -33,6 +36,9 @@ function AdminRoutes() {
         <Route path="Category" element={<ListCategory />} /> 
         <Route path="addCategory" element={<AddCategory />} />
         <Route path="updateCategory" element={<UpdateCategory />} />
+        <Route path="Users" element={<ListUser />} />
+        <Route path="Adduser" element={<AddUser />} />
+        <Route path="updateUser" element={<UpdateUser />}></Route>
 
         {/* Add more routes as necessary */}
       </Routes>

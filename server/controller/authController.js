@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const user = require("../models/users");
+const Role = require("../models/role")
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { SECRET_KEY } = require("../middleware/authMiddleware"); // Import the shared secret key
@@ -9,7 +10,7 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         // Check if the user exists
-        const userDetails = await user.findOne({ email: email });
+        const userDetails = await user.findOne({ email: email }).populate("roleID");;
         if (!userDetails) {
             return res.status(404).json({ message: "Invalid username or password" });
         }
@@ -21,11 +22,20 @@ exports.login = async (req, res) => {
         }
           // Generate JWT Token using dynamic SECRET_KEY
         const token = jwt.sign(
-            { userId: userDetails._id, email: userDetails.email, roleID: userDetails.roleID },
+            { userId: userDetails._id, email: userDetails.email, role: userDetails.roleID?.role },
             SECRET_KEY,
             { expiresIn: "1h" }
         );
-        res.json({ message: "Success",token:token  });
+        res.json({ 
+            message: "Success",
+            token:token , 
+            user: {
+            id: userDetails._id,
+            firstName: userDetails.firstName,
+            lastName: userDetails.lastName,
+            email: userDetails.email,
+            role: userDetails.roleID?.role || "Unknown",
+        } });
 
     } catch (error) {
         console.error("Login Error:", error);
@@ -42,7 +52,12 @@ exports.register = async (req,res)=>{
         if (!firstName || !lastName || !email || !password) {
           return res.status(400).json({ message: "All fields are required" });
         }
-    
+
+        // Find the "Student" role ID
+        const studentRole = await Role.findOne({ role: "Student" });
+        if (!studentRole) {
+            return res.status(400).json({ message: "Student role not found" });
+        }
         // Check if user already exists
         const existingUser = await user.findOne({ email });
         if (existingUser) {
@@ -57,7 +72,8 @@ exports.register = async (req,res)=>{
           firstName,
           lastName,
           email,
-          password: hashedPassword
+          password: hashedPassword,
+          roleID: studentRole._id
         });
     
         res.status(201).json({ message: "Account created successfully", user: newUser });
