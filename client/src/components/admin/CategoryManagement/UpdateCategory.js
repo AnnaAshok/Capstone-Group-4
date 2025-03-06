@@ -9,8 +9,8 @@ const UpdateCategory = () => {
   const [categoryImage, setCategoryImage] = useState(null);
   const navigate = useNavigate();
   const location = useLocation(); 
-  const [isEditMode, setIsEditMode] = useState(false); 
   const [existingImage, setExistingImage] = useState("");
+  const [errors, setErrors] = useState({ categoryName: "", categoryImage: "" });
 
 
   useEffect(() => {
@@ -22,11 +22,9 @@ const UpdateCategory = () => {
           const { categoryName, categoryImage } = response.data;
           setCategoryName(categoryName);
           setExistingImage(categoryImage.replace("\\", "/")); // Replacing backslash with forward slash
-          setIsEditMode(true); 
         })
         .catch((error) => {
           console.error("Error fetching category:", error);
-          alert("Error fetching category data.");
         });
     }
   }, [location.state]);
@@ -34,14 +32,35 @@ const UpdateCategory = () => {
   const handleImageChange = (e) => {
     setCategoryImage(e.target.files[0]);
   };
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { categoryName: "", categoryImage: "" };
+
+    if (!categoryName.trim()) {
+      newErrors.categoryName = "Category name is required.";
+      valid = false;
+    } else if (categoryName.length < 3) {
+      newErrors.categoryName = "Category name must be at least 3 characters.";
+      valid = false;
+    }
+
+    if (!existingImage && !categoryImage) {
+      newErrors.categoryImage = "Category image is required.";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!categoryName) {
-      alert("Please fill in all fields before submitting.");
+    if (!validateForm()) return;
+
+    if (!categoryName || (!categoryImage && !existingImage )) {
       return;
     }
-
     const formData = new FormData();
     formData.append("categoryName", categoryName);
     if (categoryImage) {
@@ -58,11 +77,9 @@ const UpdateCategory = () => {
           },
         }
       );
-      alert("Category updated successfully!");
       navigate("/admin/Category");
     } catch (error) {
       console.error("Error updating category:", error);
-      alert("Failed to update category. Please try again.");
     }
   };
 
@@ -102,6 +119,8 @@ const UpdateCategory = () => {
               size="small"
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
+              error={!!errors.categoryName}
+              helperText={errors.categoryName}
             />
           </Box>
 
@@ -143,11 +162,15 @@ const UpdateCategory = () => {
                 <img
                   src={`http://localhost:5000/${existingImage}`}
                   alt="Existing Category"
-                  style={{ width: "100px", marginTop: "10px" }}
+                  style={{ marginTop: "10px" }}
                 />
-                <p>Existing Image</p>
               </div>
             )}
+             {errors.categoryImage && (
+            <Typography variant="body2" sx={{ color: "red", marginBottom: 2 }}>
+              {errors.categoryImage}
+            </Typography>
+          )}
           </Box>
           <Box display="flex" gap={2} marginTop={2}>
             <Button type="submit" variant="contained">

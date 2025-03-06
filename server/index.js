@@ -8,6 +8,8 @@ const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const courseListController = require("./controller/courseListController");
 const categoryListController = require("./controller/categoryListController");
+const userController = require('./controller/userController')
+const roleConroller = require('./controller/roleController')
 
 const app = express();
 
@@ -40,16 +42,24 @@ app.post("/updateCategory/:id", categoryController.uploads.single("categoryImage
 app.post("/getCategoryById/:id", categoryController.getCategoryById);
 app.post("/deleteCategory/:id", categoryController.deleteCategory);
 
-
-app.get("/getCategory", categoryController.getCategories);
+// Routes for course
 app.get("/getCourseById/:id", courseController.getCourseById);
 app.get("/getCourses", courseController.getCourses);
-// app.get("/getCourseById/:id", courseController.getCourseById);
-// Routes for course
 app.post("/addCourse", courseController.upload.single("courseImage"), courseController.addCourse);
 app.post("/deleteCourse/:id", courseController.deleteCourse);
 app.post("/getCourseById/:id", courseController.getCourseById);
 app.post("/updateCourse/:id", courseController.upload.single("courseImage"), courseController.updateCourse);
+
+//routes of users
+app.post("/getUsers", userController.getUsers)
+app.post("/addUser", userController.addUser)
+app.post("/updateUser/:id",userController.updateUser)
+app.post("/getUserById/:id", userController.getUserById);
+app.post("/deleteUser/:id",userController.deleteUser)
+
+// Routes for role
+app.get("/roles",roleConroller.getRoles);
+
 
 app.listen(5000, () => {
   console.log('App listening on port 5000');

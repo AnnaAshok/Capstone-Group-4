@@ -24,15 +24,28 @@ const fileFilter = (req, file, cb) => {
 // Initialize Multer Middleware
 const uploads = multer({ storage, fileFilter });
 
-// get all categories
-exports.getCategories = async (req, res)=>{
-    try{
-        const categories = await Category.find()
-        res.status(200).json(categories);
-    }catch(error){
-        res.status(500).json({ error: error.message });
-    }
-}
+// get paginated categories
+exports.getCategories = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.body; 
+    const skip = (page - 1) * limit;
+
+      // Fetch paginated categories
+      const categories = await Category.find().skip(skip).limit(limit);
+      
+      // Count total categories for pagination
+      const totalCategories = await Category.countDocuments();
+
+      res.status(200).json({
+          categories,
+          currentPage: page,
+          totalPages: Math.ceil(totalCategories / limit),
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
 
 // add single category
 exports.addCategory =  async (req, res) =>{

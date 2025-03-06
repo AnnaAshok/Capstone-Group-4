@@ -9,7 +9,7 @@ const AddCategory = () => {
   const [categoryImage, setCategoryImage] = useState(null);
   const navigate = useNavigate();
   const location = useLocation(); 
-  const [isEditMode, setIsEditMode] = useState(false); 
+  const [errors, setErrors] = useState({ categoryName: "", categoryImage: "" });
 
 
   useEffect(() => {
@@ -21,7 +21,6 @@ const AddCategory = () => {
           const { categoryName, categoryImage } = response.data;
           setCategoryName(categoryName);
           setCategoryImage(categoryImage); 
-          setIsEditMode(true); 
         })
         .catch((error) => {
           console.error("Error fetching category:", error);
@@ -30,8 +29,31 @@ const AddCategory = () => {
     }
   }, [location.state]);
 
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { categoryName: "", categoryImage: "" };
+
+    if (!categoryName.trim()) {
+      newErrors.categoryName = "Category name is required.";
+      valid = false;
+    } else if (categoryName.length < 3) {
+      newErrors.categoryName = "Category name must be at least 3 characters.";
+      valid = false;
+    }
+
+    if (!categoryImage) {
+      newErrors.categoryImage = "Category image is required.";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!validateForm()) return;
+
     if (!categoryName || !categoryImage) {
       alert("Please fill in all fields before submitting.");
       return;
@@ -51,7 +73,6 @@ const AddCategory = () => {
       navigate("/admin/Category");
     } catch (error) {
       console.error("Error adding category:", error);
-      alert("Failed to add category. Please try again.");
     }
   };
 
@@ -71,9 +92,7 @@ const AddCategory = () => {
     setCategoryName("");
     setCategoryImage(null);
     navigate("/admin/Category");
-
   };
-
   return (
     <main className="main-container">
       <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
@@ -91,6 +110,8 @@ const AddCategory = () => {
               size="small"
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
+              error={!!errors.categoryName}
+              helperText={errors.categoryName}
             />
           </Box>
 
@@ -115,12 +136,26 @@ const AddCategory = () => {
             <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
               Drag & drop an image here, or click to upload
             </Typography>
-            {categoryImage && (
+            {categoryImage  && (
+              <div>
+                <img
+                   src={URL.createObjectURL(categoryImage)}
+                  alt="Category Image"
+                  style={{ marginTop: "10px" }}
+                />
+              </div>
+            )}
+            {/* {categoryImage && (
               <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>
                 {categoryImage.name}
               </Typography>
-            )}
+            )} */}
           </Box>
+          {errors.categoryImage && (
+            <Typography variant="body2" sx={{ color: "red", marginBottom: 2 }}>
+              {errors.categoryImage}
+            </Typography>
+          )}
           <Box display="flex" gap={2} marginTop={2}>
             <Button type="submit" variant="contained">
               Save
