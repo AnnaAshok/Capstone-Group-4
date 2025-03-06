@@ -33,6 +33,9 @@ app.post("/addCategory", categoryController.addCategory)
 app.post("/updateCategory/:id", categoryController.updateCategory)
 app.post("/categories/:id", categoryController.getCategoryById);
 
+// Route for fetching course details
+// app.get("/courses/:id", courseListController.getCourseById);
+
 app.listen(5000, () => {
   console.log('App listening on port 5000')
 })

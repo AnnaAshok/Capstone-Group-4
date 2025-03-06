@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import '../../home.css';
 import sample_img from "../../Assets/images/Python-logo.png";
+import { useNavigate } from 'react-router-dom';
 
 const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, hideCategoryButtons, hidePagination }) => {
     const [courses, setCourses] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1); // Added state for totalPages
+    const [totalPages, setTotalPages] = useState(1); 
+    const navigate = useNavigate();  // Add navigation hook
 
     const coursesPerPage = 6;
 
-    // Fix: Directly handle 'All' category as a special case
+    // Handle 'All' category 
     const selectedCategoryID = selectedCategory === "All"
         ? ""
         : categories?.find(cat => cat.categoryName === selectedCategory)?._id || "";
@@ -25,12 +27,12 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                 console.log("Fetching courses with URL:", `http://localhost:5000/courses${categoryParam}`);
 
                 const response = await fetch(`http://localhost:5000/courses${categoryParam}`);
-                console.log("Request URL:", `http://localhost:5000/courses${categoryParam}`); // Fix the logging
+                // console.log("Request URL:", `http://localhost:5000/courses${categoryParam}`); 
 
                 const data = await response.json();
 
                 // Debugging API response
-                console.log("1. Fetched courses in CourseList:", data);
+                // console.log("1. Fetched courses in CourseList:", data);
 
                 if (Array.isArray(data.courses)) {
                     setCourses(data.courses); // Set courses state
@@ -147,7 +149,13 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                                     {/* Price and Button Row */}
                                     <div className="course-price-button">
                                         <p className="course-price">${course.price}</p>
-                                        <button className="view-details-btn">View Details</button>
+                                        {/* <button className="view-details-btn">View Details</button> */}
+                                        <button
+                                            className="view-details-btn"
+                                            onClick={() => navigate(`/courses/${course._id}`)}  // Navigate to course details
+                                        >
+                                            View Details
+                                        </button>
                                     </div>
                                 </div>
                             </div>
