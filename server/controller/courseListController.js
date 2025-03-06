@@ -42,4 +42,31 @@ router.get("/", async (req, res) => {
     }
 });
 
+
+// API Route to Fetch Course Details by ID
+router.get("/:id", async (req, res) => {
+    const courseId = req.params.id;
+    console.log(`Received request for course ID: ${courseId}`);
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+        return res.status(400).json({ error: "Invalid course ID format" });
+    }
+
+    try {
+        const course = await Courses.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+
+        console.log("Course found:", course);
+        res.json(course);
+    } catch (error) {
+        console.error("Error fetching course details:", error);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+
+
 module.exports = router;

@@ -61,6 +61,9 @@ app.post("/deleteUser/:id",userController.deleteUser)
 app.get("/roles",roleConroller.getRoles);
 
 
+// Route for fetching course details
+// app.get("/courses/:id", courseListController.getCourseById);
+
 app.listen(5000, () => {
   console.log('App listening on port 5000');
 });
