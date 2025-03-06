@@ -1,10 +1,19 @@
-import { useState } from "react";
-import "../../admin.css";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
-import Home from "./Home";
-import Courses from "./Courses";
-import { Routes, Route } from "react-router-dom";
+import { useState } from 'react';
+import '../../admin.css';
+import Header from './Header';
+import Sidebar from './Sidebar';
+import Home from './Home';
+import Courses from './Courses';
+import { Routes, Route } from 'react-router-dom';
+import ListCategory from './CategoryManagement/ListCategory';
+import AddCategory from './CategoryManagement/AddCategory';
+import UpdateCategory from './CategoryManagement/UpdateCategory';
+import ListCourses from './CourseManagement/ListCourses';
+import AddCourse from './CourseManagement/AddCourse';
+import UpdateCourse from './CourseManagement/UpdateCourse';
+import ListUser from './UserManagement/ListUser';
+import AddUser from './UserManagement/AddUser';
+import UpdateUser from './UserManagement/UpdateUser';
 
 function AdminRoutes() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -19,9 +28,19 @@ function AdminRoutes() {
       <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={toggleSidebar} />
       
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/admin/home" element={<Home />} /> 
-        <Route path="/admin/Courses" element={<Courses />} />
+        <Route path="/" element={<Home />} /> 
+        {/* <Route path="home" element={<Home />} />  */}
+        <Route path="Courses" element={<ListCourses />} /> {/* Courses page route */}
+        <Route path="addCourse" element={<AddCourse />} />
+        <Route path="updateCourse/:id" element={<UpdateCourse />} />
+        <Route path="Category" element={<ListCategory />} /> 
+        <Route path="addCategory" element={<AddCategory />} />
+        <Route path="updateCategory" element={<UpdateCategory />} />
+        <Route path="Users" element={<ListUser />} />
+        <Route path="Adduser" element={<AddUser />} />
+        <Route path="updateUser" element={<UpdateUser />}></Route>
+
+        {/* Add more routes as necessary */}
       </Routes>
     </div>
   );

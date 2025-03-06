@@ -290,3 +290,10 @@ body {
       display: none;
     }
   }
+
+  /* pagination */
+  .pagination{
+    color: black;
+    display: flex;
+    gap:15px;
+  }

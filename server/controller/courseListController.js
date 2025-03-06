@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
             query.categoryId = new mongoose.Types.ObjectId(categoryID);
         } else {
             // Ensure categoryId is not null if 'All' is selected
-            query.categoryId = { $ne: null }; // Fetch all courses where categoryId is not null
+            query.categoryID = { $ne: null }; // Fetch all courses where categoryId is not null
         }
 
         console.log("Category ID received on backend:", categoryID);
