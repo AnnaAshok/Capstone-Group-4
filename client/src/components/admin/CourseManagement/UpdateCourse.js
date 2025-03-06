@@ -41,7 +41,7 @@ function UpdateCourse() {
           setFormData({
             title: course.title || "",
             description: course.description || "",
-            categoryID: course.categoryID?._id || course.categoryID || "", // Ensure correct ID format
+            categoryID: course.categoryID?._id || course.categoryID || "",
             duration: course.duration || "2 weeks",
             price: course.price || "",
             existingImage: course.courseImage
@@ -56,12 +56,11 @@ function UpdateCourse() {
 
   // Fetch categories
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/getCategory")
-      .then((response) => {
-        setCategories(response.data);
+    axios.post("http://localhost:5000/getCategory")
+      .then(response => {
+        setCategories(response.data.categories);
       })
-      .catch((error) => console.error("Error fetching categories:", error));
+      .catch(error => console.error("Error fetching categories:", error));
   }, []);
 
   const handleChange = (e) => {
@@ -112,7 +111,7 @@ function UpdateCourse() {
       console.error("Error updating course:", error);
     }
   };
-  console.log("formData", formData);
+  console.log(formData)
   return (
     <main className="main-container">
       <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
