@@ -135,7 +135,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                                 <img src={sample_img} alt="sample image" className='course-image' />
                                 <div className="course-content">
                                     <h3 className="course-title">{course.title}</h3>
-                                    <p className="course-description">{course.description}</p>
+                                    <p className="course-description"><div dangerouslySetInnerHTML={{__html: course.description}}/></p>
 
                                     {/* Duration and Stars */}
                                     <div className="course-duration-rating mt-4">

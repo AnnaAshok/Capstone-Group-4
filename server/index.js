@@ -13,15 +13,13 @@ const app = express();
 
 // Upload folder setup
 const multer = require("multer");
-const uploads = multer({ dest: "uploads/" });
+const uploads = multer({ dest: "uploads/" }); // Temporary storage for image uploads
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use("/uploads", express.static("uploads")); 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 // Connect Database
 connectDB();
@@ -35,17 +33,24 @@ app.post("/resetpassword", authController.resetPassword);
 app.use("/courses", courseListController);
 app.use("/categories", categoryListController);
 
-// Routes of category
-app.post("/getCategory", categoryController.getCategories)
-app.post("/addCategory",categoryController.uploads.single("categoryImage"), categoryController.addCategory)
-app.post("/updateCategory/:id", categoryController.uploads.single("categoryImage"),categoryController.updateCategory)
+// Routes for category
+app.post("/getCategory", categoryController.getCategories);
+app.post("/addCategory", categoryController.uploads.single("categoryImage"), categoryController.addCategory);
+app.post("/updateCategory/:id", categoryController.uploads.single("categoryImage"), categoryController.updateCategory);
 app.post("/getCategoryById/:id", categoryController.getCategoryById);
-app.post("/deleteCategory/:id",categoryController.deleteCategory)
+app.post("/deleteCategory/:id", categoryController.deleteCategory);
 
-// Routes of course
-// app.get("/getCategory", categoryController.getCategories);
-app.post("/addCourse", courseController.addCourse);
+
+app.get("/getCategory", categoryController.getCategories);
+app.get("/getCourseById/:id", courseController.getCourseById);
+app.get("/getCourses", courseController.getCourses);
+// app.get("/getCourseById/:id", courseController.getCourseById);
+// Routes for course
+app.post("/addCourse", courseController.upload.single("courseImage"), courseController.addCourse);
+app.post("/deleteCourse/:id", courseController.deleteCourse);
+app.post("/getCourseById/:id", courseController.getCourseById);
+app.post("/updateCourse/:id", courseController.upload.single("courseImage"), courseController.updateCourse);
 
 app.listen(5000, () => {
-  console.log('App listening on port 5000')
-})
+  console.log('App listening on port 5000');
+});

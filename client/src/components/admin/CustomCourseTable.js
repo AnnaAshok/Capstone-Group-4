@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled } from '@mui/material/styles';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { Table, TableBody, TableContainer, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from 'react-router-dom';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -26,73 +40,101 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const CustomTable = ({ courses, setCourses }) => {
-  // Handle editing a course
+  const navigate = useNavigate(); 
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
+
   const handleEdit = (id) => {
     console.log("Edit course ID:", id);
-    // Add navigation logic for editing the course here
+    navigate(`/admin/updateCourse/${id}`);
   };
 
-  // Handle deleting a course
-  const handleDelete = async (courseId) => {
+  const handleDelete = async () => {
     try {
-      const deletedCourse = await axios.post(`http://localhost:5000/deleteCourse/${courseId}`);
-      console.log(deletedCourse);
-
-      // Remove deleted course from the list in the parent component
+      await axios.post(`http://localhost:5000/deleteCourse/${selectedCourseId}`);
       setCourses((prevCourses) =>
-        prevCourses.filter((course) => course._id !== courseId)
+        prevCourses.filter((course) => course._id !== selectedCourseId)
       );
+      setOpenDialog(false); // Close the dialog
     } catch (error) {
       console.error("Error deleting course:", error);
     }
   };
 
+  const openDeleteDialog = (courseId) => {
+    setSelectedCourseId(courseId);
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell>Description</StyledTableCell>
-            <StyledTableCell>Duration</StyledTableCell>
-            <StyledTableCell>Price</StyledTableCell>
-            <StyledTableCell>Image</StyledTableCell>
-            <StyledTableCell>Actions</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {courses.length > 0 ? (
-            courses.map((course) => (
-              <StyledTableRow key={course._id}>
-                <StyledTableCell>{course.title}</StyledTableCell>
-                <StyledTableCell>{course.description}</StyledTableCell>
-                <StyledTableCell>{course.duration}</StyledTableCell>
-                <StyledTableCell>{course.price}</StyledTableCell>
-                <StyledTableCell>
-                  <img
-                    src={`http://localhost:5000/${course.courseImage}`}
-                    alt={course.title}
-                    style={{ width: "50px", height: "50px", borderRadius: "5px" }}
-                  />
-                </StyledTableCell>
-                <StyledTableCell>
-                  <IconButton color="primary" onClick={() => handleEdit(course._id)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(course._id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </StyledTableCell>
+    <>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Title</StyledTableCell>
+              <StyledTableCell>Description</StyledTableCell>
+              <StyledTableCell>Duration</StyledTableCell>
+              <StyledTableCell>Price</StyledTableCell>
+              <StyledTableCell>Image</StyledTableCell>
+              <StyledTableCell>Actions</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {courses.length > 0 ? (
+              courses.map((course) => (
+                <StyledTableRow key={course._id}>
+                  <StyledTableCell>{course.title}</StyledTableCell>
+                  <StyledTableCell><div dangerouslySetInnerHTML={{__html: course.description}}/></StyledTableCell>
+                  <StyledTableCell>{course.duration}</StyledTableCell>
+                  <StyledTableCell>{course.price}</StyledTableCell>
+                  <StyledTableCell>
+                    <img
+                      src={`http://localhost:5000/uploads/${course.courseImage}`}
+                      alt={course.title}
+                      style={{ width: "50px", height: "50px", borderRadius: "5px" }}
+                    />
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <IconButton color="primary" onClick={() => handleEdit(course._id)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => openDeleteDialog(course._id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+            ) : (
+              <StyledTableRow>
+                <StyledTableCell colSpan={6}>No courses available</StyledTableCell>
               </StyledTableRow>
-            ))
-          ) : (
-            <StyledTableRow>
-              <StyledTableCell colSpan={6}>No courses available</StyledTableCell>
-            </StyledTableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+   
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this course?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">Cancel</Button>
+          <Button onClick={handleDelete} color="warning" autoFocus>Confirm</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
