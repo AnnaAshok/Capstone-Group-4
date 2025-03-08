@@ -23,6 +23,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                 const categoryParam = selectedCategory === "All"
                     ? `?page=${currentPage}&limit=${coursesPerPage}`  // If All is selected, no category filter
                     : `?categoryID=${selectedCategoryID}&page=${currentPage}&limit=${coursesPerPage}`;
+                console.log("Selected Category", selectedCategory);
 
                 console.log("Fetching courses with URL:", `http://localhost:5000/courses${categoryParam}`);
 
