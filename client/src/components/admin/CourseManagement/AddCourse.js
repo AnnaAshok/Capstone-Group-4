@@ -48,7 +48,7 @@ function AddCourse() {
 
     // Check if all fields are filled
     if (!formData.title || !formData.description || !formData.categoryID || !formData.price || !formData.courseImage) {
-      alert("Please fill out all fields and upload an image.");
+      alert("Please fill out all fields");
       return;
     }
 
