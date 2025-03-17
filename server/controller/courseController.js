@@ -1,7 +1,6 @@
   const Course = require("../models/courses");
   const multer = require("multer");
   const path = require("path");
-<<<<<<< HEAD
   const { v2: cloudinary } = require("cloudinary");
   const { CloudinaryStorage } = require("multer-storage-cloudinary");
   require("dotenv").config();
@@ -11,19 +10,9 @@
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-=======
-  const mongoose = require('mongoose');
-
-  // Set up storage for course images
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, './uploads/'); // Ensure uploads folder exists
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Generate unique file names
-    }
->>>>>>> de5527613b22ce82b47b736f9a6cc630b3d2504a
   });
+  
+  const mongoose = require('mongoose');
 
 // Set up Cloudinary storage for multer
 const storage = new CloudinaryStorage({
