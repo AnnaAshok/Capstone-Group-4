@@ -21,7 +21,7 @@ const UpdateCategory = () => {
         .then((response) => {
           const { categoryName, categoryImage } = response.data;
           setCategoryName(categoryName);
-          setExistingImage(categoryImage.replace("\\", "/")); // Replacing backslash with forward slash
+          setExistingImage(categoryImage); // Replacing backslash with forward slash
         })
         .catch((error) => {
           console.error("Error fetching category:", error);
@@ -61,20 +61,36 @@ const UpdateCategory = () => {
     if (!categoryName || (!categoryImage && !existingImage )) {
       return;
     }
+    let imageUrl = existingImage; // Default to existing image
+  // If a new image is selected, upload it to Cloudinary
+  if (categoryImage) {
     const formData = new FormData();
-    formData.append("categoryName", categoryName);
-    if (categoryImage) {
-      formData.append("categoryImage", categoryImage);
-    }
+    formData.append("file", categoryImage);
+    formData.append("upload_preset", "eduSphere"); // Cloudinary upload preset
 
+    try {
+      const cloudinaryResponse = await axios.post(
+        "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+        formData
+      );
+      imageUrl = cloudinaryResponse.data.secure_url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      return;
+    }
+  }
+
+  // Prepare the category data to send to the backend
+  const categoryData = {
+    categoryName,
+    categoryImage: imageUrl,
+  };
     try {
       const response = await axios.post(
         `http://localhost:5000/updateCategory/${location.state.id}`,
-        formData,
+        categoryData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
       navigate("/admin/Category");
@@ -160,7 +176,7 @@ const UpdateCategory = () => {
             {existingImage && !categoryImage && (
               <div>
                 <img
-                  src={`http://localhost:5000/${existingImage}`}
+                  src={existingImage}
                   alt="Existing Category"
                   style={{ marginTop: "10px" }}
                 />

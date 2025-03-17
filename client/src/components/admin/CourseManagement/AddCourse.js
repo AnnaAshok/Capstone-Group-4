@@ -47,20 +47,44 @@ function AddCourse() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("title", formData.title);
-    data.append("shortDescription", formData.shortDescription);
-    data.append("longDescription", formData.longDescription);
-    data.append("categoryID", formData.categoryID);
-    data.append("duration", formData.duration);
-    data.append("price", formData.price);
 
-    if (formData.courseImage) {
-      data.append("courseImage", formData.courseImage);
+    // Check if all fields are filled
+    if (!formData.title || !formData.description || !formData.categoryID || !formData.price || !formData.courseImage) {
+      alert("Please fill out all fields and upload an image.");
+      return;
     }
 
-    try {
-      await axios.post("http://localhost:5000/addCourse", data);
+    const uploadData = new FormData(); // Use a different name like 'uploadData'
+    uploadData.append("file", formData.courseImage);
+    uploadData.append("upload_preset", "eduSphere");
+
+  try {
+    const cloudinaryResponse = await axios.post(
+      "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+      uploadData
+    );
+      const imageUrl = cloudinaryResponse.data.secure_url; // Get the uploaded image URL from Cloudinary response
+
+      const courseData = {
+        title: formData.title,
+        description: formData.description,
+        categoryID: formData.categoryID,
+        duration: formData.duration,
+        price: formData.price,
+        courseImage: imageUrl, // Use the Cloudinary image URL
+      };
+      const response = await axios.post("http://localhost:5000/addCourse", courseData, {
+        headers: { "Content-Type": "application/json" }
+      });
+
+      setFormData({
+        title: "",
+        description: "",
+        categoryID: "",
+        duration: "2 weeks",
+        price: "",
+        courseImage: null,
+      });
       navigate("/admin/courses");
     } catch (error) {
       console.error("Error adding course:", error);

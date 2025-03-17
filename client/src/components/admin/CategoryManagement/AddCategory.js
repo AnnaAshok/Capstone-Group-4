@@ -60,12 +60,25 @@ const AddCategory = () => {
     }
   
     const formData = new FormData();
-    formData.append("categoryName", categoryName);
-    formData.append("categoryImage", categoryImage);
+    formData.append("file", categoryImage);
+    formData.append("upload_preset", "eduSphere"); 
   
     try {
-      const response = await axios.post("http://localhost:5000/addCategory", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+
+      const cloudinaryResponse = await axios.post(
+        "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload", // Replace with your cloud_name
+        formData
+      );
+
+      const imageUrl = cloudinaryResponse.data.secure_url; // Get the uploaded image URL from Cloudinary response
+
+      const categoryData = {
+        categoryName,
+        categoryImage: imageUrl, // Use the Cloudinary image URL
+      };
+
+      const response = await axios.post("http://localhost:5000/addCategory", categoryData, {
+        headers: { "Content-Type": "application/json" }
       });
   
       setCategoryName("");
