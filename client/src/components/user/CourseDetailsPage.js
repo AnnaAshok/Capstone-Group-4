@@ -15,6 +15,7 @@ const CourseDetailsPage = () => {
         // Fetch course details from API
         fetch(`http://localhost:5000/courses/${courseId}`)
             .then(response => {
+                console.log("response",response)
                 if (!response.ok) {
                     throw new Error('Failed to fetch course details');
                 }

@@ -23,7 +23,8 @@ function UpdateCourse() {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
+    shortDescription: "",
+    longDescription: "",
     categoryID: "",
     duration: "2 weeks",
     price: "",
@@ -40,7 +41,8 @@ function UpdateCourse() {
         if (course) {
           setFormData({
             title: course.title || "",
-            description: course.description || "",
+            shortDescription: course.shortDescription || "",
+            longDescription: course.longDescription || "",
             categoryID: course.categoryID?._id || course.categoryID || "",
             duration: course.duration || "2 weeks",
             price: course.price || "",
@@ -67,8 +69,8 @@ function UpdateCourse() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleEditorChange = (value) => {
-    setFormData({ ...formData, description: value });
+  const handleEditorChange = (value, field) => {
+    setFormData({ ...formData, [field]: value });
   };
 
   // File input handler
@@ -94,7 +96,8 @@ function UpdateCourse() {
     e.preventDefault();
     const data = new FormData();
     data.append("title", formData.title);
-    data.append("description", formData.description);
+    data.append("shortDescription", formData.shortDescription);
+    data.append("longDescription", formData.longDescription);
     data.append("categoryID", formData.categoryID);
     data.append("duration", formData.duration);
     data.append("price", formData.price);
@@ -105,13 +108,12 @@ function UpdateCourse() {
 
     try {
       await axios.post(`http://localhost:5000/updateCourse/${id}`, data);
-      // alert("Course updated successfully!");
       navigate("/admin/courses");
     } catch (error) {
       console.error("Error updating course:", error);
     }
   };
-  console.log(formData)
+
   return (
     <main className="main-container">
       <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
@@ -120,10 +122,7 @@ function UpdateCourse() {
         </div>
         <form onSubmit={handleSubmit}>
           <Box marginBottom={2}>
-            <Typography
-              variant="body1"
-              sx={{ color: "#0F3460", fontSize: "18px" }}
-            >
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
               Course Title:
             </Typography>
             <TextField
@@ -136,25 +135,33 @@ function UpdateCourse() {
             />
           </Box>
 
-          <Typography
-            variant="body1"
-            sx={{ color: "#0F3460", fontSize: "18px" }}
-          >
-            Course Description:
+          <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+            Short Description:
+          </Typography>
+          <TextField
+            sx={{ width: "50%" }}
+            variant="outlined"
+            size="small"
+            name="shortDescription"
+            value={formData.shortDescription}
+            onChange={handleChange}
+            multiline
+            rows={4}
+          />
+
+          <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+            Long Description:
           </Typography>
           <ReactQuill
-            value={formData.description}
-            onChange={handleEditorChange}
+            value={formData.longDescription}
+            onChange={(value) => handleEditorChange(value, 'longDescription')}
             theme="snow"
             style={{ height: "200px", marginBottom: "35px" }}
           />
 
           <Box marginBottom={2}>
             <FormControl fullWidth variant="outlined" size="small">
-              <Typography
-                variant="body1"
-                sx={{ color: "#0F3460", fontSize: "18px", marginTop: "25px" }}
-              >
+              <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px", marginTop: "25px" }}>
                 Select Category:
               </Typography>
               <Select
@@ -175,10 +182,7 @@ function UpdateCourse() {
           </Box>
 
           <Box marginBottom={2}>
-            <Typography
-              variant="body1"
-              sx={{ color: "#0F3460", fontSize: "18px" }}
-            >
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
               Duration:
             </Typography>
             <Select
@@ -194,10 +198,7 @@ function UpdateCourse() {
           </Box>
 
           <Box marginBottom={2}>
-            <Typography
-              variant="body1"
-              sx={{ color: "#0F3460", fontSize: "18px" }}
-            >
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
               Price:
             </Typography>
             <TextField
@@ -211,10 +212,7 @@ function UpdateCourse() {
             />
           </Box>
 
-          <Typography
-            variant="body1"
-            sx={{ color: "#0F3460", fontSize: "18px" }}
-          >
+          <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
             Course Image:
           </Typography>
           <Box
@@ -231,10 +229,7 @@ function UpdateCourse() {
             marginBottom={2}
           >
             <input {...getInputProps()} />
-            <Typography
-              variant="body1"
-              sx={{ color: "#0F3460", fontSize: "18px" }}
-            >
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
               Drag & drop an image here, or click to upload
             </Typography>
             <input
@@ -247,44 +242,31 @@ function UpdateCourse() {
             {formData.courseImage && (
               <img
                 src={URL.createObjectURL(formData.courseImage)}
-                alt="Selected"
-                style={{ width: "100px", marginTop: "10px" }}
+                alt="Preview"
+                style={{
+                  marginTop: "10px",
+                  maxWidth: "100px",
+                  maxHeight: "100px",
+                }}
               />
             )}
 
-            {formData.existingImage && !formData.courseImage ? (
+            {formData.existingImage && !formData.courseImage && (
               <img
                 src={formData.existingImage}
-                alt="Existing Course"
+                alt="Existing"
                 style={{
-                  width: "100px",
                   marginTop: "10px",
-                  borderRadius: "8px",
+                  maxWidth: "100px",
+                  maxHeight: "100px",
                 }}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }} // Hide if error
               />
-            ) 
-            :
-             (
-              <Typography>No Image Available</Typography>
-            )
-            }
+            )}
           </Box>
 
-          <Box display="flex" gap={2} marginTop={2}>
-            <Button type="submit" variant="contained" color="primary">
-              Update
-            </Button>
-            <Button
-              type="button"
-              variant="outlined"
-              onClick={() => navigate("/admin/courses")}
-            >
-              Cancel
-            </Button>
-          </Box>
+          <Button type="submit" variant="contained" color="primary">
+            Update Course
+          </Button>
         </form>
       </Paper>
     </main>

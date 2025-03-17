@@ -1,19 +1,19 @@
-import React,{useState} from "react";
-import { Navbar, Nav, Container, Form, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Navbar, Nav, Container, Form, Button, Dropdown } from "react-bootstrap";
 import "../../index.css";
 import logoimage from "../../Assets/images/Edu_Logo.png";
 import { useNavigate } from "react-router-dom";
 import LoginSignup from "././LoginSignup";
 
 const Header = () => {
-  const loggedIn = localStorage.getItem("token")
-  const navigate = useNavigate()
+  const loggedIn = localStorage.getItem("token"); // Check if user is logged in
+  const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
 
-  const handleLogout=() =>{
+  const handleLogout = () => {
     localStorage.clear();
-    navigate(0); 
-  }
+    navigate(0); // Reload the page after logging out
+  };
 
   return (
     <header>
@@ -24,11 +24,9 @@ const Header = () => {
           backgroundColor: "#0f3460",
           color: "white",
           padding: "10px 20px",
-          marginBottom: "0", 
+          marginBottom: "0",
         }}
       >
-      
-
         <div className="contact-info d-flex align-items-center gap-3">
           <p className="contact-link mb-0">
             <i className="fa-solid fa-phone-volume"></i> 123-456-7890
@@ -39,12 +37,25 @@ const Header = () => {
         </div>
 
         <div className="login_signup d-flex align-items-center gap-3">
-          {!loggedIn ? <p className="login-signup-link" onClick={() => setModalShow(true)}>
-            <i className="fa-solid fa-sign-in-alt"></i> Login/Signup
-          </p>: 
-           <p className="logout-link" onClick={handleLogout}>
-            <i className="fa-solid fa-sign-out"></i> Logout
-          </p>}
+          {!loggedIn ? (
+            <p
+              className="login-signup-link"
+              onClick={() => setModalShow(true)}
+            >
+              <i className="fa-solid fa-sign-in-alt"></i> Login/Signup
+            </p>
+          ) : (
+            <Dropdown>
+              <Dropdown.Toggle variant="link" id="dropdown-custom-components">
+                <i className="fa-solid fa-user"></i> Welcome, User
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item href="/profile" className="drop">Profile</Dropdown.Item>
+                <Dropdown.Item onClick={handleLogout} className="drop">Logout</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
       </div>
 
@@ -52,9 +63,8 @@ const Header = () => {
       <Navbar
         expand="lg"
         style={{
-          // backgroundColor: "#e6e9ec", // Grey background
           marginTop: "0", // Remove space between header-top and navbar
-          paddingTop: "0", 
+          paddingTop: "0",
         }}
       >
         <Container
@@ -146,7 +156,7 @@ const Header = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <LoginSignup show={modalShow} handleClose={() => setModalShow(false)} setModalShow={setModalShow}/>
+      <LoginSignup show={modalShow} handleClose={() => setModalShow(false)} setModalShow={setModalShow} />
     </header>
   );
 };
