@@ -15,6 +15,7 @@ const CourseDetailsPage = () => {
         // Fetch course details from API
         fetch(`http://localhost:5000/courses/${courseId}`)
             .then(response => {
+                console.log("response",response)
                 if (!response.ok) {
                     throw new Error('Failed to fetch course details');
                 }
@@ -57,7 +58,8 @@ const CourseDetailsPage = () => {
                         <h1 className=''>{course.title}</h1>
                         {/* <img src={course.image || "../../Assets/images/Python-logo.png"} alt={course.title} className="course-image text-left"/> */}
                         <img src={sample_img} alt="sample image" className='course-image-details-page' />
-                        <p className="course-description"><div dangerouslySetInnerHTML={{__html: course.description}}/></p>                    </div>
+                        <p className="course-description"><div dangerouslySetInnerHTML={{__html: course.description}}/></p>
+                    </div>
 
                     {/* Right Section: Additional Course Details */}
                     <div className="course-right">

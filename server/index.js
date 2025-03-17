@@ -9,8 +9,6 @@ const multer = require("multer");
 const categoryController = require("./controller/categoryController")
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
-const courseListController = require("./controller/courseListController");
-const categoryListController = require("./controller/categoryListController");
 const userController = require('./controller/userController')
 const roleConroller = require('./controller/roleController')
 
@@ -49,8 +47,6 @@ app.post("/register", authController.register);
 app.post("/getEmail", authController.getEmail);
 app.post("/resetpassword", authController.resetPassword);
 
-app.use("/courses", courseListController);
-app.use("/categories", categoryListController);
 
 // Routes for category
 app.post("/getCategory", categoryController.getCategories);
@@ -58,6 +54,7 @@ app.post("/addCategory", upload.single("categoryImage"), categoryController.addC
 app.post("/updateCategory/:id", upload.single("categoryImage"), categoryController.updateCategory);
 app.post("/getCategoryById/:id", categoryController.getCategoryById);
 app.post("/deleteCategory/:id", categoryController.deleteCategory);
+app.get("/categories", categoryController.categoryList); // list of categories
 
 // Routes for course
 app.get("/getCourseById/:id", courseController.getCourseById);
@@ -66,6 +63,8 @@ app.post("/addCourse", upload.single("courseImage"), courseController.addCourse)
 app.post("/deleteCourse/:id", courseController.deleteCourse);
 app.post("/getCourseById/:id", courseController.getCourseById);
 app.post("/updateCourse/:id", upload.single("courseImage"), courseController.updateCourse);
+app.get("/courses", courseController.courseListfilter); // list of courses
+app.get("/courses/:id", courseController.courseDetailsById); // detailed view for course
 
 //routes of users
 app.post("/getUsers", userController.getUsers)
@@ -78,8 +77,6 @@ app.post("/deleteUser/:id",userController.deleteUser)
 app.get("/roles",roleConroller.getRoles);
 
 
-// Route for fetching course details
-// app.get("/courses/:id", courseListController.getCourseById);
 
 app.listen(5000, () => {
   console.log('App listening on port 5000');
