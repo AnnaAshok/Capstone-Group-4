@@ -45,7 +45,7 @@ function UpdateCourse() {
             duration: course.duration || "2 weeks",
             price: course.price || "",
             existingImage: course.courseImage
-              ? `http://localhost:5000/uploads/${course.courseImage}`
+              ? course.courseImage
               : "",
             courseImage: null,
           });
@@ -103,15 +103,35 @@ function UpdateCourse() {
       data.append("courseImage", formData.courseImage);
     }
 
+    let imageUrl = formData.existingImage;
+
+    const uploadData = new FormData(); // Use a different name like 'uploadData'
+    uploadData.append("file", formData.courseImage);
+    uploadData.append("upload_preset", "eduSphere");
+
     try {
-      await axios.post(`http://localhost:5000/updateCourse/${id}`, data);
-      // alert("Course updated successfully!");
+      const cloudinaryResponse = await axios.post(
+        "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+        uploadData
+      );
+
+      imageUrl = cloudinaryResponse.data.secure_url;
+
+      const courseData = {
+        title: formData.title,
+        description: formData.description,
+        categoryID: formData.categoryID,
+        duration: formData.duration,
+        price: formData.price,
+        courseImage: imageUrl, 
+      };
+
+      await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
       navigate("/admin/courses");
     } catch (error) {
       console.error("Error updating course:", error);
     }
   };
-  console.log(formData)
   return (
     <main className="main-container">
       <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>

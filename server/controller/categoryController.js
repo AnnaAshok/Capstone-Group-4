@@ -1,14 +1,36 @@
 const Category = require("../models/categories")
 const multer = require("multer");
 const path = require("path");
+const { v2: cloudinary } = require("cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+require("dotenv").config();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Configure Storage for Multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Store images in the "uploads" folder
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // Rename file with timestamp
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/"); 
+//     // Store images in the "uploads" folder
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + path.extname(file.originalname)); 
+//     // Rename file with timestamp
+//   },
+// });
+
+// Set up Cloudinary storage for multer
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "Images", // Folder in Cloudinary
+    allowed_formats: ["jpg", "png", "jpeg"],
+    public_id: (req, file) => Date.now() + "-" + file.originalname,
   },
 });
 
@@ -50,13 +72,13 @@ exports.getCategories = async (req, res) => {
 // add single category
 exports.addCategory =  async (req, res) =>{
   try {
-    if (!req.file) {
+    if (!req.body.categoryImage) {
         return res.status(400).json({ message: "Please upload an image" });
       }
 
       const newCategory = new Category({
         categoryName: req.body.categoryName,
-        categoryImage: req.file.path, // Save image path in DB
+        categoryImage: req.body.categoryImage, // Save image path in DB
       });
 
       await newCategory.save();
@@ -86,8 +108,8 @@ exports.getCategoryById = async (req, res) => {
         categoryName: req.body.categoryName,
       };
       // Check if a new file (image) has been uploaded
-      if (req.file) {
-        updatedCategoryData.categoryImage = req.file.path;
+      if (req.body.categoryImage) {
+        updatedCategoryData.categoryImage = req.body.categoryImage;
       }
       // Update category
       const category = await Category.findByIdAndUpdate(req.params.id, updatedCategoryData, {

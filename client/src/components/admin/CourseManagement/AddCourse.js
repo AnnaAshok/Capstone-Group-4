@@ -52,20 +52,29 @@ function AddCourse() {
       return;
     }
 
-    const data = new FormData();
-    data.append("title", formData.title);
-    data.append("description", formData.description);
-    data.append("categoryID", formData.categoryID);
-    data.append("duration", formData.duration);
-    data.append("price", formData.price);
-    data.append("courseImage", formData.courseImage);
+    const uploadData = new FormData(); // Use a different name like 'uploadData'
+    uploadData.append("file", formData.courseImage);
+    uploadData.append("upload_preset", "eduSphere");
 
-    try {
-      const response = await axios.post("http://localhost:5000/addCourse", data, {
-        headers: { "Content-Type": "multipart/form-data" },
+  try {
+    const cloudinaryResponse = await axios.post(
+      "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+      uploadData
+    );
+      const imageUrl = cloudinaryResponse.data.secure_url; // Get the uploaded image URL from Cloudinary response
+
+      const courseData = {
+        title: formData.title,
+        description: formData.description,
+        categoryID: formData.categoryID,
+        duration: formData.duration,
+        price: formData.price,
+        courseImage: imageUrl, // Use the Cloudinary image URL
+      };
+      const response = await axios.post("http://localhost:5000/addCourse", courseData, {
+        headers: { "Content-Type": "application/json" }
       });
 
-      alert("Course added successfully!");
       setFormData({
         title: "",
         description: "",

@@ -94,7 +94,7 @@ const CustomTable = ({ courses, setCourses }) => {
                   <StyledTableCell>{course.price}</StyledTableCell>
                   <StyledTableCell>
                     <img
-                      src={`http://localhost:5000/uploads/${course.courseImage}`}
+                      src={course.courseImage}
                       alt={course.title}
                       style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                     />

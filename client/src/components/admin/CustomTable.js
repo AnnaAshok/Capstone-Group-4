@@ -100,11 +100,12 @@ const CustomTable = (props) => {
             {categories.length > 0 ? (
               categories.map((category, index) => (
                 <StyledTableRow key={category._id}>
-                  <StyledTableCell>{index + 1}</StyledTableCell>
+                  <StyledTableCell>{index + 1 + (props.currentPage - 1) * props.itemsPerPage}
+                  </StyledTableCell>
                   <StyledTableCell>{category.categoryName}</StyledTableCell>
                   <StyledTableCell>
                     <img
-                      src={`http://localhost:5000/${category.categoryImage}`} 
+                      src={category.categoryImage} 
                       alt={category.categoryName}
                       style={{ width: "80px", height: "80px", borderRadius: "5px" }}
                     />
