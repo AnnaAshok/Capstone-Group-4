@@ -13,6 +13,7 @@ const userController = require('./controller/userController')
 const roleConroller = require('./controller/roleController')
 const questionsController = require('./controller/questionsController');
 
+
 const app = express();
 // Cloudinary configuration
 cloudinary.config({
@@ -85,7 +86,13 @@ app.put('/questions/:id', questionsController.updateQuestion);
 app.post('/questions/:id', questionsController.deleteQuestion);
 app.post('/getallquestions',questionsController.getAllQuestions)
 
+// Routes for profile
+app.get("/profile", userController.getUserProfile);
+app.post("/update-password", userController.updatePassword);
+app.put("/api/updateUser/:id", userController.updateUser);
 
-app.listen(5000, () => {
-  console.log('App listening on port 5000');
+
+app.listen(5005, () => {
+  console.log('App listening on port 5005');
+
 });
