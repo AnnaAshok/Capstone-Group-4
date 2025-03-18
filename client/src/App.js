@@ -9,6 +9,7 @@ import CustomTable from './components/admin/CustomTable';
 import AdminRoutes from './components/admin/AdminRoutes';
 import Profile from './components/user/profile';
 import CourseDetailsPage from './components/user/CourseDetailsPage';
+import Quiz from './components/user/Quiz';
 
 
 
@@ -30,6 +31,8 @@ function App() {
         {/* <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />}></Route> */}
 
         <Route path="/profile" element={<Profile />}></Route>
+        
+        <Route path='/quiz' element={<Quiz />} />
       </Routes>
     </BrowserRouter>
     </div>
