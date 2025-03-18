@@ -83,13 +83,8 @@ app.get("/profile", userController.getUserProfile);
 app.post("/update-password", userController.updatePassword);
 app.put("/api/updateUser/:id", userController.updateUser);
 
-<<<<<<< HEAD
+
 app.listen(5005, () => {
   console.log('App listening on port 5005');
-=======
 
-
-app.listen(5002, () => {
-  console.log('App listening on port 5002');
->>>>>>> e5a72646935e9bfb2c28f6e3912ac87ec1b6b184
 });

@@ -92,7 +92,7 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Failed to delete user", error: err.message });
   }
 };
-<<<<<<< HEAD
+
 exports.updatePassword = async (req, res) => {
   try {
     const { userId } = req.params; // Get userId from URL params
@@ -114,7 +114,7 @@ exports.updatePassword = async (req, res) => {
     res.status(400).json({ message: "Failed to update password", error: err.message });
   }
 };
-=======
+
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
@@ -159,4 +159,4 @@ exports.updatePassword = async (req, res) => {
     res.status(400).json({ message: "Failed to update password", error: err.message });
   }
 };
->>>>>>> e5a72646935e9bfb2c28f6e3912ac87ec1b6b184
+
