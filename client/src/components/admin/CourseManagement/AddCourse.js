@@ -22,8 +22,6 @@ function AddCourse() {
   useEffect(() => {
     axios.post("http://localhost:5000/getCategory")
       .then(response => {
-        console.log(response)
-
         setCategories(response.data.categories);
       })
       .catch(error => console.error("Error fetching categories:", error));

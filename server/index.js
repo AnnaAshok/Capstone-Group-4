@@ -11,6 +11,7 @@ const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController')
 const roleConroller = require('./controller/roleController')
+const questionsController = require('./controller/questionsController');
 
 const app = express();
 // Cloudinary configuration
@@ -76,6 +77,13 @@ app.post("/deleteUser/:id",userController.deleteUser)
 // Routes for role
 app.get("/roles",roleConroller.getRoles);
 
+// Routes for handling questions
+app.post('/questions', questionsController.createQuestion);
+app.get('/questions/course/:courseID', questionsController.getQuestionsByCourse);
+app.get('/questions/:id', questionsController.getQuestionById);
+app.put('/questions/:id', questionsController.updateQuestion);
+app.post('/questions/:id', questionsController.deleteQuestion);
+app.post('/getallquestions',questionsController.getAllQuestions)
 
 
 app.listen(5000, () => {
