@@ -25,7 +25,26 @@ const Footer = () => {
             <div className="col-md-6 col-lg-5 col-12 footer-1">
               <h3>
                 <img src={logoimage} className="navbar-brand" alt="Logo" />
-                <span>Edu</span>Sphere
+               
+                <span
+                  style={{
+                    color: "#0f3460",
+                    fontWeight: "bold",
+                    fontFamily: "RobotoThin",
+                  }}
+                >
+                  Edu
+                </span>
+                <span
+                  style={{
+                    color: "#f7c221",
+                    fontWeight: "bold",
+                    fontFamily: "RobotoThin",
+                  }}
+                >
+                  Sphere
+                </span>
+              
               </h3>
               <p>
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit.

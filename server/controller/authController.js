@@ -9,39 +9,40 @@ const { SECRET_KEY } = require("../middleware/authMiddleware"); // Import the sh
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        // Check if the user exists
-        const userDetails = await user.findOne({ email: email }).populate("roleID");;
+        const userDetails = await user.findOne({ email: email }).populate("roleID");
+
         if (!userDetails) {
             return res.status(404).json({ message: "Invalid username or password" });
         }
-        // Compare hashed password
+
         const isMatch = await bcrypt.compare(password, userDetails.password);
-          
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid username or password" });
         }
-          // Generate JWT Token using dynamic SECRET_KEY
+
         const token = jwt.sign(
             { userId: userDetails._id, email: userDetails.email, role: userDetails.roleID?.role },
             SECRET_KEY,
             { expiresIn: "1h" }
         );
-        res.json({ 
-            message: "Success",
-            token:token , 
-            user: {
-            id: userDetails._id,
-            firstName: userDetails.firstName,
-            lastName: userDetails.lastName,
-            email: userDetails.email,
-            role: userDetails.roleID?.role || "Unknown",
-        } });
 
+        res.json({
+            message: "Success",
+            token: token,
+            user: {
+                id: userDetails._id,
+                firstName: userDetails.firstName,
+                lastName: userDetails.lastName,
+                email: userDetails.email,
+                role: userDetails.roleID?.role || "Unknown",
+            }
+        });
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 // registration api
 exports.register = async (req,res)=>{
@@ -110,7 +111,7 @@ exports.resetPassword = async (req, res) => {
     try {
         if (!password) {
             return res.status(400).json({ message: "All fields are required" });
-          }
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await user.findOneAndUpdate(
@@ -120,7 +121,7 @@ exports.resetPassword = async (req, res) => {
         );
 
         if (result) {
-            res.status(200).json({ message: "Password updated successfully"});
+            res.status(200).json({ message: "Password updated successfully" });
         } else {
             res.status(404).json("Email not found. Please check the email and try again.");
         }
@@ -128,4 +129,4 @@ exports.resetPassword = async (req, res) => {
         console.error("Error resetting password:", error);
         res.status(500).json("Something went wrong. Please try again later.");
     }
-}
+};

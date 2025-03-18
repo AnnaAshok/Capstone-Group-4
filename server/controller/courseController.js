@@ -64,23 +64,24 @@ const uploads = multer({ storage, fileFilter });
     try {
       const { title, description, categoryID, duration, price ,courseImage} = req.body;
 
-      // Validate required fields
-      if (!title || !categoryID || !duration || !price) {
-        return res.status(400).json({ message: "All fields are required!" });
-      }
-
-      if (price < 0 ){
-        return res.status(400).json({ message: "Price should be greater than zero!" });
-      }
-
-      const newCourse = new Course({ title, description, categoryID, courseImage, duration, price });
-      await newCourse.save();
-
-      res.status(201).json({ message: "Course added successfully!" });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    // Validate required fields
+    if (!title || !shortDescription || !longDescription || !categoryID || !duration || !price) {
+      return res.status(400).json({ message: "All fields are required!" });
     }
-  };
+
+    if (price < 0) {
+      return res.status(400).json({ message: "Price should be greater than zero!" });
+    }
+
+    const newCourse = new Course({ title, shortDescription, longDescription, categoryID, courseImage, duration, price });
+    await newCourse.save();
+
+    res.status(201).json({ message: "Course added successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
   // Update Course
   exports.updateCourse = async (req, res) => {
@@ -88,24 +89,25 @@ const uploads = multer({ storage, fileFilter });
       const { title, description, categoryID, duration, price } = req.body;
       const courseImage = req.body.courseImage ? req.body.courseImage : req.body.existingImage;
 
-      // Validate required fields
-      if (!title || !categoryID || !duration || !price) {
-        return res.status(400).json({ message: "All fields are required!" });
-      }
-
-      const updatedCourse = await Course.findByIdAndUpdate(
-        req.params.id,
-        { title, description, categoryID, courseImage, duration, price },
-        { new: true }
-      );
-
-      if (!updatedCourse) return res.status(404).json({ message: "Course not found" });
-
-      res.status(200).json({ message: "Course updated successfully!", updatedCourse });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    // Validate required fields
+    if (!title || !shortDescription || !longDescription || !categoryID || !duration || !price) {
+      return res.status(400).json({ message: "All fields are required!" });
     }
-  };
+
+    const updatedCourse = await Course.findByIdAndUpdate(
+      req.params.id,
+      { title, shortDescription, longDescription, categoryID, courseImage, duration, price },
+      { new: true }
+    );
+
+    if (!updatedCourse) return res.status(404).json({ message: "Course not found" });
+
+    res.status(200).json({ message: "Course updated successfully!", updatedCourse });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
   // Delete Course
   exports.deleteCourse = async (req, res) => {

@@ -6,7 +6,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.4",
-    "@mui/material": "^6.4.4",
+    "@mui/material": "^6.4.7",
     "@react-spring/web": "^9.7.5",
     "@tailwindcss/vite": "^4.0.3",
     "@testing-library/jest-dom": "^5.17.0",
@@ -15,10 +15,16 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "crypto": "^1.0.1",
+    "devextreme": "^24.2.5",
+    "devextreme-react": "^24.2.5",
     "framer-motion": "^12.0.6",
     "gsap": "^3.12.7",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+<<<<<<< HEAD
+=======
+    "lucide-react": "^0.479.0",
+>>>>>>> e5a72646935e9bfb2c28f6e3912ac87ec1b6b184
     "motion": "^12.0.6",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.9",
