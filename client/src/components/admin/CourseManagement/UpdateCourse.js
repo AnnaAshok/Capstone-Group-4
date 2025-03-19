@@ -108,8 +108,8 @@ function UpdateCourse() {
 
     let imageUrl = formData.existingImage;
 
-    const uploadData = new FormData(); // Use a different name like 'uploadData'
-    uploadData.append("file", formData.courseImage);
+    const uploadData = new FormData(); 
+    uploadData.append("file", formData.existingImage ? formData.existingImage : formData.courseImage);
     uploadData.append("upload_preset", "eduSphere");
 
     try {
@@ -122,7 +122,8 @@ function UpdateCourse() {
 
       const courseData = {
         title: formData.title,
-        description: formData.description,
+        shortDescription: formData.shortDescription,
+        longDescription: formData.longDescription,
         categoryID: formData.categoryID,
         duration: formData.duration,
         price: formData.price,

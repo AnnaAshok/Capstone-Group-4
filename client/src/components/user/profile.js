@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../profile.css";
+import axios from "axios";
 import Header from "./Header";
 import Footer from "./Footer";
 import defaultUser from "../../Assets/images/user.png";
@@ -7,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("userInfo");
-  const [userImage, setUserImage] = useState(null);
+  const [image, setImage] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,48 +21,118 @@ const Profile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [courses, setCourses] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [user, setUser] = useState(null); // Store user data
+  const [error, setError] = useState(null);
+  const token = localStorage.getItem("token");
+  const [userId, setUserId] = useState(null); 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        setFirstName(decodedToken.firstName);
-        setLastName(decodedToken.lastName);
         setEmail(decodedToken.email);
-        setPhone(decodedToken.phone || "");
-        setAddress(decodedToken.address || "");
-        setDob(decodedToken.dob || "");
-        setCourses(decodedToken.courses || []);
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     }
   }, []);
-
-  const handlePasswordUpdate = () => {
-    if (newPassword !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
+  const fetchUserDetails = async () => {
+    try {
+        const response = await axios.post(
+            "http://localhost:5000/user/details", // API endpoint
+            { email }, // Send email in request body
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`, // Send token in Authorization header
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        setUser(response.data);
+        setUserId(response.data._id); // Store the user ID from the response
+        setFirstName(response.data.firstName);
+        setLastName(response.data.lastName);
+        setPhone(response.data.phone);
+        setAddress(response.data.address);
+        setDob(response.data.dob);
+        setImage(response.data.image);
+    } catch (err) {
+        setError(err.response?.data?.message || "An error occurred while fetching user details.");
     }
-    // Add logic for updating the password
-  };
+};
+  useEffect(()=>{
+    if(email) fetchUserDetails();
+
+  },[email])
+
+  const updateUserDetails = async () => {
+    if (newPassword || confirmPassword) {
+      if (newPassword !== confirmPassword) {
+          setErrorMessage("Passwords do not match.");
+          return;
+      }
+  }
+    let imageUrl = image; // Default to existing image
+    if (image) {
+      const formData = new FormData();
+      formData.append("file", image);
+      formData.append("upload_preset", "eduSphere"); // Cloudinary upload preset
+  
+      try {
+        const cloudinaryResponse = await axios.post(
+          "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+          formData
+        );
+        imageUrl = cloudinaryResponse.data.secure_url;
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        return;
+      }
+    }
+    try {
+      const updateData = {
+        firstName,
+        lastName,
+        phone,
+        address,
+        dob,
+    };
+    // Include password only if it's provided
+    if (newPassword) {
+        updateData.password = newPassword;
+    }
+    if(image){
+      updateData.image = imageUrl
+    }
+    const response = await axios.post(
+        `http://localhost:5000/user/update/${userId}`,
+        updateData,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    );
+        alert("User details updated successfully!");
+    } catch (err) {
+        setErrorMessage(err.response?.data?.message || "Error updating details.");
+    }
+};
 
   return (
     <>
       <Header />
       <div className="profile-page">
         <div className="profile-left">
-          <div className="profile-image" onClick={() => document.getElementById("fileInput").click()}>
-            <img src={userImage || defaultUser} alt="Profile" />
-            <input type="file" id="fileInput" accept="image/*" onChange={(e) => setUserImage(URL.createObjectURL(e.target.files[0]))} style={{ display: "none" }} />
-          </div>
+          <div className="profile-image">
+            <img src={image ? image : defaultUser} alt="Profile" />
+            </div>
           <div className="profile-details">
-            <h5>{firstName} {lastName}</h5>
+            <h5>{user?.firstName} {user?.lastName}</h5>
             <h5>{email}</h5>
-            <p>{phone}</p>
-            <p>{address}</p>
-            <p>{dob}</p>
+            <p>{user?.phone ? user?.phone : ""}</p>
+            <p>{user?.address ? user?.address : ""}</p>
+            <p>{user?.dob ? user?.dob : ""}</p>
           </div>
         </div>
 
@@ -86,7 +157,9 @@ const Profile = () => {
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
               <label>Date of Birth</label>
               <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
-              <button className="update-button">Update</button>
+              <label>Profile picture</label>
+              <input type="file" id="image" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
+              <button className="update-button" onClick={updateUserDetails}>Update</button>
             </div>
           )}
 
@@ -138,7 +211,7 @@ const Profile = () => {
                 <button onClick={() => setShowConfirmPassword(!showConfirmPassword)} />
               </div>
 
-              <button onClick={handlePasswordUpdate} className="update-button">Update Password</button>
+              <button onClick={updateUserDetails} className="update-button">Update Password</button>
             </div>
           )}
 

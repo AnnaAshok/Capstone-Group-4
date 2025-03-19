@@ -5,6 +5,8 @@ const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
+const { authMiddleware } = require("./middleware/authMiddleware"); // Import the shared secret key
+require('dotenv').config();
 
 const categoryController = require("./controller/categoryController")
 const courseController = require("./controller/courseController");
@@ -90,9 +92,10 @@ app.post('/getallquestions',questionsController.getAllQuestions)
 app.get("/profile", userController.getUserProfile);
 app.post("/update-password", userController.updatePassword);
 app.put("/api/updateUser/:id", userController.updateUser);
+app.post("/user/details", authMiddleware, authController.getUserByTokenAndEmail);
+app.post("/user/update/:id", authController.updateProfile)
 
-
-app.listen(5005, () => {
+app.listen(5000, () => {
   console.log('App listening on port 5005');
 
 });

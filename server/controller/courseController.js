@@ -62,7 +62,7 @@ const uploads = multer({ storage, fileFilter });
   // Add Course
   exports.addCourse = async (req, res) => {
     try {
-      const { title, description, categoryID, duration, price ,courseImage} = req.body;
+      const { title, shortDescription, longDescription, categoryID, duration, price ,courseImage} = req.body;
 
     // Validate required fields
     if (!title || !shortDescription || !longDescription || !categoryID || !duration || !price) {
@@ -86,7 +86,7 @@ const uploads = multer({ storage, fileFilter });
   // Update Course
   exports.updateCourse = async (req, res) => {
     try {
-      const { title, description, categoryID, duration, price } = req.body;
+      const { title, shortDescription, longDescription, categoryID, duration, price } = req.body;
       const courseImage = req.body.courseImage ? req.body.courseImage : req.body.existingImage;
 
     // Validate required fields
@@ -134,7 +134,7 @@ const uploads = multer({ storage, fileFilter });
               query.categoryId = new mongoose.Types.ObjectId(categoryID);
           } else {
               // Ensure categoryId is not null if 'All' is selected
-              query.categoryId = { $ne: null };
+              query.categoryID = { $ne: null };
           }
           const courses = await Course.find(query)
               .skip((page - 1) * limit)

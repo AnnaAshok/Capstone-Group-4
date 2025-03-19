@@ -55,7 +55,7 @@ export default function LoginSignup({ show, handleClose,setModalShow }) {
     e.preventDefault();
     if (validateForm()) {
       try {
-          const response = await axios.post('http://localhost:5005/register', { firstName, lastName, email, password })
+          const response = await axios.post('http://localhost:5000/register', { firstName, lastName, email, password })
           setMessage(response.data.message);
           if (response.status === 201) {
             // Clear form fields after successful signup
@@ -84,7 +84,7 @@ export default function LoginSignup({ show, handleClose,setModalShow }) {
         return;
     }
     try {
-        const response = await axios.post('http://localhost:5005/login', { email, password });
+        const response = await axios.post('http://localhost:5000/login', { email, password });
         if (response.data.message === "Success") {
           localStorage.setItem("token", response.data.token); // Store token
             handleClose();
