@@ -31,7 +31,7 @@ function App() {
         {/* <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />}></Route> */}
 
         <Route path="/profile" element={<Profile />}></Route>
-        
+        {/* Quiz route */}
         <Route path='/quiz' element={<Quiz />} />
       </Routes>
     </BrowserRouter>
