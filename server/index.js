@@ -5,6 +5,8 @@ const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
+const { authMiddleware } = require("./middleware/authMiddleware"); // Import the shared secret key
+require('dotenv').config();
 
 const { authMiddleware } = require("./middleware/authMiddleware"); // Import authMiddleware
 const categoryController = require("./controller/categoryController");
@@ -90,6 +92,8 @@ app.get('/getallquestions', questionsController.getAllQuestions)
 app.get("/profile", authMiddleware, userController.getUserProfile); // Protected route
 app.post("/update-password", userController.updatePassword);
 app.put("/api/updateUser/:id", userController.updateUser);
+app.post("/user/details", authMiddleware, authController.getUserByTokenAndEmail);
+app.post("/user/update/:id", authController.updateProfile)
 
 app.listen(5000, () => {
   console.log('App listening on port 5000');

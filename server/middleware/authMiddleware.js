@@ -1,11 +1,12 @@
-    const jwt = require("jsonwebtoken");
-    const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+require('dotenv').config();
 
-    // Generate a secure random secret key
-    const SECRET_KEY = crypto.randomBytes(32).toString("hex");
+// Generate a secure random secret key
+const SECRET_KEY = process.env.JWT_SECRET;
 
-    const authMiddleware = (req, res, next) => {
-        const token = req.header("Authorization");
+const authMiddleware = (req, res, next) => {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
         if (!token) {
             return res.status(401).json({ message: "Access denied. No token provided." });

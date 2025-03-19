@@ -12,17 +12,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configure Storage for Multer
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads/"); 
-//     // Store images in the "uploads" folder
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + path.extname(file.originalname)); 
-//     // Rename file with timestamp
-//   },
-// });
 
 // Set up Cloudinary storage for multer
 const storage = new CloudinaryStorage({

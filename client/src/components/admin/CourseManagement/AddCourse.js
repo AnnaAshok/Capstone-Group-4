@@ -49,7 +49,7 @@ function AddCourse() {
     e.preventDefault();
 
     // Check if all fields are filled
-    if (!formData.title || !formData.description || !formData.categoryID || !formData.price || !formData.courseImage) {
+    if (!formData.title || !formData.shortDescription || !formData.longDescription || !formData.categoryID || !formData.price || !formData.courseImage) {
       alert("Please fill out all fields");
       return;
     }
@@ -67,7 +67,8 @@ function AddCourse() {
 
       const courseData = {
         title: formData.title,
-        description: formData.description,
+        shortDescription: formData.shortDescription,
+        longDescription: formData.longDescription,
         categoryID: formData.categoryID,
         duration: formData.duration,
         price: formData.price,
