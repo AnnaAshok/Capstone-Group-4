@@ -1,105 +1,124 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { motion } from "framer-motion";  // Import framer-motion for animations
-import "../../quiz.css"; 
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import '../../quiz.css';
 
-const Quiz = () => {
-  const [quizzes, setQuizzes] = useState([]);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+const StylishQuizUI = () => {
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [error, setError] = useState(null);
 
+  // Fetch questions from the backend
   useEffect(() => {
-    fetchQuizzes();
+    const fetchQuestions = async () => {
+      try {
+        // Assuming the endpoint to fetch all questions is "/api/questions"
+        const response = await axios.get('http://localhost:5000/getallquestions');
+        setQuestions(response.data.questions); // Assuming response contains questions in 'questions'
+      } catch (err) {
+        setError('Error fetching questions');
+        console.error(err);
+      }
+    };
+
+    fetchQuestions();
   }, []);
 
-  const fetchQuizzes = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/quizzes");
-      setQuizzes(response.data);
-    } catch (error) {
-      console.error("Error fetching quizzes", error);
+  // Handle user selection for an option
+  const handleOptionSelect = (questionId, selectedOption) => {
+    const updatedAnswers = [...userAnswers];
+    updatedAnswers[questionId] = selectedOption;
+    setUserAnswers(updatedAnswers);
+  };
+
+  // Handle next question
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
-  const handleSelectAnswer = (questionId, option) => {
-    setSelectedAnswers({ ...selectedAnswers, [questionId]: option });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/api/submit-quiz", selectedAnswers);
-      setSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting quiz", error);
+  // Handle previous question
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
+
+  // Handle quiz submission
+  const handleSubmit = () => {
+    setQuizCompleted(true);
+  };
+
+  // Calculate progress
+  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+
+  if (!questions.length) {
+    return <div className="loading">Loading questions...</div>;
+  }
 
   return (
-    <div className="container">
-      <motion.h1
-        className="quiz-title"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        Take Quiz
-      </motion.h1>
+    <div className="quiz-wrapper">
+      <div className="quiz-container">
+        <h1 className="quiz-title">Interactive Quiz</h1>
+        {error && <p className="error-message">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="quiz-form">
-        {quizzes.map((quiz) => (
-          <motion.div
-            key={quiz._id}
-            className="card"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="card-header">{quiz.question}</div>
-            <div className="card-content">
-              {quiz.options.map((option, index) => (
-                <motion.div
-                  key={index}
-                  className="option"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <input
-                    type="radio"
-                    name={quiz._id}
-                    value={option}
-                    checked={selectedAnswers[quiz._id] === option}
-                    onChange={() => handleSelectAnswer(quiz._id, option)}
-                  />
-                  <label>{option}</label>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        ))}
+        <div className="question-container">
+          <h2>{questions[currentQuestionIndex].question}</h2>
 
-        <motion.button
-          type="submit"
-          className="button"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.3 }}
-        >
-          Submit Quiz
-        </motion.button>
-      </form>
+          <div className="options-container">
+            {questions[currentQuestionIndex].options.map((option, index) => (
+              <div key={index} className="option">
+                <input
+                  type="radio"
+                  name={`question-${currentQuestionIndex}`}
+                  value={option.value}
+                  checked={userAnswers[currentQuestionIndex] === option.value}
+                  onChange={() => handleOptionSelect(currentQuestionIndex, option.value)}
+                />
+                <label>{option.label}</label>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      {submitted && (
-        <motion.p
-          className="success-message"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          Quiz submitted successfully!
-        </motion.p>
-      )}
+        {/* Progress Bar */}
+        <div className="progress-bar">
+          <div className="progress" style={{ width: `${progress}%` }}></div>
+        </div>
+
+        <div className="navigation">
+          <button onClick={handlePrevious} disabled={currentQuestionIndex === 0} className="nav-button">
+            Previous
+          </button>
+          <button onClick={handleNext} disabled={currentQuestionIndex === questions.length - 1} className="nav-button">
+            Next
+          </button>
+        </div>
+
+        <div className="submit">
+          {currentQuestionIndex === questions.length - 1 ? (
+            <button onClick={handleSubmit} className="submit-button">
+              Submit
+            </button>
+          ) : (
+            <button onClick={handleNext} disabled={userAnswers[currentQuestionIndex] == null} className="submit-button">
+              Next
+            </button>
+          )}
+        </div>
+
+        {/* Final Results */}
+        {quizCompleted && (
+          <div className="result">
+            <h2>Quiz Completed!</h2>
+            <p>Great job! Review your answers and submit your score.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Quiz;
+export default StylishQuizUI;
