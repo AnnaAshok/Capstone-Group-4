@@ -44,7 +44,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="sidebar-list-item"><Link to="/admin/Courses"><BsFillArchiveFill className="icon" /> Courses</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Category"><BsFillGrid3X3GapFill className="icon" /> Category</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Users"><BsPeopleFill className="icon" /> Users</Link></li>
-        <li className="sidebar-list-item"><Link to="/admin/Quiz"><BsListCheck className="icon" /> Quiz</Link></li>
+        <li className="sidebar-list-item"><Link to="/admin/Questions"><BsListCheck className="icon" /> Questions</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Certificates"><BsMenuButtonWideFill className="icon" /> Certificates</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Settings"><BsFillGearFill className="icon" /> Settings</Link></li>
       </ul>

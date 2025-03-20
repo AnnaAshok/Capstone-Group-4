@@ -77,7 +77,8 @@ const CustomTable = ({ courses, setCourses }) => {
           <TableHead>
             <TableRow>
               <StyledTableCell>Title</StyledTableCell>
-              <StyledTableCell>Description</StyledTableCell>
+              <StyledTableCell>Short Description</StyledTableCell>
+              <StyledTableCell>Long Description</StyledTableCell>
               <StyledTableCell>Duration</StyledTableCell>
               <StyledTableCell>Price</StyledTableCell>
               <StyledTableCell>Image</StyledTableCell>
@@ -89,12 +90,17 @@ const CustomTable = ({ courses, setCourses }) => {
               courses.map((course) => (
                 <StyledTableRow key={course._id}>
                   <StyledTableCell>{course.title}</StyledTableCell>
-                  <StyledTableCell><div dangerouslySetInnerHTML={{__html: course.description}}/></StyledTableCell>
+                  {/* Display short description */}
+                  <StyledTableCell>{course.shortDescription}</StyledTableCell>
+                  {/* Display long description with HTML rendering */}
+                  <StyledTableCell>
+                    <div dangerouslySetInnerHTML={{__html: course.longDescription}} />
+                  </StyledTableCell>
                   <StyledTableCell>{course.duration}</StyledTableCell>
                   <StyledTableCell>{course.price}</StyledTableCell>
                   <StyledTableCell>
                     <img
-                      src={`http://localhost:5000/uploads/${course.courseImage}`}
+                      src={course.courseImage}
                       alt={course.title}
                       style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                     />
@@ -111,13 +117,13 @@ const CustomTable = ({ courses, setCourses }) => {
               ))
             ) : (
               <StyledTableRow>
-                <StyledTableCell colSpan={6}>No courses available</StyledTableCell>
+                <StyledTableCell colSpan={7}>No courses available</StyledTableCell>
               </StyledTableRow>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-   
+
       {/* Confirmation Dialog */}
       <Dialog
         open={openDialog}

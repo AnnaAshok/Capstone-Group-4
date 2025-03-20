@@ -134,7 +134,7 @@ useEffect(() => {
           />
       </Box>
       <Box marginBottom={2}>
-          <FormControl fullWidth variant="outlined" size="small">
+          <FormControl fullWidth sx={{ width: "50%" }} variant="outlined" size="small">
           <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", marginTop:"20px", fontSize: "18px" }}>
               Select Role:
           </Typography>

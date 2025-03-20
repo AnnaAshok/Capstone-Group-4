@@ -14,6 +14,9 @@ import UpdateCourse from './CourseManagement/UpdateCourse';
 import ListUser from './UserManagement/ListUser';
 import AddUser from './UserManagement/AddUser';
 import UpdateUser from './UserManagement/UpdateUser';
+import CreateQuiz from './QuizManagement/CreateQuiz';
+import ListQuestions from './QuizManagement/ListQuestions';
+import UpdateQuestion from './QuizManagement/UpdateQuestion';
 
 function AdminRoutes() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -39,6 +42,9 @@ function AdminRoutes() {
         <Route path="Users" element={<ListUser />} />
         <Route path="Adduser" element={<AddUser />} />
         <Route path="updateUser" element={<UpdateUser />}></Route>
+        <Route path="createQuestion" element={<CreateQuiz />}></Route>
+        <Route path='Questions' element={<ListQuestions />}></Route>
+        <Route path='UpdateQuestion' element={<UpdateQuestion />}></Route>
 
         {/* Add more routes as necessary */}
       </Routes>

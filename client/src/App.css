@@ -336,7 +336,17 @@ h1{
   max-width: 700px;
 }
 
-
+/* Logout */
+#dropdown-custom-components{
+  color:white !important;
+  text-decoration: none;
+}
+.drop{
+   color: #0f3460 !important;
+}
+.drop:hover{
+  color: #37567d !important;
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

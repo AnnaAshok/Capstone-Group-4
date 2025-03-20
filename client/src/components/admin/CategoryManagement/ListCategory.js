@@ -44,7 +44,7 @@ const ListCategory = () => {
             <h3>List of Category</h3>
             <button onClick={handleAddcategory}>Add new</button>
         </div>
-        <CustomTable categories={categories} setCategories={setCategories} />
+        <CustomTable categories={categories} setCategories={setCategories} currentPage={currentPage} itemsPerPage={limit} />
         <div className="pagination">
                 <button 
                     onClick={() => handlePageChange(currentPage - 1)} 
