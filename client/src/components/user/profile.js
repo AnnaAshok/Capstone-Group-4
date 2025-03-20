@@ -64,7 +64,11 @@ const Profile = () => {
     if(email) fetchUserDetails();
 
   },[email])
-
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setImage(URL.createObjectURL(e.target.files[0])); // Convert file to URL
+    }
+  };
   const updateUserDetails = async () => {
     if (newPassword || confirmPassword) {
       if (newPassword !== confirmPassword) {
@@ -158,7 +162,7 @@ const Profile = () => {
               <label>Date of Birth</label>
               <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
               <label>Profile picture</label>
-              <input type="file" id="image" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
+              <input type="file" id="image" accept="image/*"  onChange={handleImageChange} />
               <button className="update-button" onClick={updateUserDetails}>Update</button>
             </div>
           )}
