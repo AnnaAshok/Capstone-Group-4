@@ -8,8 +8,9 @@ import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("userInfo");
-  const [image, setImage] = useState(null);
-  const [firstName, setFirstName] = useState("");
+  const [image, setImage] = useState(null); // Stores File for uploads
+  const [preview, setPreview] = useState(defaultUser);
+    const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -25,6 +26,7 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const [userId, setUserId] = useState(null); 
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (token) {
@@ -36,11 +38,12 @@ const Profile = () => {
       }
     }
   }, []);
+
   const fetchUserDetails = async () => {
     try {
         const response = await axios.post(
             "http://localhost:5000/user/details", // API endpoint
-            { email }, // Send email in request body
+            { email }, 
             {
                 headers: {
                     "Authorization": `Bearer ${token}`, // Send token in Authorization header
@@ -55,7 +58,9 @@ const Profile = () => {
         setPhone(response.data.phone);
         setAddress(response.data.address);
         setDob(response.data.dob);
-        setImage(response.data.image);
+        if (response.data.image) {
+          setPreview(response.data.image);
+      }
     } catch (err) {
         setError(err.response?.data?.message || "An error occurred while fetching user details.");
     }
@@ -66,17 +71,43 @@ const Profile = () => {
   },[email])
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
-      setImage(URL.createObjectURL(e.target.files[0])); // Convert file to URL
-    }
-  };
-  const updateUserDetails = async () => {
-    if (newPassword || confirmPassword) {
-      if (newPassword !== confirmPassword) {
-          setErrorMessage("Passwords do not match.");
-          return;
-      }
+      const file = e.target.files[0];
+      setImage(file); // Store the actual File object
+      setPreview(URL.createObjectURL(file)); // Generate a temporary preview URL
   }
-    let imageUrl = image; // Default to existing image
+  };
+
+  const validateFields = () => {
+    let tempErrors = {};
+    if (!firstName || firstName.length < 2 || !/^[a-zA-Z]+$/.test(firstName)) {
+      tempErrors.firstName = "First name should be at least 2 letters.";
+    }
+    if (!lastName || lastName.length < 2 || !/^[a-zA-Z]+$/.test(lastName)) {
+      tempErrors.lastName = "Last name should be at least 2 letters.";
+    }
+    if (!phone || !/^\d{10,15}$/.test(phone)) {
+      tempErrors.phone = "Phone number must be between 10-15 digits.";
+    }
+    if (!address || address.length < 5) {
+      tempErrors.address = "Address must be at least 5 characters.";
+    }
+    if (!dob || new Date(dob) > new Date()) {
+      tempErrors.dob = "Date of birth must be a past date.";
+    }
+    if (newPassword && newPassword.length < 6) {
+      tempErrors.newPassword = "Password must be at least 6 characters.";
+    }
+    if (confirmPassword && newPassword !== confirmPassword) {
+      tempErrors.confirmPassword = "Passwords do not match.";
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+  
+  const updateUserDetails = async () => {
+    if (!validateFields()) return;
+
+    let imageUrl = preview; // Default to existing image
     if (image) {
       const formData = new FormData();
       formData.append("file", image);
@@ -129,8 +160,8 @@ const Profile = () => {
       <div className="profile-page">
         <div className="profile-left">
           <div className="profile-image">
-            <img src={image ? image : defaultUser} alt="Profile" />
-            </div>
+          <img src={preview} alt="Profile" />
+          </div>
           <div className="profile-details">
             <h5>{user?.firstName} {user?.lastName}</h5>
             <h5>{email}</h5>
@@ -150,19 +181,33 @@ const Profile = () => {
           {activeTab === "userInfo" && (
             <div className="user-info">
               <label>First Name</label>
-              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                {errors.firstName && <p className="error">{errors.firstName}</p>}
+
               <label>Last Name</label>
-              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                {errors.lastName && <p className="error">{errors.lastName}</p>}
+
               <label>Email</label>
               <input type="email" value={email} disabled />
+             
+
               <label>Phone Number</label>
               <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              {errors.phone && <p className="error">{errors.phone}</p>}
+
               <label>Address</label>
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+              {errors.address && <p className="error">{errors.address}</p>}
+
               <label>Date of Birth</label>
               <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
+              {errors.dob && <p className="error">{errors.dob}</p>}
+
               <label>Profile picture</label>
               <input type="file" id="image" accept="image/*"  onChange={handleImageChange} />
+              {errors.image && <p className="error">{errors.image}</p>}
+
               <button className="update-button" onClick={updateUserDetails}>Update</button>
             </div>
           )}

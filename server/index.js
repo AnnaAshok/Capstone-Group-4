@@ -8,7 +8,6 @@ const multer = require("multer");
 const { authMiddleware } = require("./middleware/authMiddleware"); // Import the shared secret key
 require('dotenv').config();
 
-const { authMiddleware } = require("./middleware/authMiddleware"); // Import authMiddleware
 const categoryController = require("./controller/categoryController");
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
