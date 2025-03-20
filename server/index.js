@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const bodyParser = require('body-parser');
 
-const categoryController = require("./controller/categoryController")
+const categoryController = require("./controller/categoryController");
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController');

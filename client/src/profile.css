@@ -5,14 +5,14 @@
   align-items: center; /* Center all content */
   gap: 20px;
   padding: 20px;
-  min-height: 100vh;
+  min-height: 110vh;
 }
 
 .profile-left {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 80vh;
+  height: 90vh;
   background: #2c4b70;
   width: 20%; /* Reduced width */
   padding: 50px; /* Adjusted padding */
@@ -36,7 +36,7 @@
 .profile-right {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center content */
+  align-items: center; 
   justify-content: center;
   width: 40%; /* Reduced width */
   background: #ffffff;
@@ -54,7 +54,7 @@
 
 .tabs {
   display: flex;
-  justify-content: center; /* Center tabs */
+  justify-content: center; 
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -74,25 +74,31 @@
 
 .user-info {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center labels & inputs */
+  /* display: flex;
+  flex-direction: column; */
+  text-align: left;
+  align-items: start;
+}
+.user-info label{
+  display: block;
+  margin-top: 10px;
+  text-align: left;
 }
 
-.user-info label,
 .course-info p {
   display: block;
   margin-top: 10px;
-  text-align: center;
+  text-align: left;
 }
 
 .user-info input {
-  width: 80%; /* Adjusted input width */
+  width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-top: 5px;
-  text-align: center;
+  margin-left: 0;
+  text-align: left;
 }
 
 .update-button {
@@ -116,7 +122,9 @@
 .password-update {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  text-align: left;
+  align-items: start;
+  /* align-items: center; */
   gap: 10px;
   width: 100%;
 }
@@ -246,6 +254,13 @@ background-color: #f1f1f1;
 
 .tabs button.active:hover {
 background-color: #0F3460;
+}
+
+
+.error {
+  color: red;
+  font-size: 18px;
+  margin-top: 5px;
 }
 
 @media (max-width: 768px) {
