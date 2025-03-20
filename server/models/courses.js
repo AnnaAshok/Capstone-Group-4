@@ -10,7 +10,9 @@ const CoursesModel = new mongoose.Schema({
     duration: { type: String, enum: duration, required: true },
     price: { type: Number, required:true },
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'questions' }], // Array of references to Questions
-    shortDescription: { type: String, required: true } 
+    shortDescription: { type: String, required: true },
+    heading: { type: String, required: true },
+    video: { type: String, required: true }
 });
 
 module.exports = mongoose.model("courses", CoursesModel);

@@ -11,17 +11,16 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 
 const categoryController = require("./controller/categoryController")
-const { authMiddleware } = require("./middleware/authMiddleware"); // Import authMiddleware
-const categoryController = require("./controller/categoryController");
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController');
 const roleConroller = require('./controller/roleController');
-
-const emailController = require('./controller/emailController');
+// const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
+const enrollmentController = require('./controller/enrollmentController');
 
 const app = express();
+
 // Cloudinary configuration
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -86,7 +85,11 @@ app.post("/deleteUser/:id", userController.deleteUser)
 // Routes for role
 app.get("/roles", roleConroller.getRoles);
 
-app.use('/api', emailController);
+// app.use('/api', emailController);
+
+// Routes for enrollment
+app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
+app.get('/enrollments/:courseId/:userId', authMiddleware, enrollmentController.checkEnrollment);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);
