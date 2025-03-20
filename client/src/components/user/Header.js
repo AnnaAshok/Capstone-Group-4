@@ -137,7 +137,7 @@ const Header = () => {
                 About Us
               </Nav.Link>
               <Nav.Link
-                href="/contact"
+                href="/contactUs"
                 style={{ color: "#0F3460", fontWeight: "bold" }}
               >
                 Contact Us

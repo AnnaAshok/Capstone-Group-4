@@ -3,11 +3,15 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const path = require("path");
 
+const bodyParser = require('body-parser');
+
 const categoryController = require("./controller/categoryController")
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
-const userController = require('./controller/userController')
-const roleConroller = require('./controller/roleController')
+const userController = require('./controller/userController');
+const roleConroller = require('./controller/roleController');
+
+const emailController = require('./controller/emailController');
 
 const app = express();
 
@@ -20,6 +24,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(bodyParser.json());
 
 // Connect Database
 connectDB();
@@ -58,6 +64,8 @@ app.post("/deleteUser/:id",userController.deleteUser)
 
 // Routes for role
 app.get("/roles",roleConroller.getRoles);
+
+app.use('/api', emailController);
 
 
 

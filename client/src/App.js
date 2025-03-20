@@ -8,6 +8,7 @@ import CoursePage  from './components/user/CoursePage';
 import CustomTable from './components/admin/CustomTable';
 import AdminRoutes from './components/admin/AdminRoutes';
 import CourseDetailsPage from './components/user/CourseDetailsPage';
+import ContactUs from './components/user/ContactUs';
 
 
 
@@ -23,6 +24,7 @@ function App() {
         
         <Route path="/courses" element={<CoursePage />}></Route>
         <Route path="/courses/:courseId" element={<CourseDetailsPage />}></Route>
+        <Route path="/contactUs" element={<ContactUs />}></Route>
         
         {/* Admin routes */}
         <Route path="/admin/*" element={<AdminRoutes />} />
