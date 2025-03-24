@@ -16,6 +16,8 @@ function AddCourse() {
     duration: "2 weeks",
     price: "",
     courseImage: null,
+    heading: "",
+    video: null,
   });
   const navigate = useNavigate();
 
@@ -44,12 +46,21 @@ function AddCourse() {
     },
   });
 
+  // Handle video upload
+  const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
+    accept: "video/*",
+    onDrop: (acceptedFiles) => {
+      setFormData({ ...formData, video: acceptedFiles[0] });
+    },
+  });
+
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Check if all fields are filled
-    if (!formData.title || !formData.shortDescription || !formData.longDescription || !formData.categoryID || !formData.price || !formData.courseImage) {
+    if (!formData.title || !formData.shortDescription || !formData.longDescription || !formData.categoryID || !formData.price || !formData.courseImage || !formData.heading || !formData.video) {
       alert("Please fill out all fields");
       return;
     }
@@ -65,6 +76,16 @@ function AddCourse() {
     );
       const imageUrl = cloudinaryResponse.data.secure_url; // Get the uploaded image URL from Cloudinary response
 
+       // Upload video
+      const videoUploadData = new FormData();
+      videoUploadData.append("file", formData.video);
+      videoUploadData.append("upload_preset", "eduSphere");
+      const videoResponse = await axios.post(
+        "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
+        videoUploadData
+      );
+      const videoUrl = videoResponse.data.secure_url;
+
       const courseData = {
         title: formData.title,
         shortDescription: formData.shortDescription,
@@ -73,7 +94,11 @@ function AddCourse() {
         duration: formData.duration,
         price: formData.price,
         courseImage: imageUrl, // Use the Cloudinary image URL
+        heading: formData.heading,
+        video: videoUrl,
       };
+      console.log(courseData); // Check if videoUrl is present here
+      
       const response = await axios.post("http://localhost:5000/addCourse", courseData, {
         headers: { "Content-Type": "application/json" }
       });
@@ -85,6 +110,8 @@ function AddCourse() {
         duration: "2 weeks",
         price: "",
         courseImage: null,
+        heading: "",
+        video: null,
       });
       navigate("/admin/courses");
     } catch (error) {
@@ -126,6 +153,20 @@ function AddCourse() {
             multiline
             rows={4}
           />
+
+          <Box marginBottom={2}>
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+              Heading:
+            </Typography>
+            <TextField
+              sx={{ width: "50%" }}
+              variant="outlined"
+              size="small"
+              name="heading"
+              value={formData.heading}
+              onChange={handleChange}
+            />
+          </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
             Long Description:
@@ -195,6 +236,13 @@ function AddCourse() {
             <input {...getInputProps()} />
             <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>Drag & drop an image here, or click to upload</Typography>
             {formData.courseImage && <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>{formData.courseImage.name}</Typography>}
+          </Box>
+
+          <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Course Video:</Typography>
+          <Box {...getVideoRootProps()} sx={{ border: "2px dashed #0F3460", padding: "20px", textAlign: "center", cursor: "pointer", borderRadius: "8px", backgroundColor: "#f9f9f9", width: "50%" }} marginBottom={2}>
+            <input {...getVideoInputProps()} />
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>Drag & drop an video here, or click to upload</Typography>
+            {formData.video && <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>{formData.video.name}</Typography>}
           </Box>
 
           <Button type="submit" variant="contained" color="primary">

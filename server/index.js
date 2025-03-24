@@ -8,14 +8,19 @@ const multer = require("multer");
 const { authMiddleware } = require("./middleware/authMiddleware"); // Import the shared secret key
 require('dotenv').config();
 
+const bodyParser = require('body-parser');
+
 const categoryController = require("./controller/categoryController");
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController');
 const roleConroller = require('./controller/roleController');
+// const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
+const enrollmentController = require('./controller/enrollmentController');
 
 const app = express();
+
 // Cloudinary configuration
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -40,6 +45,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(bodyParser.json());
 
 // Connect Database
 connectDB();
@@ -77,6 +84,12 @@ app.post("/deleteUser/:id", userController.deleteUser)
 
 // Routes for role
 app.get("/roles", roleConroller.getRoles);
+
+// app.use('/api', emailController);
+
+// Routes for enrollment
+app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
+app.get('/enrollments/:courseId/:userId', authMiddleware, enrollmentController.checkEnrollment);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);

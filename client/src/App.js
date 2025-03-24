@@ -9,6 +9,7 @@ import CustomTable from './components/admin/CustomTable';
 import AdminRoutes from './components/admin/AdminRoutes';
 import Profile from './components/user/profile';
 import CourseDetailsPage from './components/user/CourseDetailsPage';
+import ContactUs from './components/user/ContactUs';
 import Quiz from './components/user/Quiz';
 
 
@@ -25,6 +26,7 @@ function App() {
         
         <Route path="/courses" element={<CoursePage />}></Route>
         <Route path="/courses/:courseId" element={<CourseDetailsPage />}></Route>
+        <Route path="/contactUs" element={<ContactUs />}></Route>
         
         {/* Admin routes */}
         <Route path="/admin/*" element={<AdminRoutes />} />
