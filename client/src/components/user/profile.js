@@ -5,12 +5,14 @@ import Header from "./Header";
 import Footer from "./Footer";
 import defaultUser from "../../Assets/images/user.png";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("userInfo");
-  const [image, setImage] = useState(null); // Stores File for uploads
+  const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(defaultUser);
-    const [firstName, setFirstName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,10 +24,10 @@ const Profile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [courses, setCourses] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [user, setUser] = useState(null); // Store user data
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
-  const [userId, setUserId] = useState(null); 
+  const [userId, setUserId] = useState(null);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -41,40 +43,44 @@ const Profile = () => {
 
   const fetchUserDetails = async () => {
     try {
-        const response = await axios.post(
-            "http://localhost:5000/user/details", // API endpoint
-            { email }, 
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`, // Send token in Authorization header
-                    "Content-Type": "application/json"
-                }
-            }
-        );
-        setUser(response.data);
-        setUserId(response.data._id); // Store the user ID from the response
-        setFirstName(response.data.firstName);
-        setLastName(response.data.lastName);
-        setPhone(response.data.phone);
-        setAddress(response.data.address);
-        setDob(response.data.dob);
-        if (response.data.image) {
-          setPreview(response.data.image);
+      const response = await axios.post(
+        "http://localhost:5000/user/details",
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setUser(response.data);
+      setUserId(response.data._id);
+      setFirstName(response.data.firstName);
+      setLastName(response.data.lastName);
+      setPhone(response.data.phone);
+      setAddress(response.data.address);
+      setDob(response.data.dob);
+      if (response.data.image) {
+        setPreview(response.data.image);
       }
     } catch (err) {
-        setError(err.response?.data?.message || "An error occurred while fetching user details.");
+      setError(
+        err.response?.data?.message ||
+          "An error occurred while fetching user details."
+      );
     }
-};
-  useEffect(()=>{
-    if(email) fetchUserDetails();
+  };
 
-  },[email])
+  useEffect(() => {
+    if (email) fetchUserDetails();
+  }, [email]);
+
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
-      setImage(file); // Store the actual File object
-      setPreview(URL.createObjectURL(file)); // Generate a temporary preview URL
-  }
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
   const validateFields = () => {
@@ -103,16 +109,16 @@ const Profile = () => {
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
-  
+
   const updateUserDetails = async () => {
     if (!validateFields()) return;
 
-    let imageUrl = preview; // Default to existing image
+    let imageUrl = preview;
     if (image) {
       const formData = new FormData();
       formData.append("file", image);
-      formData.append("upload_preset", "eduSphere"); // Cloudinary upload preset
-  
+      formData.append("upload_preset", "eduSphere");
+
       try {
         const cloudinaryResponse = await axios.post(
           "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
@@ -121,6 +127,7 @@ const Profile = () => {
         imageUrl = cloudinaryResponse.data.secure_url;
       } catch (error) {
         console.error("Error uploading image:", error);
+        toast.error("Error uploading image.");
         return;
       }
     }
@@ -131,28 +138,28 @@ const Profile = () => {
         phone,
         address,
         dob,
-    };
-    // Include password only if it's provided
-    if (newPassword) {
+      };
+      if (newPassword) {
         updateData.password = newPassword;
-    }
-    if(image){
-      updateData.image = imageUrl
-    }
-    const response = await axios.post(
+      }
+      if (image) {
+        updateData.image = imageUrl;
+      }
+      const response = await axios.post(
         `http://localhost:5000/user/update/${userId}`,
         updateData,
         {
-            headers: {
-                "Content-Type": "application/json",
-            },
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-    );
-        alert("User details updated successfully!");
+      );
+      toast.success("User details updated successfully!");
     } catch (err) {
-        setErrorMessage(err.response?.data?.message || "Error updating details.");
+      setErrorMessage(err.response?.data?.message || "Error updating details.");
+      toast.error(err.response?.data?.message || "Error updating details.");
     }
-};
+  };
 
   return (
     <>
@@ -160,10 +167,12 @@ const Profile = () => {
       <div className="profile-page">
         <div className="profile-left">
           <div className="profile-image">
-          <img src={preview} alt="Profile" />
+            <img src={preview} alt="Profile" />
           </div>
           <div className="profile-details">
-            <h5>{user?.firstName} {user?.lastName}</h5>
+            <h5>
+              {user?.firstName} {user?.lastName}
+            </h5>
             <h5>{email}</h5>
             <p>{user?.phone ? user?.phone : ""}</p>
             <p>{user?.address ? user?.address : ""}</p>
@@ -173,39 +182,73 @@ const Profile = () => {
 
         <div className="profile-right">
           <div className="tabs">
-            <button className={activeTab === "userInfo" ? "active" : ""} onClick={() => setActiveTab("userInfo")}>User Information</button>
-            <button className={activeTab === "passwordUpdate" ? "active" : ""} onClick={() => setActiveTab("passwordUpdate")}>Change Password</button>
-            <button className={activeTab === "courseInfo" ? "active" : ""} onClick={() => setActiveTab("courseInfo")}>Course Information</button>
+            <button
+              className={activeTab === "userInfo" ? "active" : ""}
+              onClick={() => setActiveTab("userInfo")}
+            >
+              User Information
+            </button>
+            <button
+              className={activeTab === "passwordUpdate" ? "active" : ""}
+              onClick={() => setActiveTab("passwordUpdate")}
+            >
+              Change Password
+            </button>
+            <button
+              className={activeTab === "courseInfo" ? "active" : ""}
+              onClick={() => setActiveTab("courseInfo")}
+            >
+              Course Information
+            </button>
           </div>
 
           {activeTab === "userInfo" && (
             <div className="user-info">
               <label>First Name</label>
-                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                {errors.firstName && <p className="error">{errors.firstName}</p>}
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+              {errors.firstName && <p className="error">{errors.firstName}</p>}
 
               <label>Last Name</label>
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                {errors.lastName && <p className="error">{errors.lastName}</p>}
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+              {errors.lastName && <p className="error">{errors.lastName}</p>}
 
               <label>Email</label>
               <input type="email" value={email} disabled />
-             
 
               <label>Phone Number</label>
-              <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
               {errors.phone && <p className="error">{errors.phone}</p>}
 
               <label>Address</label>
-              <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
               {errors.address && <p className="error">{errors.address}</p>}
 
               <label>Date of Birth</label>
-              <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
+              <input
+                type="date"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+              />
               {errors.dob && <p className="error">{errors.dob}</p>}
 
               <label>Profile picture</label>
-              <input type="file" id="image" accept="image/*"  onChange={handleImageChange} />
+              <input type="file" id="image" accept="image/*" onChange={handleImageChange} />
               {errors.image && <p className="error">{errors.image}</p>}
 
               <button className="update-button" onClick={updateUserDetails}>Update</button>
@@ -302,6 +345,18 @@ const Profile = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };
