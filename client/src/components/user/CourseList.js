@@ -12,9 +12,11 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
     const coursesPerPage = 6;
 
     // Handle 'All' category 
-    const selectedCategoryID = selectedCategory === "All"
-        ? ""
-        : categories?.find(cat => cat.categoryName === selectedCategory)?._id || "";
+    // const selectedCategoryID = selectedCategory === "All"
+    //     ? null
+    //     : categories?.find(cat => cat.categoryName === selectedCategory)?._id || "";
+    const selectedCategoryID = categories?.find(cat => cat.categoryName === selectedCategory)?._id || null;
+
 
     // Fetch courses from backend
     useEffect(() => {
@@ -32,10 +34,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
 
                 const data = await response.json();
 
-                // Debugging API response
-                // console.log("1. Fetched courses in CourseList:", data);
-
-                if (Array.isArray(data.courses)) {
+                if (data?.courses) {
                     setCourses(data.courses); // Set courses state
                     setTotalPages(data.totalPages); // Set totalPages from API
                     setCurrentPage(data.currentPage); // Set currentPage from API
@@ -49,7 +48,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
             }
         };
 
-        // Only fetch if selectedCategoryID is valid or All category is selected
+        // // Only fetch if selectedCategoryID is valid or All category is selected
         if (selectedCategory === "All" || selectedCategoryID !== null) {
             fetchCourses();
         }
@@ -60,13 +59,11 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
         ? courses // If 'All' is selected, show all courses
         : courses.filter(course => course.categoryId === selectedCategoryID); // Filter by categoryID
 
-    // Log filtered courses
-    // console.log("Courses Before Filtering:", courses);  // Check if courses array is populated
-    // console.log("Filtered Courses After Filtering:", filteredCourses);
-    // console.log("Total Courses Available:", filteredCourses.length);
 
     const totalCourses = filteredCourses.length;
-    const totalPagesCalculated = Math.ceil(totalCourses / coursesPerPage); // Use the totalCourses length to calculate totalPages
+    //const totalPagesCalculated = Math.ceil(totalCourses / coursesPerPage); // Use the totalCourses length to calculate totalPages
+    const totalPagesCalculated = totalPages; // Use the totalPages from the API response
+
     //const indexOfFirstCourse = (currentPage - 1) * limit;
     //const indexOfLastCourse = Math.min(indexOfFirstCourse + limit, filteredCourses.length);
 
@@ -77,13 +74,6 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
     console.log("Total Pages:", totalPagesCalculated);
     console.log("Index of First Course:", indexOfFirstCourse);
     console.log("Index of Last Course:", indexOfLastCourse);
-
-    // applying pagination for the case when limit is provided
-    // const displayedCourses = limit
-    // ? filteredCourses.slice(0, limit) // If limit exists, only show limited courses
-    // : filteredCourses.length > 0
-    //     ? filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse) // If pagination is needed
-    //     : [];
 
     // Applying pagination: if limit is provided, only show limited courses
     const displayedCourses = limit
@@ -135,7 +125,8 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                     {displayedCourses.length > 0 ? (
                         displayedCourses.map(course => (
                             <div key={course._id} className="course-card">
-                                <img src={sample_img} alt="sample image" className='course-image' />
+                                {/* <img src={sample_img} alt="sample image" className='course-image' /> */}
+                                <img src={course.courseImage} alt={course.title} className="course-image"/>
                                 <div className="course-content">
                                     <h3 className="course-title">{course.title}</h3>
                                     <p className="course-description"><div dangerouslySetInnerHTML={{__html: course.description}}/></p>

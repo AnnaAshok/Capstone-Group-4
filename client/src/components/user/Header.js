@@ -95,7 +95,7 @@ const Header = () => {
               <Nav.Link href="/" style={{ color: "#0F3460", fontWeight: "bold" }}>Home</Nav.Link>
               <Nav.Link href="/courses" style={{ color: "#0F3460", fontWeight: "bold" }}>Courses</Nav.Link>
               <Nav.Link href="/about" style={{ color: "#0F3460", fontWeight: "bold" }}>About Us</Nav.Link>
-              <Nav.Link href="/contact" style={{ color: "#0F3460", fontWeight: "bold" }}>Contact Us</Nav.Link>
+              <Nav.Link href="/contactUs" style={{ color: "#0F3460", fontWeight: "bold" }}>Contact Us</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

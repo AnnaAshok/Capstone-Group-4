@@ -24,6 +24,17 @@ const storage = new CloudinaryStorage({
   },
 });
 
+// Set up Cloudinary storage for video uploads
+const videoStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "Videos",
+    resource_type: "video",
+    allowed_formats: ["mp4", "avi", "mov"],
+    public_id: (req, file) => Date.now() + "-" + file.originalname,
+  },
+});
+
 // File Filter (Only accept images)
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
@@ -35,6 +46,7 @@ const fileFilter = (req, file, cb) => {
 
 // Initialize Multer Middleware
 const uploads = multer({ storage, fileFilter });
+const videoUpload = multer({ storage: videoStorage });
 
 
   // Get all courses
@@ -62,7 +74,7 @@ const uploads = multer({ storage, fileFilter });
   // Add Course
   exports.addCourse = async (req, res) => {
     try {
-      const { title, shortDescription, longDescription, categoryID, duration, price ,courseImage} = req.body;
+      const { title, shortDescription, longDescription, categoryID, duration, price ,courseImage, heading, video } = req.body;
 
     // Validate required fields
     if (!title || !shortDescription || !longDescription || !categoryID || !duration || !price) {
@@ -73,7 +85,24 @@ const uploads = multer({ storage, fileFilter });
       return res.status(400).json({ message: "Price should be greater than zero!" });
     }
 
-    const newCourse = new Course({ title, shortDescription, longDescription, categoryID, courseImage, duration, price });
+    // // Upload video to Cloudinary if available
+    // let videoUrl = "";
+    // if (req.files && req.files.video) {
+    //   const cloudinaryVideoResponse = await cloudinary.uploader.upload(req.files.video[0].path, { resource_type: "video" }); // Upload video to Cloudinary
+    //   videoUrl = cloudinaryVideoResponse.secure_url;
+    // }
+
+    const newCourse = new Course({ 
+      title, 
+      shortDescription, 
+      longDescription, 
+      categoryID, 
+      courseImage, 
+      duration, 
+      price, 
+      heading, 
+      video});
+
     await newCourse.save();
 
     res.status(201).json({ message: "Course added successfully!" });
@@ -121,7 +150,6 @@ const uploads = multer({ storage, fileFilter });
     }
   };
   
-  exports.uploads = uploads;
 
   // Course list for coursepage with filter
   exports.courseListfilter = async (req, res) => {
@@ -136,11 +164,15 @@ const uploads = multer({ storage, fileFilter });
               // Ensure categoryId is not null if 'All' is selected
               query.categoryID = { $ne: null };
           }
+
+          const totalCourses = await Course.countDocuments(query); // Total count of filtered courses
+          const totalPages = Math.ceil(totalCourses / limit); // Calculate total pages
+
           const courses = await Course.find(query)
               .skip((page - 1) * limit)
               .limit(parseInt(limit));
   
-          const totalCourses = await Course.countDocuments(query); // Total count for pagination
+          //const totalCourses = await Course.countDocuments(query); // Total count for pagination
   
           res.json({
               courses,
@@ -173,3 +205,5 @@ const uploads = multer({ storage, fileFilter });
           res.status(500).json({ error: "Server error" });
       }
   }
+
+exports.uploads = uploads;
