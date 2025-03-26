@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography, Paper, Select, MenuItem, FormControl, IconButton } from "@mui/material";
+import { TextField, Button, Box, Typography, Paper, Select, MenuItem, FormControl, IconButton,FormHelperText } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const CreateQuiz = () => {
@@ -14,6 +14,8 @@ const CreateQuiz = () => {
   const [answer, setAnswer] = useState("");
   const [mark, setMark] = useState();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+
 
   useEffect(() => {
     axios.get("http://localhost:5000/getCourses")
@@ -21,11 +23,25 @@ const CreateQuiz = () => {
       .catch(error => console.error("Error fetching courses:", error));
   }, []);
 
+  const validateForm = () => {
+    let newErrors = {};
+    
+    if (!selectedCourse) newErrors.selectedCourse = "Course is required.";
+    if (!question.trim()) newErrors.question = "Question cannot be empty.";
+    if (options.some(opt => !opt.label.trim())) newErrors.options = "All options must be filled.";
+    if (!answer) newErrors.answer = "Please select a correct answer.";
+    if (!mark || isNaN(mark) || mark <= 0) newErrors.mark = "Marks must be a positive number.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleOptionChange = (index, field, value) => {
     const updatedOptions = [...options];
     updatedOptions[index][field] = value;
     setOptions(updatedOptions);
-
+    if (errors.options && value.trim()) {
+      setErrors(prev => ({ ...prev, options: "" }));
+    }
     // If the edited option was the selected answer, reset the answer
     if (field === "label" && answer === options[index].value) {
       setAnswer("");
@@ -43,6 +59,7 @@ const CreateQuiz = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
     const newQuestion = {
       courseID: selectedCourse,
@@ -69,21 +86,23 @@ const CreateQuiz = () => {
         <form onSubmit={handleSubmit}>
           {/* Select Course */}
           <Box marginBottom={2}>
-            <FormControl fullWidth sx={{ width: "50%" }} variant="outlined" size="small" required>
+            <FormControl fullWidth sx={{ width: "50%" }} variant="outlined" size="small" error={!!errors.selectedCourse}>
               <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", marginTop: "20px", fontSize: "18px" }}>Select Course:</Typography>
-              <Select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} required>
+              <Select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} >
                 <MenuItem value=""><em>None</em></MenuItem>
                 {courses.map((course) => (
                   <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
                 ))}
               </Select>
+              {errors.selectedCourse && <FormHelperText error={true}>{errors.selectedCourse}</FormHelperText>}
             </FormControl>
           </Box>
 
           {/* Question Input */}
           <Box marginBottom={2}>
             <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Question:</Typography>
-            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={question} onChange={(e) => setQuestion(e.target.value)} required />
+            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={question} onChange={(e) => setQuestion(e.target.value)} error={!!errors.question} 
+              helperText={errors.question} />
           </Box>
 
           {/* Options Input */}
@@ -98,10 +117,12 @@ const CreateQuiz = () => {
                   value={option.label}
                   onChange={(e) => handleOptionChange(index, "label", e.target.value)}
                   placeholder={`Option ${index + 1}`}
-                  required
+                  error={!!errors.options}
+                  
                 />
               </Box>
             ))}
+                        {errors.options && <FormHelperText error>{errors.options}</FormHelperText>}
             {options.length < 4 && (
               <IconButton onClick={addOption} color="primary">
                 <AddCircleIcon />
@@ -119,13 +140,15 @@ const CreateQuiz = () => {
                   <MenuItem key={index} value={option.value}>{option.label || `Option ${index + 1}`}</MenuItem>
                 ))}
               </Select>
+              {errors.answer && <FormHelperText error={true}>{errors.answer}</FormHelperText>}
             </FormControl>
           </Box>
 
           {/* Marks Input */}
           <Box marginBottom={2}>
             <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Marks:</Typography>
-            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={mark} onChange={(e) => setMark(e.target.value)} required type="number" />
+            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={mark} onChange={(e) => setMark(e.target.value)}  error={!!errors.mark}
+              helperText={errors.mark} type="number" />
           </Box>
 
           {/* Buttons */}
