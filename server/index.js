@@ -14,8 +14,8 @@ const categoryController = require("./controller/categoryController");
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController');
-const roleController = require('./controller/roleController');
-// const emailController = require('./controller/emailController');
+const roleConroller = require('./controller/roleController');
+const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
 const quizController = require("./controller/quizController");
@@ -85,9 +85,9 @@ app.post("/getUserById/:id", userController.getUserById);
 app.post("/deleteUser/:id", userController.deleteUser)
 
 // Routes for role
-app.get("/roles", roleController.getRoles);
-
-// app.use('/api', emailController);
+app.get("/roles", roleConroller.getRoles);
+// Route for email sending
+app.post('/send-email', emailController.sendEmail);
 
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 

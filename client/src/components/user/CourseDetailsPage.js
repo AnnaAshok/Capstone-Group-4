@@ -154,8 +154,6 @@ const CourseDetailsPage = () => {
             }
         } else {
             setShowPaymentForm(true)
-            // Redirect to payment page for paid courses
-            //navigate(/payment?courseId=${courseId}&userID=${userID});
         }
     };
 
@@ -193,8 +191,8 @@ const CourseDetailsPage = () => {
 
                     <div className="course-right">
                         {/* <h2>Course Details</h2> */}
-                        <p className=''>Duration: {course.duration}</p>
-                        <p className=''>Price: ${course.price}</p>
+                        <p className=''><strong>Duration:</strong> {course.duration}</p>
+                        <p className=''><strong>Price:</strong> ${course.price}</p>
                        {!enrolled && !showPaymentForm && (
                             <button onClick={handleEnrollment} className="enroll-button">Enroll</button>
                         )}
