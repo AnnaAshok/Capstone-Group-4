@@ -12,7 +12,7 @@ const CoursesModel = new mongoose.Schema({
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'questions' }], // Array of references to Questions
     shortDescription: { type: String, required: true },
     heading: { type: String, required: true },
-    video: { type: String, required: true }
+    videos: [String],
 });
 
 module.exports = mongoose.model("courses", CoursesModel);

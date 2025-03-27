@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import '../../home.css';
-import sample_img from "../../Assets/images/Python-logo.png";
 import { useNavigate } from 'react-router-dom';
 
 const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, hideCategoryButtons, hidePagination }) => {
     const [courses, setCourses] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1); 
-    const navigate = useNavigate();  // Add navigation hook
+    const navigate = useNavigate();  
 
     const coursesPerPage = 6;
 
     // Handle 'All' category 
-    // const selectedCategoryID = selectedCategory === "All"
-    //     ? null
-    //     : categories?.find(cat => cat.categoryName === selectedCategory)?._id || "";
-    const selectedCategoryID = categories?.find(cat => cat.categoryName === selectedCategory)?._id || null;
-
+    const selectedCategoryID = selectedCategory === "All"
+        ? null
+        : categories?.find(cat => cat.categoryName === selectedCategory)?._id || "";
 
     // Fetch courses from backend
     useEffect(() => {
@@ -30,11 +27,10 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                 console.log("Fetching courses with URL:", `http://localhost:5000/courses${categoryParam}`);
 
                 const response = await fetch(`http://localhost:5000/courses${categoryParam}`);
-                // console.log("Request URL:", `http://localhost:5000/courses${categoryParam}`); 
 
                 const data = await response.json();
 
-                if (data?.courses) {
+                if (Array.isArray(data.courses)) {
                     setCourses(data.courses); // Set courses state
                     setTotalPages(data.totalPages); // Set totalPages from API
                     setCurrentPage(data.currentPage); // Set currentPage from API
@@ -57,15 +53,12 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
     // Ensure filtering is based on categoryID, but skip when "All" is selected
     const filteredCourses = selectedCategory === "All"
         ? courses // If 'All' is selected, show all courses
-        : courses.filter(course => course.categoryId === selectedCategoryID); // Filter by categoryID
+        : courses.filter(course => course.categoryID === selectedCategoryID); // Filter by categoryID
 
 
     const totalCourses = filteredCourses.length;
     //const totalPagesCalculated = Math.ceil(totalCourses / coursesPerPage); // Use the totalCourses length to calculate totalPages
-    const totalPagesCalculated = totalPages; // Use the totalPages from the API response
-
-    //const indexOfFirstCourse = (currentPage - 1) * limit;
-    //const indexOfLastCourse = Math.min(indexOfFirstCourse + limit, filteredCourses.length);
+    const totalPagesCalculated = totalPages; // Use the value from API
 
     // Calculate the index of the first and last course based on the current page
     const indexOfFirstCourse = (currentPage - 1) * limit;
