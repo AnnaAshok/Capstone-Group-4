@@ -252,7 +252,6 @@ function AddCourse() {
           <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
             Course Video:
           </Typography>
-
           <Box
             {...getVideoRootProps()}
             sx={{

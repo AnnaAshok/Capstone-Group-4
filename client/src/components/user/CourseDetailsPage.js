@@ -7,6 +7,7 @@ import Footer from './Footer';
 import LoginSignup from './LoginSignup';
 import { jwtDecode } from 'jwt-decode';
 import Quiz from './Quiz';
+import Certificate from './Certificate';
 import PaymentForm from "./PaymentForms.js";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
@@ -50,6 +51,7 @@ const CourseDetailsPage = () => {
                     const decodedToken = jwtDecode(token);
                     const userID = decodedToken.userId;
 
+                    // First check LocalStorage
                     const storedEnrollment = localStorage.getItem(`enrolled_${courseId}_${userID}`);
                     if (storedEnrollment === 'true') {
                         setEnrolled(true);
@@ -249,6 +251,9 @@ const CourseDetailsPage = () => {
             {loginModalShow && (
                 <LoginSignup show={loginModalShow} handleClose={() => setLoginModalShow(false)} />
             )}
+
+
+            <Certificate />
 
             <Footer />
         </>

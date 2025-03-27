@@ -750,7 +750,7 @@
 }
 
 /******* video styles in course details page ********/
-.video-container {
+/* .video-container {
     margin-bottom: 20px;
     margin-top: 20px;
     display: flex;
@@ -778,6 +778,45 @@
 
 .attend-quiz-button:hover {
     background-color: rgb(15, 52, 96);
+} */
+
+.video-container {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.videos-row {
+    display: grid; /* Use grid instead of flex */
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 20px; /* Space between items */
+    margin-top: 10px;
+}
+
+.video-item {
+    display: flex;
+    justify-content: center; /* Center the video */
+}
+
+.attend-quiz-button {
+    background-color: #f7c221;
+    color: white;
+    border: none;
+    padding: .5rem 5rem;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.attend-quiz-button:hover {
+    background-color: rgb(15, 52, 96);
+}
+
+.certificate-div {
+    margin-bottom: 5rem;
+    text-align: center;
+    margin-top: 3rem;
 }
 
 @media (max-width: 768px) {
