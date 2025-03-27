@@ -1,51 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 function cn(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const SimpleQuizUI = () => {
+const SimpleQuizUI = ({ courseId }) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [timer, setTimer] = useState(0); // Initialize timer to 0
+  const [timer, setTimer] = useState(0);
   const [originalTime, setOriginalTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const [certificateGenerated, setCertificateGenerated] = useState(false);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [userId, setUserId] = useState(null); // Get User ID
 
   useEffect(() => {
+    // Get the user ID from the token
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUserId(decodedToken.userId);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setError('Invalid token.');
+        setLoading(false);
+        return; // Stop further execution
+      }
+    } else {
+      setError('User not logged in.');
+      setLoading(false);
+      return;
+    }
+
     const fetchQuestions = async () => {
-        try {
-            setLoading(true);
-            const courseID = '67dba967cef55edef474789b';
-            const response = await axios.get(`http://localhost:5000/questions/${courseID}`);
-            console.log(response.data);
-            if (response.data) {
-                setQuestions(response.data);
-            } else {
-                setError('Invalid data received from server');
-            }
-        } catch (err) {
-            setError('Error fetching questions');
-            console.error(err);
-        } finally {
-            setLoading(false);
+      try {
+        setLoading(true);
+        const response = await axios.get(`http://localhost:5000/questions/${courseId}`);
+        if (response.data) {
+          setQuestions(response.data);
+        } else {
+          setError('Invalid data received from server');
         }
+      } catch (err) {
+        setError('Error fetching questions');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchQuestions();
-}, []);
+  }, [courseId]);
 
   useEffect(() => {
     if (questions.length > 0) {
-      // Set the timer based on the number of questions.
-      const timePerQuestion = 60; // 60 seconds per question
+      const timePerQuestion = 60;
       const totalTime = questions.length * timePerQuestion;
       setOriginalTime(totalTime);
       setTimer(totalTime);
@@ -94,37 +111,47 @@ const SimpleQuizUI = () => {
   const handleSubmit = async () => {
     setQuizCompleted(true);
     let correctAnswers = 0;
-  
+
     questions.forEach(question => {
       if (userAnswers[question._id] === question.answer) {
         correctAnswers++;
       }
     });
-  
+
     setCorrectAnswersCount(correctAnswers);
     const percentage = (correctAnswers / questions.length) * 100;
     const status = percentage >= 60 ? "passed" : "failed";
-  
+
     setResultMessage(status === "passed" ? "Congratulations! You passed!" : "Sorry, you failed. Please try again next time.");
-  
+
     // Prepare data to send
     const quizData = {
-      userId: "67e1c368393d53724fc5c48e", 
-      courseID: "67dba967cef55edef474789b", 
+      userId: userId,
+      courseId: courseId,
       totalMarks: questions.length,
       receivedMarks: correctAnswers,
-      status
+      status: status
     };
-  
+    console.log("quizData:", quizData);
+
     try {
-      await axios.post("http://localhost:5000/quiz-results", quizData);
-        console.log("courseID");
-    //   console.log("Quiz result saved successfully.");
+      const response = await axios.post("http://localhost:5000/quiz-results", quizData);
+      // Check for HTTP status codes outside the 200 range
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Failed to save quiz results: ${response.status}`);
+      }
+      const responseData = response.data;  // Capture the response data
+      console.log("Response Data:", responseData); // Log the response
+      if (!responseData)
+      {
+        setError("Empty response from server");
+        return;
+      }
     } catch (error) {
       console.error("Error saving quiz result:", error);
+      setError('Failed to save quiz results. Please try again.');
     }
   };
-  
 
   const progress = questions.length ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
 
@@ -146,10 +173,8 @@ const SimpleQuizUI = () => {
     setCertificateGenerated(false);
     setCorrectAnswersCount(0);
     try {
-      // Fetch questions again with the same hardcoded course ID
-      const courseID = '67dba967cef55edef474789b'; // Same hardcoded course ID
-      const response = await axios.get(`http://localhost:5000/questions/${courseID}`);
-      
+      const response = await axios.get(`http://localhost:5000/questions/${courseId}`);
+
       if (response.data) {
         setQuestions(response.data);
       } else {
@@ -286,7 +311,7 @@ const SimpleQuizUI = () => {
             <p className="text-lg mt-2">
               You scored {correctAnswersCount} out of {questions.length}.
             </p>
-            {resultMessage === "Congratulations! You passed!" && !certificateGenerated && (
+            {/* {resultMessage === "Congratulations! You passed!" && !certificateGenerated && (
               <button
                 onClick={() => setCertificateGenerated(true)}
                 className="mt-4 px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
@@ -296,7 +321,7 @@ const SimpleQuizUI = () => {
             )}
             {certificateGenerated && (
               <p className="text-lg text-green-500 mt-2">Certificate Generated!</p>
-            )}
+            )} */}
           </div>
         )}
 
@@ -312,3 +337,4 @@ const SimpleQuizUI = () => {
 };
 
 export default SimpleQuizUI;
+

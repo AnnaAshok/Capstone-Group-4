@@ -95,7 +95,7 @@ exports.getQuestionById = async (req, res) => {
 exports.updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { courseID, question, options, answer } = req.body;
+    const { courseID, question, options, answer,mark } = req.body;
 
     // Validate options
     if (!Array.isArray(options) || options.length < 2) {
@@ -105,7 +105,7 @@ exports.updateQuestion = async (req, res) => {
     // Find and update the question
     const updatedQuestion = await Questions.findByIdAndUpdate(
       id,
-      { courseID, question, options, answer },
+      { courseID, question, options, answer ,mark},
       { new: true }
     );
 

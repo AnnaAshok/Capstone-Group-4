@@ -8,6 +8,7 @@ import { useDropzone } from "react-dropzone"; // Importing useDropzone
 
 function AddCourse() {
   const [categories, setCategories] = useState([]);
+
   const [formData, setFormData] = useState({
     title: "",
     shortDescription: "",
@@ -17,7 +18,7 @@ function AddCourse() {
     price: "",
     courseImage: null,
     heading: "",
-    video: null,
+    videos: [],
   });
   const navigate = useNavigate();
 
@@ -49,8 +50,12 @@ function AddCourse() {
   // Handle video upload
   const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
     accept: "video/*",
+    multiple: true, // Allow multiple video selection
     onDrop: (acceptedFiles) => {
-      setFormData({ ...formData, video: acceptedFiles[0] });
+      setFormData((prevData) => ({
+        ...prevData,
+        videos: [...prevData.videos, ...acceptedFiles], // Append new videos
+      }));
     },
   });
 
@@ -60,7 +65,7 @@ function AddCourse() {
     e.preventDefault();
 
     // Check if all fields are filled
-    if (!formData.title || !formData.shortDescription || !formData.longDescription || !formData.categoryID || !formData.price || !formData.courseImage || !formData.heading || !formData.video) {
+    if (!formData.title || !formData.shortDescription || !formData.longDescription || !formData.categoryID || !formData.price || !formData.courseImage || !formData.heading || !formData.videos.length === 0) {
       alert("Please fill out all fields");
       return;
     }
@@ -69,22 +74,28 @@ function AddCourse() {
     uploadData.append("file", formData.courseImage);
     uploadData.append("upload_preset", "eduSphere");
 
-  try {
-    const cloudinaryResponse = await axios.post(
-      "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
-      uploadData
-    );
+    try {
+      const cloudinaryResponse = await axios.post(
+        "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+        uploadData
+      );
       const imageUrl = cloudinaryResponse.data.secure_url; // Get the uploaded image URL from Cloudinary response
 
-       // Upload video
-      const videoUploadData = new FormData();
-      videoUploadData.append("file", formData.video);
-      videoUploadData.append("upload_preset", "eduSphere");
-      const videoResponse = await axios.post(
-        "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
-        videoUploadData
+      // Upload multiple videos
+      const videoUrls = await Promise.all(
+        formData.videos.map(async (video) => {
+          const videoUploadData = new FormData();
+          videoUploadData.append("file", video);
+          videoUploadData.append("upload_preset", "eduSphere");
+
+          const videoResponse = await axios.post(
+            "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
+            videoUploadData
+          );
+
+          return videoResponse.data.secure_url; // Return video URL after upload
+        })
       );
-      const videoUrl = videoResponse.data.secure_url;
 
       const courseData = {
         title: formData.title,
@@ -95,10 +106,10 @@ function AddCourse() {
         price: formData.price,
         courseImage: imageUrl, // Use the Cloudinary image URL
         heading: formData.heading,
-        video: videoUrl,
+        videos: videoUrls,
       };
       console.log(courseData); // Check if videoUrl is present here
-      
+
       const response = await axios.post("http://localhost:5000/addCourse", courseData, {
         headers: { "Content-Type": "application/json" }
       });
@@ -111,7 +122,7 @@ function AddCourse() {
         price: "",
         courseImage: null,
         heading: "",
-        video: null,
+        videos: null,
       });
       navigate("/admin/courses");
     } catch (error) {
@@ -238,12 +249,41 @@ function AddCourse() {
             {formData.courseImage && <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>{formData.courseImage.name}</Typography>}
           </Box>
 
-          <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Course Video:</Typography>
-          <Box {...getVideoRootProps()} sx={{ border: "2px dashed #0F3460", padding: "20px", textAlign: "center", cursor: "pointer", borderRadius: "8px", backgroundColor: "#f9f9f9", width: "50%" }} marginBottom={2}>
+          <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
+            Course Video:
+          </Typography>
+
+          <Box
+            {...getVideoRootProps()}
+            sx={{
+              border: "2px dashed #0F3460",
+              padding: "20px",
+              textAlign: "center",
+              cursor: "pointer",
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9",
+              width: "50%"
+            }}
+            marginBottom={2}
+          >
             <input {...getVideoInputProps()} />
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>Drag & drop an video here, or click to upload</Typography>
-            {formData.video && <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>{formData.video.name}</Typography>}
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+              Drag & drop videos here, or click to upload
+            </Typography>
+
+            {/* Display selected video names */}
+            {formData.videos && formData.videos.length > 0 && (
+              <Box sx={{ marginTop: 1 }}>
+                <Typography variant="body2" sx={{ color: "green" }}>Selected Videos:</Typography>
+                {formData.videos.map((video, index) => (
+                  <Typography key={index} variant="body2" sx={{ color: "#0F3460" }}>
+                    {video.name}
+                  </Typography>
+                ))}
+              </Box>
+            )}
           </Box>
+
 
           <Button type="submit" variant="contained" color="primary">
             Add Course

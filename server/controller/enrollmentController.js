@@ -4,6 +4,7 @@ const { authMiddleware  } = require('../middleware/authMiddleware');
 const Enrollment = require('../models/enrollments')
 const mongoose = require('mongoose');
 
+// To enroll a student for a course
 exports.enrollCourse = async (req, res) => {
     const userId = req.body.userID;
     const { courseId, paymentId, price } = req.body; 
@@ -44,13 +45,16 @@ exports.enrollCourse = async (req, res) => {
 };
 
 // Check if a user is enrolled in a course
-// Check if a user is enrolled in a course
 exports.checkEnrollment = async (req, res) => {
     const { courseId, userId } = req.params;
     console.log(`Checking enrollment for courseId: ${courseId}, userId: ${userId}`);
 
     try {
-        const enrollment = await Enrollment.findOne({ courseID: new mongoose.Types.ObjectId(courseId), userID: new mongoose.Types.ObjectId(userId) });
+        const enrollment = await Enrollment.findOne({ 
+            courseID: new mongoose.Types.ObjectId(courseId), 
+            userID: new mongoose.Types.ObjectId(userId) 
+        });
+
         console.log("Enrollment result:", enrollment);
         if (enrollment) {
             return res.status(200).json({ message: 'User is already enrolled', enrolled: true });

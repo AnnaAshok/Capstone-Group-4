@@ -4,6 +4,8 @@ import Footer from './Footer'
 import '../../home.css';
 import CourseList from './CourseList';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 import course_icon from "../../Assets/images/course-icon.png"
 import quiz_icon from "../../Assets/images/quiz-icon.png"
@@ -14,8 +16,8 @@ import sample_img from "../../Assets/images/data-sci.jpg"
 import Main from '././Main'
 
 const Home = () => {
-
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch categories from backend
   useEffect(() => {
@@ -82,7 +84,10 @@ const Home = () => {
             <p className='about-content-subtitle'>About Our Platform</p>
             <h2>We empower students with quality learning resources on our innovative platform.</h2>
             <p className='mt-4'>Our team comprises certified professionals specializing in web development, data science, graphic design, and emerging technologies. With extensive industry experience, we provide comprehensive course materials and interactive quizzes to enhance your learning journey.</p>
-            <button className='btn-browse-all-course'>Browse All Courses</button>
+            {/* <button className='btn-browse-all-course'>Browse All Courses</button> */}
+            <button className="btn-browse-all-course" onClick={() => navigate("/courses")}>
+              Browse All Courses
+            </button>
           </div>
         </div>
       </section>
@@ -141,8 +146,8 @@ const Home = () => {
             {categories?.map((category, index) => (// Duplicate for smooth looping
               <div key={index} className="category-card">
                 <div className='category-image'>
-                  {/* <img src={category.categoryImage} alt={category.categoryName} className="category-image" /> */}
-                  <img src={sample_img} alt="sample image" className='category-image' />
+                  <img src={category.categoryImage} alt={category.categoryName} className="category-image" /> 
+                  {/* <img src={sample_img} alt="sample image" className='category-image' /> */}
                 </div>
 
                 <div className="category-info">

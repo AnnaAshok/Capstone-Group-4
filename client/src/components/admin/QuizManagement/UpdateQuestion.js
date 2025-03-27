@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { TextField, Button, Box, Typography, Paper, Select, MenuItem, FormControl, IconButton } from "@mui/material";
+import { TextField, Button, Box, Typography, Paper, Select, MenuItem, FormControl, IconButton,FormHelperText } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const UpdateQuestion = () => {
@@ -13,6 +13,7 @@ const UpdateQuestion = () => {
   const [mark, setMark] = useState("");
   const navigate = useNavigate();
   const location = useLocation(); 
+  const [errors, setErrors] = useState({}); // State for error messages
 
 
   useEffect(() => {
@@ -46,10 +47,31 @@ const UpdateQuestion = () => {
       setOptions([...options, { label: "", value: String.fromCharCode(65 + options.length) }]);
     }
   };
+  const validateForm = () => {
+    const newErrors = {};
 
+    if (!selectedCourse) newErrors.selectedCourse = "Course selection is required.";
+    if (!question.trim()) newErrors.question = "Question cannot be empty.";
+    
+    if (options.length < 2) {
+      newErrors.options = "At least two options are required.";
+    } else {
+      options.forEach((option, index) => {
+        if (!option.label.trim()) {
+          newErrors[`option_${index}`] = `Option ${index + 1} cannot be empty.`;
+        }
+      });
+    }
+
+    if (!answer) newErrors.answer = "Please select a correct answer.";
+    if (!mark || isNaN(mark) || Number(mark) <= 0) newErrors.mark = "Marks must be a positive number.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!validateForm()) return; 
     const updatedQuestion = {
       courseID: selectedCourse,
       question,
@@ -74,19 +96,21 @@ const UpdateQuestion = () => {
         </div>
         <form onSubmit={handleSubmit}>
           <Box marginBottom={2}>
-            <FormControl fullWidth sx={{ width: "50%" }} variant="outlined" size="small" required>
+            <FormControl fullWidth sx={{ width: "50%" }} variant="outlined" size="small"  error={!!errors.selectedCourse}>
               <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Select Course:</Typography>
-              <Select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} required>
+              <Select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} >
                 {courses.map(course => (
                   <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
                 ))}
               </Select>
+              {errors.selectedCourse && <FormHelperText>{errors.selectedCourse}</FormHelperText>}
             </FormControl>
           </Box>
 
           <Box marginBottom={2}>
             <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Question:</Typography>
-            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={question} onChange={(e) => setQuestion(e.target.value)} required />
+            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={question} onChange={(e) => setQuestion(e.target.value)} error={!!errors.question}
+              helperText={errors.question} />
           </Box>
 
           <div>
@@ -100,10 +124,12 @@ const UpdateQuestion = () => {
                   value={option.label}
                   onChange={(e) => handleOptionChange(index, "label", e.target.value)}
                   placeholder={`Option ${index + 1}`}
-                  required
+                  error={!!errors[`option_${index}`]}
+                  helperText={errors[`option_${index}`]}
                 />
               </Box>
             ))}
+                        {errors.options && <FormHelperText error>{errors.options}</FormHelperText>}
             {options.length < 4 && (
               <IconButton onClick={addOption} color="primary">
                 <AddCircleIcon />
@@ -114,17 +140,19 @@ const UpdateQuestion = () => {
           <Box marginBottom={2}>
             <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Answer:</Typography>
             <FormControl sx={{ width: "50%" }} variant="outlined" size="small">
-              <Select value={answer} onChange={(e) => setAnswer(e.target.value)} required>
+              <Select value={answer} onChange={(e) => setAnswer(e.target.value)}>
                 {options.map((option, index) => (
                   <MenuItem key={index} value={option.value}>{option.label || `Option ${index + 1}`}</MenuItem>
                 ))}
               </Select>
+              {errors.answer && <FormHelperText>{errors.answer}</FormHelperText>}
             </FormControl>
           </Box>
 
           <Box marginBottom={2}>
             <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Marks:</Typography>
-            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={mark} onChange={(e) => setMark(e.target.value)} required type="number" />
+            <TextField sx={{ width: "50%" }} variant="outlined" size="small" value={mark} onChange={(e) => setMark(e.target.value)}  error={!!errors.mark}
+              helperText={errors.mark} type="number" />
           </Box>
 
           <Box display="flex" gap={2} marginTop={2}>

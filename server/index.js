@@ -90,7 +90,7 @@ app.get("/roles", roleController.getRoles);
 
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
-app.get('/enrollments/:courseId/:userId', authMiddleware, enrollmentController.checkEnrollment);
+app.get('/enroll/:userId/:courseId', authMiddleware, enrollmentController.checkEnrollment);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);
@@ -102,7 +102,10 @@ app.post('/getallquestions', questionsController.getAllQuestions);
 app.get('/getallquestions', questionsController.getAllQuestions);
 
 
-app.use('/', quizController)
+app.use('/', quizController);
+// app.post('/quiz-results', saveQuizResult);
+// app.get('/quiz-results', getQuizResults);
+
 
 // Routes for handling questions
 // app.post('/questions', questionsController.createQuestion);
