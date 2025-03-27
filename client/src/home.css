@@ -264,14 +264,13 @@
 
 .course-description {
     color: #666;
-    font-size: 1rem;
+    font-size: 18px;
     margin-bottom: 10px;
 }
 
 .course-duration,
 .course-price {
     font-weight: bold;
-    /* color: #333; */
 }
 
 /* Duration and stars in a row */
@@ -282,12 +281,6 @@
     font-size: 16px;
     margin-top: 10px;
 }
-
-/* Star color */
-/* .stars {
-    color: #0F3460;
-    font-size: 22px;
-} */
 
 /* Horizontal line below duration */
 .divider {
@@ -624,6 +617,7 @@
 
 .course-details-page {
     padding: 5rem 2rem;
+    padding-bottom: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -649,7 +643,7 @@
 }
 
 .course-left h1 {
-    font-size: 24px;
+    font-size: 30px;
     margin-bottom: 15px;
 }
 
@@ -661,19 +655,13 @@
     margin-bottom: 15px;
 }
 
-.course-description {
-    font-size: 16px;
-    color: #555;
-}
-
 .course-right {
     flex: 0.5;
     padding: 20px;
-    /* background: #f9f9f9; */
     border-radius: 8px;
     text-align: center;
-    /* box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1); */
     border: 1px solid #0f3460;
+    font-size: 18px;
 }
 
 .course-right h2 {
@@ -717,7 +705,7 @@
 }
 
 .course-image-details-page {
-    width: 20%;
+    width: 40%;
     margin: 1.5rem 1rem;
     margin-left: auto;
     margin-right: auto;
@@ -743,7 +731,7 @@
 }
 
 .course-materials p {
-    font-size: 1rem;
+    font-size: 18px;
     color: #666;
     line-height: 1.5;
     margin-bottom: 20px;
@@ -849,7 +837,7 @@
 
 .contact-us-section {
     padding: 100px 40px;
-    margin-top: 10rem;
+    margin-top: 3rem;
     margin-bottom: 12rem;
     gap: 2rem;
 }
@@ -871,7 +859,7 @@
     padding: 20px;
     text-align: center;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgb(247 194 33 / 28%);
+    box-shadow: 0 4px 8px rgb(247 194 33);
     margin: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -899,6 +887,10 @@
     margin: 0;
     font-size: 16px;
     color: #555;
+}
+
+.email-success-message {
+    color: green;
 }
 
 /* Contact Form and Map */

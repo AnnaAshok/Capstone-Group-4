@@ -15,7 +15,7 @@ const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController');
 const roleConroller = require('./controller/roleController');
-// const emailController = require('./controller/emailController');
+const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
 const { paymentController, handleWebhook ,updatePaymentStatus} = require("./controller/payment");  
@@ -84,8 +84,9 @@ app.post("/deleteUser/:id", userController.deleteUser)
 
 // Routes for role
 app.get("/roles", roleConroller.getRoles);
-
-// app.use('/api', emailController);
+// Route for email sending
+app.post('/send-email', emailController.sendEmail);
+//app.use('/send-email', emailController);
 
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 

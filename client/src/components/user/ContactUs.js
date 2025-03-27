@@ -9,28 +9,42 @@ import email_icon from "../../Assets/images/email_icon.png";
 import phone_icon from "../../Assets/images/phone_icon.png";
 
 const ContactUs = () => {
-    // const [formData, setFormData] = useState({
-    //     name: '',
-    //     email: '',
-    //     subject: '',
-    //     message: ''
-    // });
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+    });
 
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setFormData({ ...formData, [name]: value });
-    // };
+    const [message, setMessage] = useState('');
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await axios.post('http://localhost:5000/send-email', formData);
-    //         alert(response.data.message);
-    //     } catch (error) {
-    //         alert('Failed to send email.');
-    //         console.error(error);
-    //     }
-    // };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('http://localhost:5000/send-email', formData);
+            //alert(response.data.message);
+            console.log(response.data);
+            setMessage('Your message has been sent successfully!');
+
+            // Clear the form fields after successful email sending
+            setFormData({
+                name: '',
+                email: '',
+                subject: '',
+                message: ''
+            });
+
+        } catch (error) {
+            //alert('Failed to send email.');
+            setMessage('Failed to send email. Please try again later.');
+            console.error(error);
+        }
+    };
 
     return (
         <>
@@ -63,41 +77,42 @@ const ContactUs = () => {
                     {/* Left Column: Contact Form */}
                     <div className="contact-form">
                         <h2>Contact Us</h2>
-                        {/* <form onSubmit={handleSubmit}> */}
-                        <form>
+                        <form onSubmit={handleSubmit}>
+                            {/* <form> */}
                             <input
                                 type="text"
                                 name="name"
                                 placeholder="Your Name"
-                                // value={formData.name}
-                                // onChange={handleChange}
+                                value={formData.name}
+                                onChange={handleChange}
                                 required
                             />
                             <input
                                 type="email"
                                 name="email"
                                 placeholder="Your Email"
-                                // value={formData.email}
-                                // onChange={handleChange}
+                                value={formData.email}
+                                onChange={handleChange}
                                 required
                             />
                             <input
                                 type="text"
                                 name="subject"
                                 placeholder="Subject"
-                                // value={formData.subject}
-                                // onChange={handleChange}
+                                value={formData.subject}
+                                onChange={handleChange}
                                 required
                             />
                             <textarea
                                 name="message"
                                 placeholder="Your Message"
                                 rows="5"
-                                // value={formData.message}
-                                // onChange={handleChange}
+                                value={formData.message}
+                                onChange={handleChange}
                                 required
                             ></textarea>
                             <button type="submit">Send Message</button>
+                            <div className='email-success-message'>{message && <p>{message}</p>}</div>
                         </form>
                     </div>
 
