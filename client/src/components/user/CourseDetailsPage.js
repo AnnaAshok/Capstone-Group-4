@@ -5,6 +5,7 @@ import Header from './Header'
 import Footer from './Footer'
 import LoginSignup from "./LoginSignup";
 import { jwtDecode } from 'jwt-decode';
+import Certificate from './Certificate';
 
 function removeHtmlTags(input) {
     const doc = new DOMParser().parseFromString(input, 'text/html');
@@ -40,7 +41,7 @@ const CourseDetailsPage = () => {
                     const decodedToken = jwtDecode(token);
                     const userID = decodedToken.userId;
 
-                    // 🔥 First check LocalStorage
+                    // First check LocalStorage
                     const storedEnrollment = localStorage.getItem(`enrolled_${courseId}_${userID}`);
                     if (storedEnrollment === 'true') {
                         setEnrolled(true);
@@ -206,6 +207,9 @@ const CourseDetailsPage = () => {
             {loginModalShow && (
                 <LoginSignup show={loginModalShow} handleClose={() => setLoginModalShow(false)} />
             )}
+
+
+            <Certificate />
 
             <Footer />
         </>

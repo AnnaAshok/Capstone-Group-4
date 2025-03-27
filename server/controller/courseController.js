@@ -111,17 +111,18 @@ exports.addCourse = async (req, res) => {
 // Update Course
 exports.updateCourse = async (req, res) => {
   try {
-    const { title, shortDescription, longDescription, categoryID, duration, price } = req.body;
+    const { title, shortDescription, heading, longDescription, categoryID, duration, price } = req.body;
     const courseImage = req.body.courseImage ? req.body.courseImage : req.body.existingImage;
+    const videos = req.body.videos ? req.body.videos : req.body.existingVideos;
 
     // Validate required fields
-    if (!title || !shortDescription || !longDescription || !categoryID || !duration || !price) {
+    if (!title || !shortDescription || !heading || !longDescription || !categoryID || !duration || !price) {
       return res.status(400).json({ message: "All fields are required!" });
     }
 
     const updatedCourse = await Course.findByIdAndUpdate(
       req.params.id,
-      { title, shortDescription, longDescription, categoryID, courseImage, duration, price },
+      { title, shortDescription, heading, longDescription, categoryID, courseImage, duration, price, videos },
       { new: true }
     );
 

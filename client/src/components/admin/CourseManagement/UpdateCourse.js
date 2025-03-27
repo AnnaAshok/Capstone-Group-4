@@ -24,12 +24,15 @@ function UpdateCourse() {
   const [formData, setFormData] = useState({
     title: "",
     shortDescription: "",
+    heading: "",
     longDescription: "",
     categoryID: "",
     duration: "2 weeks",
     price: "",
     existingImage: "",
     courseImage: null,
+    existingVideos: [],
+    videos: [],
   });
 
   // Fetch course details
@@ -42,6 +45,7 @@ function UpdateCourse() {
           setFormData({
             title: course.title || "",
             shortDescription: course.shortDescription || "",
+            heading: course.heading || "",
             longDescription: course.longDescription || "",
             categoryID: course.categoryID?._id || course.categoryID || "",
             duration: course.duration || "2 weeks",
@@ -50,11 +54,18 @@ function UpdateCourse() {
               ? course.courseImage
               : "",
             courseImage: null,
+            existingVideos: course.videos
+              ? course.videos
+              : "",
+            videos: null,
           });
         }
       })
       .catch((error) => console.error("Error fetching course:", error));
   }, [id]);
+
+  console.log("Existing videos fetched from DB: ", formData.existingVideos);
+
 
   // Fetch categories
   useEffect(() => {
@@ -77,7 +88,14 @@ function UpdateCourse() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({ ...formData, courseImage: file });
+      if (file.type.startsWith("image/")) {
+        setFormData({ ...formData, courseImage: file });
+      } else if (file.type.startsWith("video/")) {
+        setFormData((prevData) => ({
+          ...prevData,
+          videos: [...prevData.videos, file], // Append videos for multiple files
+        }));
+      }
     }
   };
 
@@ -91,12 +109,25 @@ function UpdateCourse() {
     },
   });
 
+  // Handle video upload
+  const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
+    accept: "video/*",
+    multiple: true, // Allow multiple video selection
+    onDrop: (acceptedFiles) => {
+      setFormData((prevData) => ({
+        ...prevData,
+        videos: [...prevData.videos || [], ...acceptedFiles], // Append new videos
+      }));
+    },
+  });
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("title", formData.title);
     data.append("shortDescription", formData.shortDescription);
+    data.append("heading", formData.heading);
     data.append("longDescription", formData.longDescription);
     data.append("categoryID", formData.categoryID);
     data.append("duration", formData.duration);
@@ -108,7 +139,7 @@ function UpdateCourse() {
 
     let imageUrl = formData.existingImage;
 
-    const uploadData = new FormData(); 
+    const uploadData = new FormData();
     uploadData.append("file", formData.existingImage ? formData.existingImage : formData.courseImage);
     uploadData.append("upload_preset", "eduSphere");
 
@@ -120,14 +151,36 @@ function UpdateCourse() {
 
       imageUrl = cloudinaryResponse.data.secure_url;
 
+      // Upload video if a new one is provided
+      const videoUrls = formData.existingVideos;
+      if (formData.videos && formData.videos.length > 0) {
+        for (const video of formData.videos) {
+          const uploadData = new FormData();
+          uploadData.append("file", video);
+          uploadData.append("upload_preset", "eduSphere");
+    
+          try {
+            const cloudinaryVideoResponse = await axios.post(
+              "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
+              uploadData
+            );
+            videoUrls.push(cloudinaryVideoResponse.data.secure_url);
+          } catch (error) {
+            console.error("Error uploading video:", error);
+          }
+        }
+      }
+
       const courseData = {
         title: formData.title,
         shortDescription: formData.shortDescription,
+        heading: formData.heading,
         longDescription: formData.longDescription,
         categoryID: formData.categoryID,
         duration: formData.duration,
         price: formData.price,
-        courseImage: imageUrl, 
+        courseImage: imageUrl,
+        videos: videoUrls,
       };
 
       await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
@@ -170,6 +223,20 @@ function UpdateCourse() {
             multiline
             rows={4}
           />
+
+          <Box marginBottom={2}>
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+              Heading:
+            </Typography>
+            <TextField
+              sx={{ width: "50%" }}
+              variant="outlined"
+              size="small"
+              name="heading"
+              value={formData.heading}
+              onChange={handleChange}
+            />
+          </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
             Long Description:
@@ -285,6 +352,44 @@ function UpdateCourse() {
               />
             )}
           </Box>
+
+           {/* Course Video Upload */}
+                     <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
+                       Course Video:
+                     </Typography>
+                     <Box
+                       {...getVideoRootProps()}
+                       sx={{
+                         border: "2px dashed #0F3460",
+                         padding: "20px",
+                         textAlign: "center",
+                         cursor: "pointer",
+                         borderRadius: "8px",
+                         backgroundColor: "#f9f9f9",
+                         width: "50%"
+                       }}
+                       marginBottom={2}
+                     >
+                       <input {...getVideoInputProps()} />
+                       <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+                         Drag & drop videos here, or click to upload
+                       </Typography>
+           
+                       {/* Display selected video names */}
+                       {formData.videos && formData.videos.length > 0 && (
+                         <Box sx={{ marginTop: 1 }}>
+                           <Typography variant="body2" sx={{ color: "green" }}>Selected Videos:</Typography>
+                           {formData.videos.map((video, index) => (
+                             <Typography key={index} variant="body2" sx={{ color: "#0F3460" }}>
+                               {video.name}
+                             </Typography>
+                           ))}
+                         </Box>
+                       )}
+                     </Box>
+
+
+
 
           <Button type="submit" variant="contained" color="primary">
             Update Course
