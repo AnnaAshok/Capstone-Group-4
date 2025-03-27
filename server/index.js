@@ -18,7 +18,7 @@ const roleConroller = require('./controller/roleController');
 // const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
-
+const { paymentController, handleWebhook ,updatePaymentStatus} = require("./controller/payment");  
 const app = express();
 
 // Cloudinary configuration
@@ -106,6 +106,11 @@ app.post("/update-password", userController.updatePassword);
 app.put("/api/updateUser/:id", userController.updateUser);
 app.post("/user/details", authMiddleware, authController.getUserByTokenAndEmail);
 app.post("/user/update/:id", authController.updateProfile)
+
+// paymnet integration
+app.post("/create-payment-intent", paymentController);
+app.post("/webhook", express.raw({ type: "application/json" }), handleWebhook);
+app.post("/update-payment-status", updatePaymentStatus)
 
 app.listen(5000, () => {
   console.log('App listening on port 5000');

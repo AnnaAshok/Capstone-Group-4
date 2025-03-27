@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 
-const PaymentModel = new mongoose.Schema({
-    cardNumber: { type: Number, required: true},
-    cvv: { type: Number, required: true },
-    expiryDate: { type: Date, required:true },
-    amount: { type: Number, required:true },
+const PaymentModel = new mongoose.Schema(
+    {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        amount: { type: Number, required: true },
+        currency: { type: String, default: "usd" },
+        transactionId: { type: String, required: true },
+        status: { type: String, enum: ["pending", "successful", "failed"], default: "pending" },
     },
     { timestamps: true });
 
