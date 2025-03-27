@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 exports.enrollCourse = async (req, res) => {
     const userId = req.body.userID;
     const { courseId, paymentId, price } = req.body; 
-
     try {
         // Check if the enrollment already exists
         const existingEnrollment = await Enrollment.findOne({ userID: userId, courseID: courseId });
@@ -17,20 +16,17 @@ exports.enrollCourse = async (req, res) => {
         }
 
         // Conditionally set paymentID to null if the price is 0 or paymentId is not provided
-        let paymentObjectId = null;
+        // let paymentObjectId = null;
         if (price > 0 && paymentId) {
-            paymentObjectId = new mongoose.Types.ObjectId(paymentId);
+            paymentObjectId = paymentId
         }
 
         // Create a new enrollment
         const enrollment = await Enrollment.create({
             userID: new mongoose.Types.ObjectId(userId),
             courseID: new mongoose.Types.ObjectId(courseId),
-            paymentID: paymentObjectId
+            paymentID: paymentId
         });
-        console.log("userId=", userId);
-        console.log("courseId=", courseId);
-        console.log("paymentId=", paymentObjectId);
 
 
         if (enrollment) {
