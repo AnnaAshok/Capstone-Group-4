@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import axios from 'axios';
+import '../../index.css';
 
-const PaymentForm = ({ amount, userId }) => {
+const PaymentForm = ({ amount, userId,courseId ,setEnrolled,setShowPaymentForm,setSuccessMessage}) => {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
@@ -47,11 +48,30 @@ const PaymentForm = ({ amount, userId }) => {
             }, {
                 headers: { "Content-Type": "application/json" }
             });
-
-            if (response.ok) {
-                alert("Payment Successful!");
+            if (response.status == 200) {
+                // alert("Payment Successful!");
                 // Now manually redirect to success page
-                window.location.href = "http://localhost:3000/success";
+
+                    setShowPaymentForm(false); 
+                    try {
+                        const enrolled = await fetch('http://localhost:5000/enroll', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem("token")}`
+                            },
+                            body: JSON.stringify({ userID:userId, courseId, paymentId:response.data.payment._id })
+                        });
+                        if (enrolled.ok) {
+                            setSuccessMessage('Enrollment successful!');
+                            setEnrolled(true)
+                        } else {
+                            throw new Error('Enrollment failed.');
+                        }
+                    } catch (err) {
+                        // setError('Something went wrong.');
+                    }
+                
             } else {
                 console.error("Error saving transaction.");
             }
@@ -63,7 +83,7 @@ const PaymentForm = ({ amount, userId }) => {
     return (
         <form onSubmit={handlePayment}>
             <PaymentElement />
-            <button type="submit" disabled={loading}>
+            <button type="submit" disabled={loading} className="paybtn btn mt-3" >
                 {loading ? "Processing..." : "Pay Now"}
             </button>
         </form>

@@ -24,7 +24,7 @@ const paymentController = async (req, res) => {
         const userObjectId = new mongoose.Types.ObjectId(userId);
 
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount,  // Amount in cents
+            amount: amount*100,  // Amount in cents
             currency: "usd",
             automatic_payment_methods: { enabled: true },
         });
