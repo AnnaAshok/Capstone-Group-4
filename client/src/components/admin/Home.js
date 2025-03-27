@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
-  BsFillBellFill,
 } from "react-icons/bs";
 import {
   BarChart,
@@ -19,6 +18,58 @@ import {
 } from "recharts";
 
 function Home() {
+  const [stats, setStats] = useState({
+    courses: 0,
+    users: 0,
+    categories: 0,
+  });
+
+  useEffect(() => {
+    Promise.all([
+      fetch("http://localhost:5000/getCourses")
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Error fetching courses:", err);
+          return { count: 0 };
+        }),
+      fetch("http://localhost:5000/getUsers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Error fetching users:", err);
+          return { count: 0 };
+        }),
+      fetch("http://localhost:5000/getCategory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Error fetching categories:", err);
+          return { categories: [] }; // Default to empty array if error
+        }),
+    ])
+      .then(([courses, users, categories]) => {
+        console.log("Courses Response:", courses);
+        console.log("Users Response:", users);
+        console.log("Categories Response:", categories);
+
+        // Handle category count properly from the response
+        setStats({
+          courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
+          users: users.count ?? (Array.isArray(users) ? users.length : 0),
+          categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
+        });
+      })
+      .catch((error) => console.error("Error in API requests:", error));
+  }, []);
+
+  useEffect(() => {
+    console.log("Updated Stats:", stats);
+  }, [stats]);
+
   const data = [
     { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
     { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
@@ -39,49 +90,30 @@ function Home() {
         <div className="card">
           <div className="card-inner">
             <h3>Courses</h3>
-            <BsFillArchiveFill className="card_icon" />{" "}
-            {/* Archive icon for Courses */}
+            <BsFillArchiveFill className="card_icon" />
           </div>
-          <h1>300</h1>
+          <h1 key={stats.courses}>{stats.courses}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3>Users</h3>
-            <BsPeopleFill className="card_icon" /> {/* People icon for Users */}
+            <BsPeopleFill className="card_icon" />
           </div>
-          <h1>12</h1>
+          <h1 key={stats.users}>{stats.users}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
-            <h3>Active Courses</h3>
-            <BsFillGrid3X3GapFill className="card_icon" />{" "}
-            {/* Grid icon for Active Courses */}
+            <h3>Categories</h3>
+            <BsFillGrid3X3GapFill className="card_icon" />
           </div>
-          <h1>33</h1>
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>Category</h3>
-            <BsFillGrid3X3GapFill className="card_icon" />{" "}
-            {/* Grid icon for Category */}
-          </div>
-          <h1>42</h1>
+          <h1 key={stats.categories}>{stats.categories}</h1>
         </div>
       </div>
 
       <div className="charts">
-       
         <div className="chart-item">
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={data}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
+            <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -95,26 +127,13 @@ function Home() {
 
         <div className="chart-item">
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={data}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
+            <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="pv"
-                stroke="#8884d8"
-                activeDot={{ r: 8 }}
-              />
+              <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
               <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>

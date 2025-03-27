@@ -6,4 +6,6 @@ const CertificatesModel = new mongoose.Schema({
     courseID: { type: mongoose.Schema.Types.ObjectId, ref: 'courses', default: null }
 });
 
-module.exports = mongoose.model("certificates", CertificatesModel);
+const Certificates = mongoose.model("certificates", CertificatesModel);
+
+module.exports = Certificates;

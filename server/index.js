@@ -14,10 +14,11 @@ const categoryController = require("./controller/categoryController");
 const courseController = require("./controller/courseController");
 const authController = require("./controller/authController");
 const userController = require('./controller/userController');
-const roleConroller = require('./controller/roleController');
+const roleController = require('./controller/roleController');
 // const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
+const quizController = require("./controller/quizController");
 
 const app = express();
 
@@ -83,7 +84,7 @@ app.post("/getUserById/:id", userController.getUserById);
 app.post("/deleteUser/:id", userController.deleteUser)
 
 // Routes for role
-app.get("/roles", roleConroller.getRoles);
+app.get("/roles", roleController.getRoles);
 
 // app.use('/api', emailController);
 
@@ -94,11 +95,22 @@ app.get('/enrollments/:courseId/:userId', authMiddleware, enrollmentController.c
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);
 app.get('/questions/course/:courseID', questionsController.getQuestionsByCourse);
-app.get('/questions/:id', questionsController.getQuestionById);
+app.get('/questions/:courseID', questionsController.getQuestionById);
 app.put('/questions/:id', questionsController.updateQuestion);
 app.post('/questions/:id', questionsController.deleteQuestion);
 app.post('/getallquestions', questionsController.getAllQuestions);
-app.get('/getallquestions', questionsController.getAllQuestions)
+app.get('/getallquestions', questionsController.getAllQuestions);
+
+
+app.use('/', quizController)
+
+// Routes for handling questions
+// app.post('/questions', questionsController.createQuestion);
+// app.get('/questions', questionsController.getAllQuestions); // Fetch all questions (GET)
+// app.get('/questions/course/:courseID', questionsController.getQuestionsByCourse);
+// app.get('/questions/:id', questionsController.getQuestionById);
+// app.put('/questions/:id', questionsController.updateQuestion);
+// app.delete('/questions/:id', questionsController.deleteQuestion);
 
 // Routes for profile
 app.get("/profile", authMiddleware, userController.getUserProfile); // Protected route

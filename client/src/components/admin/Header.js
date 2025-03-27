@@ -1,7 +1,18 @@
 import React from "react";
-import { BsJustify, BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle, BsSearch } from "react-icons/bs";
+import { BsJustify, BsBoxArrowRight } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 function Header({ toggleSidebar }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear any stored authentication data (if using localStorage/sessionStorage)
+    localStorage.removeItem("authToken");
+
+    // Redirect to the Home page
+    navigate("/");
+  };
+
   return (
     <header className="header">
       {/* Sidebar Toggle Button */}
@@ -9,16 +20,14 @@ function Header({ toggleSidebar }) {
         <BsJustify className="icon" />
       </div>
 
-      {/* Search Icon */}
-      <div className="header-left">
-        <BsSearch className="icon" />
-      </div>
+      <div style={{ flex: 1 }}></div> {/* Spacing div */}
 
-      {/* Notifications, Messages, and Profile Icons */}
+      {/* Logout Button */}
       <div className="header-right">
-        <BsFillBellFill className="icon" />
-        <BsFillEnvelopeFill className="icon" />
-        <BsPersonCircle className="icon" />
+        <button className="logout-button" onClick={handleLogout}>
+          {/* <BsBoxArrowRight className="icon" /> */}
+          Sign Out
+        </button>
       </div>
     </header>
   );
