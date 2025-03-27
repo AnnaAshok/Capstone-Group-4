@@ -89,7 +89,7 @@ app.get("/roles", roleConroller.getRoles);
 
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
-app.get('/enrollments/:courseId/:userId', authMiddleware, enrollmentController.checkEnrollment);
+app.get('/enroll/:userId/:courseId', authMiddleware, enrollmentController.checkEnrollment);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);

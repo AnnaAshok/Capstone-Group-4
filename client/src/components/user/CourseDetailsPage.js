@@ -5,6 +5,11 @@ import Header from './Header'
 import Footer from './Footer'
 import LoginSignup from "./LoginSignup";
 import { jwtDecode } from 'jwt-decode'; 
+import PaymentForm from "./PaymentForms.js";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe("pk_test_51R6wQSQcPPmDfWJk5KDjPCcTRcmg8kiv55ZACiHCR9CX56h7gMPcJNOiRaCoNRQrjH0cbdpHpuh2b2wRSN00PIA500YP74CTjf");
 
 const CourseDetailsPage = () => {
     const { courseId } = useParams(); // Get course ID from URL
@@ -16,6 +21,9 @@ const CourseDetailsPage = () => {
     const [loginModalShow, setLoginModalShow] = useState(false);  // Renamed the state for modal visibility
     const navigate = useNavigate();
 
+    const [showPaymentForm, setShowPaymentForm] = useState(false);
+    const [clientSecret, setClientSecret] = useState("");
+
     useEffect(() => {
         const fetchCourseDetails = async () => {
             try {
@@ -24,7 +32,7 @@ const CourseDetailsPage = () => {
                     throw new Error('Failed to fetch course details');
                 }
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setCourse(data);
     
                 // Check if the user is already enrolled
@@ -33,8 +41,21 @@ const CourseDetailsPage = () => {
                     const decodedToken = jwtDecode(token);
                     const userID = decodedToken.userId;
     
-                    const enrollmentResponse = await fetch(`http://localhost:5000/enroll/${courseId}/${userID}`);
+                    const storedEnrollment = localStorage.getItem(`enrolled_${courseId}_${userID}`);
+                    if (storedEnrollment === 'true') {
+                        setEnrolled(true);
+                        setLoading(false); // Ensure loading is set to false once enrollment is checked
+                        return; // Stop here since we know the user is enrolled
+                    }
 
+                    // Check if the user is already enrolled in the course from the DB
+                    const enrollmentResponse = await fetch(`http://localhost:5000/enroll/${userID}/${courseId}`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${token}`, // Ensure the token is passed as a Bearer token
+                            "Content-Type": "application/json",
+                        }
+                    });
                     if (enrollmentResponse.ok) {
                         const enrollmentData = await enrollmentResponse.json();
                         if (enrollmentData.enrolled) {
@@ -59,11 +80,36 @@ const CourseDetailsPage = () => {
             setEnrolled(false);
         };
     }, [courseId]);
-
-    
+ 
+        const token = localStorage.getItem("token");
+        let userID = "";
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            userID = decodedToken.userId;
+        }
+        useEffect(() => {
+            if (showPaymentForm && !clientSecret) {
+                fetch("http://localhost:5000/create-payment-intent", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount:course?.price, userId:userID}),
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.clientSecret) {
+                            setClientSecret(data.clientSecret);
+                        } else {
+                            setError("Failed to load payment details. Please try again.");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching clientSecret:", error);
+                        setError("An error occurred while processing payment.");
+                    });
+            }
+        }, [showPaymentForm, clientSecret , course]);
     const handleEnrollment = async () => {
         const token = localStorage.getItem("token");  // Retrieve token from localStorage
-        console.log("Token from localStorage:", token);
     
         // Check if the user is not logged in
         if (!token) {
@@ -76,13 +122,10 @@ const CourseDetailsPage = () => {
         let userID;
         try {
             const decodedToken = jwtDecode(token);  // Decode the token to extract information
-            console.log(decodedToken);
 
             userID = decodedToken.userId;  // Assuming the userID is in the decoded token (adjust if needed)
-            console.log("Decoded User ID:", userID);
 
         } catch (error) {
-            console.log("Error decoding token:", error);
             setError('Invalid token.');
             return;
         }
@@ -109,11 +152,11 @@ const CourseDetailsPage = () => {
                 setError('Something went wrong.');
             }
         } else {
+            setShowPaymentForm(true)
             // Redirect to payment page for paid courses
             //navigate(`/payment?courseId=${courseId}&userID=${userID}`);
         }
     };
-console.log(loginModalShow)
 
     if (loading) {
         return <p>Loading course details...</p>;
@@ -149,13 +192,30 @@ console.log(loginModalShow)
                         {/* <h2>Course Details</h2> */}
                         <p className=''>Duration: {course.duration}</p>
                         <p className=''>Price: ${course.price}</p>
-                        {!enrolled && (
+                       {!enrolled && !showPaymentForm && (
                             <button onClick={handleEnrollment} className="enroll-button">Enroll</button>
                         )}
+
+                        {showPaymentForm && clientSecret && (
+                            <Elements stripe={stripePromise} options={{ clientSecret }}>
+                                <PaymentForm 
+                                    amount={course.price} 
+                                    userId={userID}
+                                    courseId={courseId}
+                                    setEnrolled={setEnrolled}
+                                    setShowPaymentForm={setShowPaymentForm}
+                                    setSuccessMessage={setSuccessMessage}
+                                />
+                            </Elements>
+                        )}
+
                         <button onClick={() => window.history.back()} className="back-button">Back</button>
                         {successMessage && <p className="success-message">{successMessage}</p>}
                     </div>
                 </div>
+            </section>
+            <section>
+          
             </section>
 
             {enrolled && (

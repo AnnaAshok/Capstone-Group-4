@@ -32,3 +32,13 @@ code {
     filter: drop-shadow(6px 8px 10px rgba(0, 0, 0, 0.5));
   }
 }
+.paybtn{
+  background-color: #f7c221 !important;
+  color: white !important;
+  border: 1px solid #f7c221 !important;
+  padding: .5rem 5rem !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  margin-top: 10px !important;
+  width: 90% !important;
+}
