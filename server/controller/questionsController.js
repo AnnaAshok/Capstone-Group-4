@@ -78,15 +78,13 @@ exports.getQuestionsByCourse = async (req, res) => {
 // Get a specific question by ID
 exports.getQuestionById = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    // Find question by ID
-    const question = await Questions.findById(id).populate('courseID');
-    if (!question) {
+    const { courseID } = req.params;
+    const questions = await Questions.find({ courseID }).populate('courseID');
+        if (!questions) {
       return res.status(404).json({ message: 'Question not found' });
     }
 
-    res.status(200).json(question);
+    res.status(200).json(questions);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error while fetching question' });

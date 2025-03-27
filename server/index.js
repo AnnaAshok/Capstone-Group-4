@@ -18,6 +18,8 @@ const roleConroller = require('./controller/roleController');
 const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
+const quizController = require("./controller/quizController");
+
 const { paymentController, handleWebhook ,updatePaymentStatus} = require("./controller/payment");  
 const app = express();
 
@@ -86,7 +88,6 @@ app.post("/deleteUser/:id", userController.deleteUser)
 app.get("/roles", roleConroller.getRoles);
 // Route for email sending
 app.post('/send-email', emailController.sendEmail);
-//app.use('/send-email', emailController);
 
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
@@ -95,11 +96,25 @@ app.get('/enroll/:userId/:courseId', authMiddleware, enrollmentController.checkE
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);
 app.get('/questions/course/:courseID', questionsController.getQuestionsByCourse);
-app.get('/questions/:id', questionsController.getQuestionById);
+app.get('/questions/:courseID', questionsController.getQuestionById);
 app.put('/questions/:id', questionsController.updateQuestion);
 app.post('/questions/:id', questionsController.deleteQuestion);
 app.post('/getallquestions', questionsController.getAllQuestions);
-app.get('/getallquestions', questionsController.getAllQuestions)
+app.get('/getallquestions', questionsController.getAllQuestions);
+
+
+app.use('/', quizController);
+// app.post('/quiz-results', saveQuizResult);
+// app.get('/quiz-results', getQuizResults);
+
+
+// Routes for handling questions
+// app.post('/questions', questionsController.createQuestion);
+// app.get('/questions', questionsController.getAllQuestions); // Fetch all questions (GET)
+// app.get('/questions/course/:courseID', questionsController.getQuestionsByCourse);
+// app.get('/questions/:id', questionsController.getQuestionById);
+// app.put('/questions/:id', questionsController.updateQuestion);
+// app.delete('/questions/:id', questionsController.deleteQuestion);
 
 // Routes for profile
 app.get("/profile", authMiddleware, userController.getUserProfile); // Protected route

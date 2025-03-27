@@ -7,55 +7,82 @@ body {
   }
   
   .icon {
-    vertical-align: middle;
+    text-align: end;
     line-height: 1px;
-    font-size: 20px;
-    color:#0F3460;
-  }
 
-  .icon_header {
-    vertical-align: middle;
-    line-height: 1px;
-    display: inline;
-    font-size: 26px;
-  }
-  .icon, .icon_header {
-    margin-right: 5px;
+    font-size: 30px;
+    color: #0F3460;
+    margin-right: 5px; 
   }
   
+  .icon_header {
+    line-height: 1px;
+    font-size: 26px;
+    margin-right: 5px; 
+  }
+  
+  /* Close Icon Styling */
   .close_icon {
-    color: rgb(0, 0, 0);
+    color: #0F3460;
     margin-left: 30px;
-    margin-top: 10px;
+    margin-bottom: 100px;
+    font-size: medium;
     cursor: pointer;
   }
   
-  .grid-container {
-    display: grid;
-    grid-template-columns: 260px 1fr 1fr 1fr;
-    grid-template-rows: 0.2fr 3fr;
-    grid-template-areas:
-      'sidebar header header header'
-      'sidebar main main main';
-    height: 100vh;
-  }
-  
-  /* Header  */
-  .header-left,
+  /* Grid Layout for Page */
+.grid-container {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr 1fr;
+  grid-template-rows: 0.2fr 3fr;
+  grid-template-areas:
+    'sidebar header header header'
+    'sidebar main main main';
+  height: 100vh;
+}
+
+/* Header Styling */
+.header {
+  grid-area: header;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  padding: 0 20px;
+  box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
+  background-color: #fff; 
+}
+
+/* Right Side - Logout Button */
 .header-right {
   display: flex;
-  align-items: center; /* Align icons vertically in the center */
+  align-items: center;
+  justify-content: flex-end;  /* Align content to the right */
 }
-  .header {
-    grid-area: header;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-    box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
-  }
-  
+
+/* Styling for Sign Out Button */
+.logout-button {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 5px 15px;
+  font-size: 16px;
+  background-color: #0F3460;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.logout-button:hover {
+  background-color: #0d2a42;
+}
+
+/* Add padding for the icons to space them properly */
+.logout-button .icon {
+  font-size: 20px; /* Adjust icon size */
+  margin-right: 8px;  /* Space between icon and text */
+}
   .menu-icon {
     display: none;
   }
@@ -63,6 +90,7 @@ body {
   .main-title h3{
     color:#000000 !important;
   }
+  
   /* End Header  */
   
   /* Sidebar  */
@@ -133,11 +161,6 @@ body {
   .sidebar-responsive {
     display: inline !important;
     position: absolute;
-    /*
-      we want the z-index of the sidebar higher so that
-      the charts are not showing over the sidebar 
-      on small screens
-    */
     z-index: 12 !important;
   }
   
@@ -215,7 +238,7 @@ body {
   /* End Main  */
   
    
-  @media screen and (max-width: 1024px) {
+  @media(max-width: 1024px) {
     .grid-container {
       grid-template-columns: 1fr;
       grid-template-rows: 0.2fr 3fr;
@@ -243,7 +266,7 @@ body {
   
   /* Medium <= 992px */
     
-  @media screen and (max-width: 992px) {
+  @media (max-width: 992px) {
     .grid-container {
       grid-template-columns: 1fr;
       grid-template-rows: 0.2fr 3fr;
@@ -270,13 +293,29 @@ body {
   }
   /* Small <= 768px */
     
-  @media screen and (max-width: 768px) {
+  @media(max-width: 768px) {
     .main-cards {
       grid-template-columns: 1fr;
       gap: 10px;
       margin-bottom: 0;
     }
-  
+     #sidebar{
+    width: 42%;
+  }
+    .charts {
+      grid-template-columns: 1fr;
+      margin-top: 30px;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .main-cards {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 0;
+    }
+     #sidebar{
+    width: 50%;
+  }
     .charts {
       grid-template-columns: 1fr;
       margin-top: 30px;
@@ -290,7 +329,7 @@ body {
       display: none;
     }
   }
-
+ 
   /* pagination */
   .pagination{
     color: black;
