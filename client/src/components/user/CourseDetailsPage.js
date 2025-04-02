@@ -1,8 +1,8 @@
 // CourseDetailsPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../home.css'; // You might need to adjust this path
-import Header from './Header'; // And these paths, depending on your project structure
+import '../../home.css'; 
+import Header from './Header';
 import Footer from './Footer';
 import LoginSignup from './LoginSignup';
 import { jwtDecode } from 'jwt-decode';
@@ -11,9 +11,13 @@ import Certificate from './Certificate';
 import PaymentForm from "./PaymentForms.js";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
+
+
 
 const stripePromise = loadStripe("pk_test_51R6wQSQcPPmDfWJk5KDjPCcTRcmg8kiv55ZACiHCR9CX56h7gMPcJNOiRaCoNRQrjH0cbdpHpuh2b2wRSN00PIA500YP74CTjf");
 
+// To remove <p> from long description
 function removeHtmlTags(input) {
     const doc = new DOMParser().parseFromString(input, 'text/html');
     return doc.body.textContent || '';
@@ -32,6 +36,9 @@ const CourseDetailsPage = () => {
 
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
+    const [quizPassed, setQuizPassed] = useState(false);
+
+    const [userName, setUserName] = useState("User");
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -43,7 +50,6 @@ const CourseDetailsPage = () => {
                     throw new Error('Failed to fetch course details');
                 }
                 const data = await response.json();
-                // console.log(data);
                 setCourse(data);
 
                 const token = localStorage.getItem('token');
@@ -67,6 +73,23 @@ const CourseDetailsPage = () => {
                         },
                     });
 
+                    if (userID) {
+                        console.log("hai");
+                        try {
+                            const response = await axios.post(`http://localhost:5000/getUserById/${userID}`);
+                            
+                            if (response.data) {
+                                //setUserName(response.data.firstName || "User");
+                                const { firstName, lastName } = response.data;
+                                setUserName(`${firstName} ${lastName}`.trim() || "User");
+                            } else {
+                                console.error("No user data received");
+                            }
+                        } catch (error) {
+                            console.error("Error fetching user data:", error);
+                        }
+                    }
+
                     if (enrollmentResponse.ok) {
                         const enrollmentData = await enrollmentResponse.json();
                         if (enrollmentData.enrolled) {
@@ -83,34 +106,61 @@ const CourseDetailsPage = () => {
 
         fetchCourseDetails();
     }, [courseId]);
- 
-        const token = localStorage.getItem("token");
-        let userID = "";
-        if (token) {
-            const decodedToken = jwtDecode(token);
-            userID = decodedToken.userId;
-        }
-        useEffect(() => {
-            if (showPaymentForm && !clientSecret) {
-                fetch("http://localhost:5000/create-payment-intent", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ amount:course?.price, userId:userID}),
+
+    const token = localStorage.getItem("token");
+    let userID = "";
+
+    if (token) {
+        const decodedToken = jwtDecode(token);
+        userID = decodedToken.userId;
+    }
+
+    // useEffect(() => {
+    //     console.log("hai");
+    //     if (token) {
+    //         try {
+    //             const decodedToken = jwtDecode(token);
+    //             console.log("Decoded Token:", decodedToken);
+    
+    //             if (decodedToken.userId) {
+    //                 fetch(`http://localhost:5000/getUserById/${userID}`) 
+    //                     .then(response => response.json())
+    //                     .then(data => {
+    //                         console.log("Fetched User Data:", data);
+    //                         setUserName(data.username || "User");
+    //                     })
+    //                     .catch(error => {
+    //                         console.error("Error fetching user data:", error);
+    //                     });
+    //             }
+    //         } catch (error) {
+    //             console.error("Error decoding token:", error);
+    //         }
+    //     }
+    // }, [token]);
+
+    useEffect(() => {
+        if (showPaymentForm && !clientSecret) {
+            fetch("http://localhost:5000/create-payment-intent", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: course?.price, userId: userID }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.clientSecret) {
+                        setClientSecret(data.clientSecret);
+                    } else {
+                        setError("Failed to load payment details. Please try again.");
+                    }
                 })
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.clientSecret) {
-                            setClientSecret(data.clientSecret);
-                        } else {
-                            setError("Failed to load payment details. Please try again.");
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching clientSecret:", error);
-                        setError("An error occurred while processing payment.");
-                    });
-            }
-        }, [showPaymentForm, clientSecret , course]);
+                .catch((error) => {
+                    console.error("Error fetching clientSecret:", error);
+                    setError("An error occurred while processing payment.");
+                });
+        }
+    }, [showPaymentForm, clientSecret, course]);
+
     const handleEnrollment = async () => {
         const token = localStorage.getItem('token');
 
@@ -122,8 +172,7 @@ const CourseDetailsPage = () => {
         let userID;
         try {
             const decodedToken = jwtDecode(token);  // Decode the token to extract information
-
-            userID = decodedToken.userId;  // Assuming the userID is in the decoded token (adjust if needed)
+            userID = decodedToken.userId;  
 
         } catch (error) {
             setError('Invalid token.');
@@ -161,6 +210,12 @@ const CourseDetailsPage = () => {
         setShowQuiz(true);
     };
 
+    const handleQuizCompletion = (isPassed) => {
+        if (isPassed) {
+            setQuizPassed(true);
+        }
+    };
+
     if (loading) {
         return <p>Loading course details...</p>;
     }
@@ -190,17 +245,16 @@ const CourseDetailsPage = () => {
                     </div>
 
                     <div className="course-right">
-                        {/* <h2>Course Details</h2> */}
                         <p className=''><strong>Duration:</strong> {course.duration}</p>
                         <p className=''><strong>Price:</strong> ${course.price}</p>
-                       {!enrolled && !showPaymentForm && (
+                        {!enrolled && !showPaymentForm && (
                             <button onClick={handleEnrollment} className="enroll-button">Enroll</button>
                         )}
 
                         {showPaymentForm && clientSecret && (
                             <Elements stripe={stripePromise} options={{ clientSecret }}>
-                                <PaymentForm 
-                                    amount={course.price} 
+                                <PaymentForm
+                                    amount={course.price}
                                     userId={userID}
                                     courseId={courseId}
                                     setEnrolled={setEnrolled}
@@ -216,7 +270,7 @@ const CourseDetailsPage = () => {
                 </div>
             </section>
             <section>
-          
+
             </section>
 
             {enrolled && !showQuiz && (
@@ -244,19 +298,19 @@ const CourseDetailsPage = () => {
                 </section>
             )}
 
-            {showQuiz && <Quiz courseId={courseId} />}
+            {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} />}
+
+
+            {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
+
 
             {loginModalShow && (
                 <LoginSignup show={loginModalShow} handleClose={() => setLoginModalShow(false)} />
             )}
 
-
-            <Certificate />
-
             <Footer />
         </>
     );
 };
-
 
 export default CourseDetailsPage;
