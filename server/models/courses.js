@@ -15,4 +15,5 @@ const CoursesModel = new mongoose.Schema({
     videos: [String],
 });
 
-module.exports = mongoose.model("courses", CoursesModel);
+module.exports = mongoose.model("Course", CoursesModel);
+

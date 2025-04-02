@@ -92,6 +92,7 @@ app.post('/send-email', emailController.sendEmail);
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
 app.get('/enroll/:userId/:courseId', authMiddleware, enrollmentController.checkEnrollment);
+app.get('/enrollments/user/:userId', enrollmentController.getEnrollmentsByUser);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);

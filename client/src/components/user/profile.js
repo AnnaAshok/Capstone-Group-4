@@ -7,6 +7,7 @@ import defaultUser from "../../Assets/images/user.png";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom"; // Import useNavigate instead of useHistory
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("userInfo");
@@ -22,16 +23,21 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [courses, setCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const [userId, setUserId] = useState(null);
   const [errors, setErrors] = useState({});
+  
+  const navigate = useNavigate(); // Use useNavigate for redirection
 
+  // Redirect if not authenticated
   useEffect(() => {
-    if (token) {
+    if (!token) {
+      navigate("/"); // Redirect to the home page if not authenticated
+    } else {
       try {
         const decodedToken = jwtDecode(token);
         setEmail(decodedToken.email);
@@ -39,7 +45,7 @@ const Profile = () => {
         console.error("Error decoding token:", error);
       }
     }
-  }, []);
+  }, [token, navigate]);
 
   const fetchUserDetails = async () => {
     try {
@@ -71,17 +77,59 @@ const Profile = () => {
     }
   };
 
+  const fetchEnrolledCourses = async () => {
+    if (!userId) return;
+    try {
+      const response = await axios.get(`http://localhost:5000/enrollments/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data && response.data.length > 0) {
+        const courseDetails = await Promise.all(
+          response.data.map(async (enrollment) => {
+            console.log('Enrollment Data:', enrollment);
+            const courseResponse = await axios.get(`http://localhost:5000/courses/${enrollment._id}`);
+            return courseResponse.data;
+          })
+        );
+        setEnrolledCourses(courseDetails);
+      } else {
+        setEnrolledCourses([]);
+      }
+    } catch (error) {
+      console.error("Error fetching enrolled courses:", error);
+      setError("Failed to fetch enrolled courses.");
+    }
+  };
+
   useEffect(() => {
     if (email) fetchUserDetails();
   }, [email]);
 
+  useEffect(() => {
+    if (userId) fetchEnrolledCourses();
+  }, [userId]);
+
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
+      const fileType = file.type;
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  
+      // Check if the uploaded file is of the allowed types
+      if (!allowedTypes.includes(fileType)) {
+        toast.error("Please upload a valid image file (JPG, JPEG, or PNG).");
+        return;
+      }
+  
       setImage(file);
       setPreview(URL.createObjectURL(file));
     }
   };
+  
 
   const validateFields = () => {
     let tempErrors = {};
@@ -159,6 +207,11 @@ const Profile = () => {
       setErrorMessage(err.response?.data?.message || "Error updating details.");
       toast.error(err.response?.data?.message || "Error updating details.");
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove token from localStorage
+    navigate("/"); // Redirect to home page after logout
   };
 
   return (
@@ -255,7 +308,8 @@ const Profile = () => {
             </div>
           )}
 
-          {activeTab === "passwordUpdate" && (
+
+{activeTab === "passwordUpdate" && (
             <div className="password-update">
               {errorMessage && <p className="error-message">{errorMessage}</p>}
               <label>New Password</label>
@@ -330,33 +384,27 @@ const Profile = () => {
             </div>
           )}
 
+
+
           {activeTab === "courseInfo" && (
             <div className="course-info">
-              <h3>Enrolled Courses</h3>
-              <ul>
-                {courses.length > 0 ? (
-                  courses.map((course, index) => <li key={index}>{course}</li>)
-                ) : (
-                  <p>No courses enrolled.</p>
-                )}
-              </ul>
+              <h4>Enrolled Courses</h4>
+              {enrolledCourses.length > 0 ? (
+                enrolledCourses.map((course) => (
+                  <div key={course._id} className="course-card">
+                    <h5>{course.title}</h5>
+                    <p>{course.description}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No courses enrolled yet.</p>
+              )}
             </div>
           )}
         </div>
       </div>
       <Footer />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      <ToastContainer />
     </>
   );
 };

@@ -40,29 +40,30 @@ function App() {
   // }, []);
   return (
     <div className='App'>
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<LoginSignup/>}></Route>
-        <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
-        <Route path='/' element={<Home />}></Route>
-        <Route path='/tables' element={<CustomTable />}></Route>
-        
-        <Route path="/courses" element={<CoursePage />}></Route>
-        <Route path="/courses/:courseId" element={<CourseDetailsPage />}></Route>
-        <Route path="/contactUs" element={<ContactUs />}></Route>
-        
-        {/* Admin routes */}
-        <Route path="/admin/*" element={<AdminRoutes />} />
-        {/* <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />}></Route> */}
+         <BrowserRouter>
+        <Routes>
+          <Route path='/login' element={<LoginSignup />} />
+          <Route path='/forgotpassword' element={<Forgotpassword />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/tables' element={<CustomTable />} />
+          <Route path="/courses" element={<CoursePage />} />
+          <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
+          <Route path="/contactUs" element={<ContactUs />} />
 
-        <Route path="/profile" element={<Profile />}></Route>
-        {/* Quiz route */}
-        <Route path='/quiz' element={<Quiz />} />
-        <Route path='/checkout' element={<ProceedToPay />} />
+          {/* Admin routes */}
+          <Route path="/admin/*" element={<AdminRoutes />} />
 
-      </Routes>
-    </BrowserRouter>
+          {/* Profile Route */}
+          <Route path="/profile" element={<Profile />} />
 
+          {/* Quiz Route */}
+          <Route path='/quiz' element={<Quiz />} />
+          
+          {/* Checkout Route */}
+          <Route path='/checkout' element={<ProceedToPay />} />
+
+        </Routes>
+      </BrowserRouter>
     </div>
  
   );
