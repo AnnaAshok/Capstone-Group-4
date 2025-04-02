@@ -19,10 +19,11 @@ exports.sendEmail = async (req, res) => {
 
         // Compose email options
         const mailOptions = {
-            from: email,
+            from: 'annaashok4197@gmail.com',
+            replyTo: email, // User's email
             to: 'annaashok4197@gmail.com',
             subject: `New message from: ${name} - ${subject}`,
-            text: message
+            text: `From: ${name} (${email})\n\n${message}`
         };
 
         // Send the email

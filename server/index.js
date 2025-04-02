@@ -19,6 +19,7 @@ const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
 const quizController = require("./controller/quizController");
+//const certificateController = require("./controller/certificateController");
 
 const { paymentController, handleWebhook ,updatePaymentStatus} = require("./controller/payment");  
 const app = express();
@@ -58,7 +59,7 @@ app.post("/login", authController.login);
 app.post("/register", authController.register);
 app.post("/getEmail", authController.getEmail);
 app.post("/resetpassword", authController.resetPassword);
-
+ 
 // Routes for category
 app.post("/getCategory", categoryController.getCategories);
 app.post("/addCategory", upload.single("categoryImage"), categoryController.addCategory);
@@ -86,12 +87,17 @@ app.post("/deleteUser/:id", userController.deleteUser)
 
 // Routes for role
 app.get("/roles", roleConroller.getRoles);
+
 // Route for email sending
 app.post('/send-email', emailController.sendEmail);
 
 // Routes for enrollment
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
 app.get('/enroll/:userId/:courseId', authMiddleware, enrollmentController.checkEnrollment);
+
+// Routes for certificate
+//app.get('/certificate/:id', certificateController.getUserNameById);
+//app.post("/certificate/:id", userController.getUserById);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);
