@@ -19,8 +19,9 @@ const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
 const quizController = require("./controller/quizController");
+//const certificateController = require("./controller/certificateController");
 
-const { paymentController, handleWebhook ,updatePaymentStatus} = require("./controller/payment");  
+const { paymentController, handleWebhook ,updatePaymentStatus,getPaymentsWithUserEmails} = require("./controller/payment");  
 const app = express();
 
 // Cloudinary configuration
@@ -58,7 +59,7 @@ app.post("/login", authController.login);
 app.post("/register", authController.register);
 app.post("/getEmail", authController.getEmail);
 app.post("/resetpassword", authController.resetPassword);
-
+ 
 // Routes for category
 app.post("/getCategory", categoryController.getCategories);
 app.post("/addCategory", upload.single("categoryImage"), categoryController.addCategory);
@@ -86,6 +87,7 @@ app.post("/deleteUser/:id", userController.deleteUser)
 
 // Routes for role
 app.get("/roles", roleConroller.getRoles);
+
 // Route for email sending
 app.post('/send-email', emailController.sendEmail);
 
@@ -93,6 +95,10 @@ app.post('/send-email', emailController.sendEmail);
 app.post('/enroll', authMiddleware, enrollmentController.enrollCourse); 
 app.get('/enroll/:userId/:courseId', authMiddleware, enrollmentController.checkEnrollment);
 app.get('/enrollments/user/:userId', enrollmentController.getEnrollmentsByUser);
+
+// Routes for certificate
+//app.get('/certificate/:id', certificateController.getUserNameById);
+//app.post("/certificate/:id", userController.getUserById);
 
 // Routes for handling questions
 app.post('/questions', questionsController.createQuestion);
@@ -102,6 +108,7 @@ app.put('/questions/:id', questionsController.updateQuestion);
 app.post('/questions/:id', questionsController.deleteQuestion);
 app.post('/getallquestions', questionsController.getAllQuestions);
 app.get('/getallquestions', questionsController.getAllQuestions);
+app.get('/details/questions/:id', questionsController.getQuestionDetails);
 
 
 app.use('/', quizController);
@@ -113,7 +120,6 @@ app.use('/', quizController);
 // app.post('/questions', questionsController.createQuestion);
 // app.get('/questions', questionsController.getAllQuestions); // Fetch all questions (GET)
 // app.get('/questions/course/:courseID', questionsController.getQuestionsByCourse);
-// app.get('/questions/:id', questionsController.getQuestionById);
 // app.put('/questions/:id', questionsController.updateQuestion);
 // app.delete('/questions/:id', questionsController.deleteQuestion);
 
@@ -128,6 +134,7 @@ app.post("/user/update/:id", authController.updateProfile)
 app.post("/create-payment-intent", paymentController);
 app.post("/webhook", express.raw({ type: "application/json" }), handleWebhook);
 app.post("/update-payment-status", updatePaymentStatus)
+app.get("/getAllPayments", getPaymentsWithUserEmails);
 
 app.listen(5000, () => {
   console.log('App listening on port 5000');

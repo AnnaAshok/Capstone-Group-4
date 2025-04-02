@@ -24,7 +24,7 @@ const UpdateQuestion = () => {
 
   useEffect(() => {
     const questionId = location.state?.id; 
-    axios.get(`http://localhost:5000/questions/${questionId}`)
+    axios.get(`http://localhost:5000/details/questions/${questionId}`)
       .then(response => {
         const { courseID, question, options, answer, mark } = response.data;
         setSelectedCourse(courseID._id);

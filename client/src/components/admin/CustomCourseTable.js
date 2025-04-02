@@ -83,7 +83,7 @@ console.log(courses)
               <StyledTableCell>Duration</StyledTableCell>
               <StyledTableCell>Price</StyledTableCell>
               <StyledTableCell>Image</StyledTableCell>
-              <StyledTableCell>Video</StyledTableCell>
+              {/* <StyledTableCell>Video</StyledTableCell> */}
               <StyledTableCell>Actions</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -108,13 +108,13 @@ console.log(courses)
                       style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                     />
                   </StyledTableCell>
-                  <StyledTableCell>
+                  {/* <StyledTableCell>
                     <img
                       src={course.video ? course.courseImage :""}
                       alt={course.title}
                       style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                     />
-                  </StyledTableCell>
+                  </StyledTableCell> */}
                   <StyledTableCell>
                     <IconButton color="primary" onClick={() => handleEdit(course._id)}>
                       <EditIcon />

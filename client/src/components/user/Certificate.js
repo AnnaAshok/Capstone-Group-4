@@ -4,28 +4,17 @@ import certificateBg from "../../Assets/images/certificate-template-2.png";
 import greatVibesBase64 from '../../Assets/Fonts/greatVibesBase64';
 import signature from "../../Assets/images/signature-3.png";
 
-const Certificate = ({
-    userName = "John Doe",
-    firstName = "John",
-    lastName = "Doe",
-    courseName = "React Development",
-    marksPassed = "85%",
-    dateAttended = "March 20, 2024",
-    certificateBackground = certificateBg, 
-}) => {
-    const [showCertificateButton, setShowCertificateButton] = useState(true);
+// const Certificate = ({
+const Certificate = ({ userName, courseName, quizPassed }) => {
+    console.log("Quiz Passed Status:", quizPassed); 
+    console.log("User Name:", userName); 
 
     const generateCertificate = () => {
         const doc = new jsPDF("landscape", "mm", "a4"); // Landscape mode, A4 size
 
-        // // Simulate quiz completion
-        // const handleQuizCompletion = () => {
-        //     setShowCertificateButton(true);
-        // };
-
         // Load Background Image
         const img = new Image();
-        img.src = certificateBackground;
+        img.src = certificateBg;
         img.crossOrigin = "anonymous"; // Avoid CORS issues
 
         img.onload = () => {
@@ -46,7 +35,7 @@ const Certificate = ({
             doc.setFont("helvetica", "normal");
             doc.setFontSize(16);
             doc.text(`for successfully completing the quiz and demonstrating`, 148, 125, null, null, "center");
-            doc.text(`proficiency in the subject.`, 148, 133, null, null, "center");
+            doc.text(`proficiency in ${courseName}.`, 148, 133, null, null, "center");
 
             // Issue Date
             const issueDate = new Date().toLocaleDateString();
@@ -62,7 +51,7 @@ const Certificate = ({
 
     return (
         <div className="certificate-div">
-            {showCertificateButton && (
+            {quizPassed && (
                 <button onClick={generateCertificate} className="attend-quiz-button">
                     Download Certificate
                 </button>

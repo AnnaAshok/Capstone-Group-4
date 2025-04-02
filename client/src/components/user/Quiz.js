@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+// import Certificate from './Certificate';
 
 function cn(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const SimpleQuizUI = ({ courseId }) => {
+const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
@@ -121,6 +122,10 @@ const SimpleQuizUI = ({ courseId }) => {
     setCorrectAnswersCount(correctAnswers);
     const percentage = (correctAnswers / questions.length) * 100;
     const status = percentage >= 60 ? "passed" : "failed";
+
+    if (status === "passed") {
+      onQuizComplete(true);
+    }
 
     setResultMessage(status === "passed" ? "Congratulations! You passed!" : "Sorry, you failed. Please try again next time.");
 
@@ -332,7 +337,13 @@ const SimpleQuizUI = ({ courseId }) => {
           Reset Quiz
         </button>
       </div>
+
     </div>
+
+    
+
+
+
   );
 };
 

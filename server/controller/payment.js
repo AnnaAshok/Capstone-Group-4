@@ -3,6 +3,8 @@ const Stripe = require("stripe");
 const dotenv = require("dotenv");
 const Payment = require("../models/payment");  
 const mongoose = require('mongoose');
+const user = require("../models/users");
+
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -91,6 +93,29 @@ const updatePaymentStatus =  async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+const getPaymentsWithUserEmails = async (req, res) => {
+    try {
+      const payments = await Payment.find()
+        .populate({
+          path: "userId",
+          select: "email", // Fetch only the email field from User
+        })
+        .select("amount currency status userId"); // Select required fields from Payment
+  console.log(payments)
+      // Formatting response to include user email directly
+      const formattedPayments = payments.map(payment => ({
+        email: payment.userId.email, 
+        amount: payment.amount,
+        currency: payment.currency,
+        status: payment.status
+      }));
+  
+      res.status(200).json(formattedPayments);
+    } catch (error) {
+      console.error("Error fetching payment details:", error);
+      res.status(500).json({ error: "Server error while fetching payments" });
+    }
+  };
 
 // Export functions using CommonJS
-module.exports = { paymentController, handleWebhook ,updatePaymentStatus};
+module.exports = { paymentController, handleWebhook ,updatePaymentStatus ,getPaymentsWithUserEmails};
