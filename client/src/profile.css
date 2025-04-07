@@ -184,6 +184,10 @@ padding: 20px;
 background-color: #f4f4f4;
 border-radius: 8px;
 }
+.course-info h4{
+  font-size: 1.9rem;
+  color: #0F3460;
+}
 
 .course-info h2 {
 font-size: 24px;
@@ -234,6 +238,44 @@ margin-top: 10px;
 color: #ff0000;
 font-size: 14px;
 }
+
+/* .course-scroll-container {
+  max-height: 400px; 
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.course-card {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #ccc;
+} */
+
+.enrolled-courses-scroll {
+  max-height: 500px; /* or 400px */
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-top: 10px;
+  border-radius: 12px;
+  background-color: #f4f4f4;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+}
+
+.enrolled-courses-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.enrolled-courses-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+.enrolled-courses-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 
 .tabs button.active {
 background-color: #0F3460;

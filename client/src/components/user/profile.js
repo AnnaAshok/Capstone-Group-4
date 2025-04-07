@@ -385,22 +385,23 @@ const Profile = () => {
           )}
 
 
+{activeTab === "courseInfo" && (
+  <div className="course-info">
+    <h4>Enrolled Courses</h4>
+    {enrolledCourses.length > 0 ? (
+      <div className="enrolled-courses-scroll">
+        {enrolledCourses.map((course) => (
+          <div key={course._id} className="course-card">
+            <h5>{course.title}</h5>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p>No courses enrolled yet.</p>
+    )}
+  </div>
+)}
 
-          {activeTab === "courseInfo" && (
-            <div className="course-info">
-              <h4>Enrolled Courses</h4>
-              {enrolledCourses.length > 0 ? (
-                enrolledCourses.map((course) => (
-                  <div key={course._id} className="course-card">
-                    <h5>{course.title}</h5>
-                    <p>{course.description}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No courses enrolled yet.</p>
-              )}
-            </div>
-          )}
         </div>
       </div>
       <Footer />
