@@ -217,6 +217,7 @@ const Profile = () => {
   return (
     <>
       <Header />
+   
       <div className="profile-page">
         <div className="profile-left">
           <div className="profile-image">

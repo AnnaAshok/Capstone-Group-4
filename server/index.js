@@ -19,6 +19,7 @@ const emailController = require('./controller/emailController');
 const questionsController = require('./controller/questionsController');
 const enrollmentController = require('./controller/enrollmentController');
 const quizController = require("./controller/quizController");
+const payment =require("./controller/payment");
 //const certificateController = require("./controller/certificateController");
 
 const { paymentController, handleWebhook ,updatePaymentStatus,getPaymentsWithUserEmails} = require("./controller/payment");  
