@@ -2,7 +2,7 @@ import './App.css';
 import{BrowserRouter, Routes, Route} from 'react-router-dom'
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-
+import ProtectedRoute from './components/protectedRoute/ProtectedRoute.js';
 import LoginSignup from './components/user/LoginSignup';
 import Forgotpassword from './components/user/Forgotpassword';
 import Home from './components/user/Home'
@@ -45,20 +45,20 @@ function App() {
         <Route path='/login' element={<LoginSignup/>}></Route>
         <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
         <Route path='/' element={<Home />}></Route>
-        <Route path='/tables' element={<CustomTable />}></Route>
+        <Route path='/tables' element={<ProtectedRoute  element={<CustomTable />} />}></Route>
         
         <Route path="/courses" element={<CoursePage />}></Route>
-        <Route path="/courses/:courseId" element={<CourseDetailsPage />}></Route>
+        <Route path="/courses/:courseId" element={<ProtectedRoute element={<CourseDetailsPage />} />}></Route>
         <Route path="/contactUs" element={<ContactUs />}></Route>
         
         {/* Admin routes */}
-        <Route path="/admin/*" element={<AdminRoutes />} />
+        <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />} />
         {/* <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />}></Route> */}
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+        <Route path="/checkout" element={<ProtectedRoute element={<ProceedToPay />} />} />
 
-        <Route path="/profile" element={<Profile />}></Route>
         {/* Quiz route */}
-        <Route path='/quiz' element={<Quiz />} />
-        <Route path='/checkout' element={<ProceedToPay />} />
+        <Route path='/quiz' element={<ProtectedRoute element={<Quiz />} />} />
 
       </Routes>
     </BrowserRouter>

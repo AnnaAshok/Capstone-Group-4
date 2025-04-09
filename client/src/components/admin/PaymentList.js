@@ -50,7 +50,7 @@ const PaymentList = () => {
     return (
         <main className="main-container">
             <div className='list-payments'>
-                <h3>List of Payments</h3>
+                {/* <h3>List of Payments</h3> */}
             </div>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
