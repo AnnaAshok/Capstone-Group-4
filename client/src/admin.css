@@ -225,8 +225,6 @@ body {
     color: whitesmoke !important;
   }
 
- 
-  
   .charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -234,105 +232,186 @@ body {
     margin-top: 60px;
     height: 300px;
   }
+  .charts .chart-item h3 {
+    color: #ff6d00 !important;
+    text-align: center;
+  }
+  
   
   /* End Main  */
   
-   
-  @media(max-width: 1024px) {
-    .grid-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: 0.2fr 3fr;
-      grid-template-areas:
-        'header'
-        'main';
-    }
-    .logo{
-      width: 50%;
-    }
-  
-    #sidebar {
-      width: 28%;
-      display: none;
-    }
-  
-    .menu-icon {
-      display: inline;
-    }
-  
-    .sidebar-title > span {
-      display: inline;
-    }
+   /* For larger screens (1024px and below) */
+@media (max-width: 1024px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+      'header'
+      'main';
   }
-  
-  /* Medium <= 992px */
-    
-  @media (max-width: 992px) {
-    .grid-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: 0.2fr 3fr;
-      grid-template-areas:
-        'header'
-        'main';
-    }
-    .logo{
-      width: 50%;
-    }
-  
-    #sidebar {
-      width: 32%;
-      display: none;
-    }
-  
-    .menu-icon {
-      display: inline;
-    }
-  
-    .sidebar-title > span {
-      display: inline;
-    }
-  }
-  /* Small <= 768px */
-    
-  @media(max-width: 768px) {
-    .main-cards {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 0;
-    }
-     #sidebar{
-    width: 42%;
-  }
-    .charts {
-      grid-template-columns: 1fr;
-      margin-top: 30px;
-    }
-  }
-  @media screen and (max-width: 500px) {
-    .main-cards {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 0;
-    }
-     #sidebar{
+
+  .logo {
     width: 50%;
   }
-    .charts {
-      grid-template-columns: 1fr;
-      margin-top: 30px;
-    }
+
+  #sidebar {
+    width: 28%;
+    display: none;
+  }
+
+  .menu-icon {
+    display: inline;
+  }
+
+  .sidebar-title > span {
+    display: inline;
+  }
+}
+
+/* For medium screens (992px and below) */
+@media (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+      'header'
+      'main';
+  }
+
+  .logo {
+    width: 50%;
+  }
+
+  #sidebar {
+    width: 32%;
+    display: none;
+  }
+
+  .menu-icon {
+    display: inline;
+  }
+
+  .sidebar-title > span {
+    display: inline;
+  }
+}
+
+/* For smaller screens (768px and below) */
+@media (max-width: 768px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  #sidebar {
+    width: 42%;
+    display: none; /* Hide sidebar on mobile */
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+  }
+
+  .pagination {
+    flex-direction: column; /* Stack pagination items vertically */
+    gap: 10px;
+  }
+}
+
+
+/* For very small screens (500px and below) */
+@media (max-width: 500px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  #sidebar {
+    width: 50%;
+    display: none; /* Hide sidebar on mobile */
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+  }
+
+  .pagination {
+    flex-direction: column; /* Stack pagination items vertically */
+    gap: 10px;
+  }
+}
+
+/* For extra small screens (576px and below) */
+@media screen and (max-width: 576px) {
+  .hedaer-left {
+    display: none; 
   }
   
-  /* Extra Small <= 576px */
-  
-  @media screen and (max-width: 576px) {
-    .hedaer-left {
-      display: none;
-    }
+  #sidebar {
+    width: 60%; 
+    display: none; 
   }
- 
-  /* pagination */
-  .pagination{
-    color: black;
-    display: flex;
-    gap:15px;
+
+  /* Pagination should fit the screen better */
+  .pagination {
+    flex-direction: column; /* Stack pagination items vertically */
+    gap: 10px;
   }
+}
+
+.pagination {
+  color: black;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+/* For extra small screens (480px and below) */
+@media (max-width: 480px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  #sidebar {
+    width: 60%; 
+    display: none; 
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+  }
+
+  .pagination {
+    flex-direction: column; /* Stack pagination items vertically */
+    gap: 10px;
+  }
+
+  /* Adjustments to the header */
+  .hedaer-left {
+    display: none; /* Hide logo/left part of header */
+  }
+}
+
+/* For very small screens like iPhone SE (375px wide) */
+@media (max-width: 375px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  #sidebar {
+    width: 50%; 
+    
+  }  
+}
+
+

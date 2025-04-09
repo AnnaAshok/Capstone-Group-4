@@ -13,8 +13,6 @@ import Profile from './components/user/profile';
 import CourseDetailsPage from './components/user/CourseDetailsPage';
 import ContactUs from './components/user/ContactUs';
 import Quiz from './components/user/Quiz';
-
-
 import ProceedToPay from './components/user/ProceedToPay.js';
 
 
@@ -40,6 +38,7 @@ function App() {
   // }, []);
   return (
     <div className='App'>
+
     <BrowserRouter>
       <Routes>
         <Route path='/login' element={<LoginSignup/>}></Route>
@@ -53,16 +52,15 @@ function App() {
         
         {/* Admin routes */}
         <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />} />
-        {/* <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />}></Route> */}
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
         <Route path="/checkout" element={<ProtectedRoute element={<ProceedToPay />} />} />
 
         {/* Quiz route */}
         <Route path='/quiz' element={<ProtectedRoute element={<Quiz />} />} />
 
-      </Routes>
-    </BrowserRouter>
 
+        </Routes>
+      </BrowserRouter>
     </div>
  
   );
