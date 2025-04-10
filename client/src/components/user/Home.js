@@ -3,21 +3,90 @@ import Header from './Header'
 import Footer from './Footer'
 import '../../home.css';
 import CourseList from './CourseList';
+import TestimonialSection from './Testimonials';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useRef } from 'react';
 
 import course_icon from "../../Assets/images/course-icon.png"
 import quiz_icon from "../../Assets/images/quiz-icon.png"
 import certificate_icon from "../../Assets/images/certificate-icon.png"
+
 import about_img from "../../Assets/images/about-img-3.png"
-import newsletter_img from "../../Assets/images/newsletter-image.png"
-import sample_img from "../../Assets/images/data-sci.jpg"
+
+import courses_icon from "../../Assets/images/courses-icon.png"
+import categories_icon from "../../Assets/images/categories-icon.png"
+import users_icon from "../../Assets/images/users-icon.png"
+
+
 import Main from '././Main'
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+
+  // For accordian in why choose us section
+  const toggleAccordion = (e) => {
+    const button = e.currentTarget;
+    const answer = button.nextElementSibling;
+    const isOpen = button.classList.contains("active");
+
+    document.querySelectorAll(".faq-question").forEach((btn) => {
+      btn.classList.remove("active");
+      btn.nextElementSibling.style.maxHeight = null;
+    });
+
+    if (!isOpen) {
+      button.classList.add("active");
+      answer.style.maxHeight = answer.scrollHeight + "px";
+    }
+  };
+
+
+  // Fetching no. of courses, categories and users
+  const [stats, setStats] = useState({
+    courses: 0,
+    users: 0,
+    categories: 0,
+  });
+
+  useEffect(() => {
+    Promise.all([
+      fetch("http://localhost:5000/getCourses")
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Error fetching courses:", err);
+          return { count: 0 };
+        }),
+      fetch("http://localhost:5000/getUsers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Error fetching users:", err);
+          return { count: 0 };
+        }),
+      fetch("http://localhost:5000/getCategory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Error fetching categories:", err);
+          return { categories: [] };
+        }),
+    ])
+      .then(([courses, users, categories]) => {
+        setStats({
+          courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
+          users: users.count ?? (Array.isArray(users) ? users.length : 0),
+          categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
+        });
+      })
+      .catch((error) => console.error("Error in API requests:", error));
+  }, []);
+
 
   // Fetch categories from backend
   useEffect(() => {
@@ -38,11 +107,11 @@ const Home = () => {
       });
   }, []);
 
-
   return (
     <>
       <Header />
       <Main />
+
       {/* Our Services */}
       <section className="text-center services">
         <div className='service-title-image'>
@@ -72,11 +141,10 @@ const Home = () => {
 
       {/* About our platform */}
       <section className='about-our-platform'>
-        <div className='about-our-platform-bg container'>
+        <div className='about-our-platform-bg'>
 
           <div className='about-image'>
             <div className='about-image-border'>
-              {/* <div className='about-img'></div> */}
               <img src={about_img} alt="an image of a girl with books"></img>
             </div>
           </div>
@@ -84,54 +152,30 @@ const Home = () => {
             <p className='about-content-subtitle'>About Our Platform</p>
             <h2>We empower students with quality learning resources on our innovative platform.</h2>
             <p className='mt-4'>Our team comprises certified professionals specializing in web development, data science, graphic design, and emerging technologies. With extensive industry experience, we provide comprehensive course materials and interactive quizzes to enhance your learning journey.</p>
-            {/* <button className='btn-browse-all-course'>Browse All Courses</button> */}
+            <div className='btn-browse-all-course-div'>
             <button className="btn-browse-all-course" onClick={() => navigate("/courses")}>
-              Browse All Courses
+             Browse All Courses
             </button>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className='ad-section'>
-        <div className='ad-overlay'>
-          <h2>50% Offer For Very First 50<br />Student's & Mentors</h2>
-        </div>
-      </section>
 
       <CourseList
         categories={categories.slice(0, 3)}
         selectedCategory="All"
         limit={3}
         hideCategoryButtons={true}
-        hidePagination={true} 
+        hidePagination={true}
+        showViewAll={true}
       />
 
 
-      {/* Subscribe our Newsletter */}
-      <section className='newsletter-section'>
-        <div className='newsletter-grid'>
 
-          <div className='newsletter-image'>
+      <TestimonialSection />
 
-            {/* <div className='about-img'></div> */}
-            <img src={newsletter_img} alt="an image of a girl with books"></img>
 
-          </div>
-          <div className='newsletter-content'>
-            <p className='newsletter-content-subtitle'>Subscribe Newsletter</p>
-            <h2>Find Your Best Course With Us</h2>
-            <p className='mt-4'>Quality technologies via fully tested methods of empowerment. Proactively disseminate web enabled best practices after cross functional expertise.</p>
-
-            {/* Input Fields for Email & Courses */}
-            <div className="newsletter-inputs">
-              <input type="email" placeholder="Email" className="newsletter-input" />
-              <input type="text" placeholder="Course Name" className="newsletter-input" />
-            </div>
-
-            <button className='btn-subscribe-now mt-4'>Subscribe Now</button>
-          </div>
-        </div>
-      </section>
 
       {/* categories  */}
       <section className='category-section text-center'>
@@ -143,17 +187,15 @@ const Home = () => {
 
         <div className="carousel-container container mt-5">
           <div className="carousel-track">
-            {categories?.map((category, index) => (// Duplicate for smooth looping
+            {categories?.map((category, index) => (
               <div key={index} className="category-card">
                 <div className='category-image'>
-                  <img src={category.categoryImage} alt={category.categoryName} className="category-image" /> 
-                  {/* <img src={sample_img} alt="sample image" className='category-image' /> */}
+                  <img src={category.categoryImage} alt={category.categoryName} className="category-image" />
                 </div>
 
                 <div className="category-info">
                   <p className="category-name">
                     <strong>{category.categoryName}</strong>
-                    {/* <span className="course-count"> ({category.courseCount} courses)</span> */}
                   </p>
                 </div>
               </div>
@@ -162,9 +204,89 @@ const Home = () => {
         </div>
       </section>
 
+
+      {/* Why choose Us section  */}
+      <section class="why-choose-us">
+        <div class="why-choose-us-div">
+          <h2 class="section-title">Why Choose Us</h2>
+          <p class="section-subtitle">Our platform is trusted by thousands of learners across the globe.</p>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <img src={courses_icon} alt="icon for courses" class="stat-icon" />
+
+              <h3 className="stat-number">{stats.courses}+</h3>
+              <p class="stat-label">Courses Offered</p>
+            </div>
+            <div class="stat-box">
+              <img src={categories_icon} alt="icon for categories" class="stat-icon" />
+              <h3 className="stat-number">{stats.categories}+</h3>
+              <p class="stat-label">Categories</p>
+            </div>
+            <div class="stat-box">
+              <img src={users_icon} alt="icon for users" class="stat-icon" />
+              <h3 className="stat-number">{stats.users}+</h3>
+              <p class="stat-label">Registered Users</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* FAQ Section */}
+      <section className="faq-section">
+        <div className="faq-container">
+          {/* <h2 className="faq-title">Frequently Asked Questions</h2> */}
+
+          <div className='faq-title-image'>
+          <p className='faq-subtitle mt-5'>Top Questions</p>
+          <h2 className="faq-title">Frequently Asked Questions</h2>
+        </div>
+    
+
+          <div className="faq-item">
+            <button className="faq-question" onClick={(e) => toggleAccordion(e)}>
+              What courses do you offer?
+              <span className="arrow">&#9662;</span>
+            </button>
+            <div className="faq-answer">
+              <p>We offer a wide range of courses in web development, data science, graphic design, and more!</p>
+            </div>
+          </div>
+          <div className="faq-item">
+            <button className="faq-question" onClick={(e) => toggleAccordion(e)}>
+              Are the courses beginner-friendly?
+              <span className="arrow">&#9662;</span>
+            </button>
+            <div className="faq-answer">
+              <p>Yes! Our courses are designed for all levels. You can start as a beginner and gradually advance.</p>
+            </div>
+          </div>
+          <div className="faq-item">
+            <button className="faq-question" onClick={(e) => toggleAccordion(e)}>
+              Do I get a certificate after completing a quiz?
+              <span className="arrow">&#9662;</span>
+            </button>
+            <div className="faq-answer">
+              <p>Yes, you will receive a certificate upon successfully passing the quiz.</p>
+            </div>
+          </div>
+          <div className="faq-item">
+            <button className="faq-question" onClick={(e) => toggleAccordion(e)}>
+              How can I contact support?
+              <span className="arrow">&#9662;</span>
+            </button>
+            <div className="faq-answer">
+              <p>You can reach our support team via the contact form on our website or through email.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       <Footer />
     </>
   )
 }
 
 export default Home
+

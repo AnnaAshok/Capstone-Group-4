@@ -209,8 +209,7 @@ h1{
 }
 .copyright p{
  margin-bottom: 0;
- font-size: 1.2rem;
- font-weight: 700;
+ font-size: 0.85rem;
 }
 
 /* Social Icon Footer */
@@ -263,7 +262,8 @@ h1{
 }
 
 .contact-btn:hover {
-  background-color: #d1d5db;
+  background-color: white;
+  color: #0f3460;
 }
 
 

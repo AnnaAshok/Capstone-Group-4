@@ -19,11 +19,19 @@ code {
     monospace;
 }
 
-@layer components {
+/* @layer components {
   .primary-btn {
     @apply inline-block bg-primary text-white font-semibold rounded-lg
-     hover:bg-secondary duration-200 shadow-[0px_10px_8px_-7px_#ffd978] 
+     hover:bg-secondary duration-200 
      hover:shadow-[0px_10px_8px_-7px_#69a79c] py-3 px-6;
+  }
+} */
+
+@layer components {
+  .primary-btn {
+    @apply inline-block text-white font-semibold rounded-lg 
+      hover:shadow-[0px_10px_8px_-7px_#69a79c] py-3 px-6
+      border border-white;
   }
 }
 
