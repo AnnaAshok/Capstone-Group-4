@@ -221,7 +221,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
   const userChoice = userAnswers[currentQuestion._id];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4">
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 space-y-6">
         <div className="flex justify-between items-center mb-4">
           <p className="text-md text-gray-600">Time Remaining: {formatTime(timer)}</p>

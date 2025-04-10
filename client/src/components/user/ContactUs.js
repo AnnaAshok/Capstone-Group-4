@@ -50,11 +50,16 @@ const ContactUs = () => {
         <>
             <Header />
 
-            <section>
-                <div className='contact-us-banner-bg'></div>
-            </section>
+           
+                <div className="contact-us-banner-bg">
+                    <div className="contact-page-banner-text">
+                        <p className="contact-page-subtitle">WE’RE HERE TO HELP</p>
+                        <h1 className="contact-page-title">GET IN<br />TOUCH<br />WITH US</h1>
+                    </div>
+                </div>
+            
 
-            <section className="contact-us-section container">
+            <section className="contact-us-section">
                 <div className="contact-info-container">
                     <div className="contact-info-box">
                         <img src={address_icon} alt="sample image" className='contact-info-box-image-icon' />

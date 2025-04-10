@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../home.css';
 import { useNavigate } from 'react-router-dom';
 
-const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, hideCategoryButtons, hidePagination }) => {
+const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, hideCategoryButtons, hidePagination, showViewAll }) => {
     const [courses, setCourses] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1); 
@@ -84,6 +84,12 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                     <h2 className="courses-title">Featured Courses</h2>
                 </div>
                 <p className="course-title-description mt-2">Explore our wide range of courses designed to help you excel.</p>
+                {/* Only show this if the prop is true */}
+                {showViewAll && (
+                <a href="/courses" className="view-all-link">
+                    View all Courses
+                </a>
+                )}
 
                 {/* Conditionally show category buttons */}
                 {!hideCategoryButtons && (

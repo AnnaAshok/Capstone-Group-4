@@ -73,7 +73,7 @@ const Header = () => {
             </Navbar.Brand>
 
             {/* Search Bar */}
-            <Form className="d-flex ms-5">
+            {/* <Form className="d-flex ms-5">
               <Form.Control type="search" placeholder="Search" className="me-2" />
               <Button
                 style={{
@@ -85,7 +85,7 @@ const Header = () => {
               >
                 Search
               </Button>
-            </Form>
+            </Form> */}
           </div>
 
           <Navbar.Toggle aria-controls="navbarScroll" className="ms-auto" />
@@ -94,7 +94,7 @@ const Header = () => {
             <Nav className="ms-auto">
               <Nav.Link href="/" style={{ color: "#0F3460", fontWeight: "bold" }}>Home</Nav.Link>
               <Nav.Link href="/courses" style={{ color: "#0F3460", fontWeight: "bold" }}>Courses</Nav.Link>
-              <Nav.Link href="/about" style={{ color: "#0F3460", fontWeight: "bold" }}>About Us</Nav.Link>
+              <Nav.Link href="/aboutUs" style={{ color: "#0F3460", fontWeight: "bold" }}>About Us</Nav.Link>
               <Nav.Link href="/contactUs" style={{ color: "#0F3460", fontWeight: "bold" }}>Contact Us</Nav.Link>
             </Nav>
           </Navbar.Collapse>

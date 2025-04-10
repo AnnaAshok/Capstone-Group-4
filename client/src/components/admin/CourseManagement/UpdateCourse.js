@@ -64,6 +64,7 @@ function UpdateCourse() {
       .catch((error) => console.error("Error fetching course:", error));
   }, [id]);
 
+  console.log("new uploaded image: ", formData.courseImage);
   console.log("Existing videos fetched from DB: ", formData.existingVideos);
 
 
@@ -139,265 +140,286 @@ function UpdateCourse() {
 
     let imageUrl = formData.existingImage;
 
-    const uploadData = new FormData();
-    uploadData.append("file", formData.existingImage ? formData.existingImage : formData.courseImage);
-    uploadData.append("upload_preset", "eduSphere");
+    // Check if a new image is uploaded
+    if (formData.courseImage && formData.courseImage !== formData.existingImage) {
+      const uploadData = new FormData();
+      uploadData.append("file", formData.courseImage);
+      uploadData.append("upload_preset", "eduSphere");
 
-    try {
-      const cloudinaryResponse = await axios.post(
-        "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
-        uploadData
-      );
+      console.log("uploaded image", formData.courseImage);
 
-      imageUrl = cloudinaryResponse.data.secure_url;
+      try {
+        const cloudinaryResponse = await axios.post(
+          "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+          uploadData
+        );
+        console.log("Cloudinary Response", cloudinaryResponse);
+        imageUrl = cloudinaryResponse.data.secure_url;
+        console.log("imageURL", imageUrl);
 
-      // Upload video if a new one is provided
-      const videoUrls = formData.existingVideos;
-      if (formData.videos && formData.videos.length > 0) {
-        for (const video of formData.videos) {
-          const uploadData = new FormData();
-          uploadData.append("file", video);
-          uploadData.append("upload_preset", "eduSphere");
-    
-          try {
-            const cloudinaryVideoResponse = await axios.post(
-              "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
-              uploadData
-            );
-            videoUrls.push(cloudinaryVideoResponse.data.secure_url);
-          } catch (error) {
-            console.error("Error uploading video:", error);
-          }
-        }
+      } catch (error) {
+        console.error("Image upload failed", error);
+        imageUrl = formData.existingImage;
       }
 
-      const courseData = {
-        title: formData.title,
-        shortDescription: formData.shortDescription,
-        heading: formData.heading,
-        longDescription: formData.longDescription,
-        categoryID: formData.categoryID,
-        duration: formData.duration,
-        price: formData.price,
-        courseImage: imageUrl,
-        videos: videoUrls,
-      };
-
-      await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
-      navigate("/admin/courses");
-    } catch (error) {
-      console.error("Error updating course:", error);
+    } else {
+      // If no new image uploaded, use the existing one
+      imageUrl = formData.existingImage;
     }
-  };
-  return (
-    <main className="main-container">
-      <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
-        <div className="list-category">
-          <h3>Update Course</h3>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <Box marginBottom={2}>
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-              Course Title:
-            </Typography>
-            <TextField
-              sx={{ width: "50%" }}
-              variant="outlined"
-              size="small"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-            />
-          </Box>
 
+
+    // Upload video if a new one is provided
+    const videoUrls = formData.existingVideos;
+
+    if (formData.videos && formData.videos.length > 0) {
+      for (const video of formData.videos) {
+        const uploadData = new FormData();
+        uploadData.append("file", video);
+        uploadData.append("upload_preset", "eduSphere");
+
+        try {
+          const cloudinaryVideoResponse = await axios.post(
+            "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
+            uploadData
+          );
+          videoUrls.push(cloudinaryVideoResponse.data.secure_url);
+        } catch (error) {
+          console.error("Error uploading video:", error);
+        }
+      }
+    }
+
+
+    const courseData = {
+      title: formData.title,
+      shortDescription: formData.shortDescription,
+      heading: formData.heading,
+      longDescription: formData.longDescription,
+      categoryID: formData.categoryID,
+      duration: formData.duration,
+      price: formData.price,
+      courseImage: imageUrl,
+      videos: videoUrls,
+    };
+
+    await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
+    navigate("/admin/courses");
+  }
+  // } catch (error) {
+  //   console.error("Error updating course:", error);
+  // }
+// }
+//   };
+
+return (
+  <main className="main-container">
+    <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
+      <div className="list-category">
+        <h3>Update Course</h3>
+      </div>
+      <form onSubmit={handleSubmit}>
+        <Box marginBottom={2}>
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-            Short Description:
+            Course Title:
           </Typography>
           <TextField
             sx={{ width: "50%" }}
             variant="outlined"
             size="small"
-            name="shortDescription"
-            value={formData.shortDescription}
+            name="title"
+            value={formData.title}
             onChange={handleChange}
-            multiline
-            rows={4}
           />
+        </Box>
 
-          <Box marginBottom={2}>
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-              Heading:
-            </Typography>
-            <TextField
-              sx={{ width: "50%" }}
-              variant="outlined"
-              size="small"
-              name="heading"
-              value={formData.heading}
-              onChange={handleChange}
-            />
-          </Box>
+        <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+          Short Description:
+        </Typography>
+        <TextField
+          sx={{ width: "50%" }}
+          variant="outlined"
+          size="small"
+          name="shortDescription"
+          value={formData.shortDescription}
+          onChange={handleChange}
+          multiline
+          rows={4}
+        />
 
+        <Box marginBottom={2}>
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-            Long Description:
+            Heading:
           </Typography>
-          <ReactQuill
-            value={formData.longDescription}
-            onChange={(value) => handleEditorChange(value, 'longDescription')}
-            theme="snow"
-            style={{ height: "200px", marginBottom: "35px" }}
+          <TextField
+            sx={{ width: "50%" }}
+            variant="outlined"
+            size="small"
+            name="heading"
+            value={formData.heading}
+            onChange={handleChange}
           />
+        </Box>
 
-          <Box marginBottom={2}>
-            <FormControl fullWidth variant="outlined" size="small">
-              <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px", marginTop: "25px" }}>
-                Select Category:
-              </Typography>
-              <Select
-                name="categoryID"
-                value={formData.categoryID || ""} // Ensures existing category is shown
-                onChange={handleChange}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {categories.map((category) => (
-                  <MenuItem key={category._id} value={category._id}>
-                    {category.categoryName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+        <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+          Long Description:
+        </Typography>
+        <ReactQuill
+          value={formData.longDescription}
+          onChange={(value) => handleEditorChange(value, 'longDescription')}
+          theme="snow"
+          style={{ height: "200px", marginBottom: "35px" }}
+        />
 
-          <Box marginBottom={2}>
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-              Duration:
+        <Box marginBottom={2}>
+          <FormControl fullWidth variant="outlined" size="small">
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px", marginTop: "25px" }}>
+              Select Category:
             </Typography>
             <Select
-              name="duration"
-              value={formData.duration}
+              name="categoryID"
+              value={formData.categoryID || ""} // Ensures existing category is shown
               onChange={handleChange}
-              fullWidth
             >
-              <MenuItem value="2 weeks">2 Weeks</MenuItem>
-              <MenuItem value="1 month">1 Month</MenuItem>
-              <MenuItem value="3 months">3 Months</MenuItem>
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.categoryName}
+                </MenuItem>
+              ))}
             </Select>
-          </Box>
+          </FormControl>
+        </Box>
 
-          <Box marginBottom={2}>
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-              Price:
-            </Typography>
-            <TextField
-              sx={{ width: "50%" }}
-              variant="outlined"
-              size="small"
-              name="price"
-              type="number"
-              value={formData.price}
-              onChange={handleChange}
-            />
-          </Box>
-
+        <Box marginBottom={2}>
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-            Course Image:
+            Duration:
           </Typography>
-          <Box
-            {...getRootProps()}
-            sx={{
-              border: "2px dashed #0F3460",
-              padding: "20px",
-              textAlign: "center",
-              cursor: "pointer",
-              borderRadius: "8px",
-              backgroundColor: "#f9f9f9",
-              width: "50%",
-            }}
-            marginBottom={2}
+          <Select
+            name="duration"
+            value={formData.duration}
+            onChange={handleChange}
+            fullWidth
           >
-            <input {...getInputProps()} />
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-              Drag & drop an image here, or click to upload
-            </Typography>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              style={{ display: "none" }}
+            <MenuItem value="2 weeks">2 Weeks</MenuItem>
+            <MenuItem value="1 month">1 Month</MenuItem>
+            <MenuItem value="3 months">3 Months</MenuItem>
+          </Select>
+        </Box>
+
+        <Box marginBottom={2}>
+          <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+            Price:
+          </Typography>
+          <TextField
+            sx={{ width: "50%" }}
+            variant="outlined"
+            size="small"
+            name="price"
+            type="number"
+            value={formData.price}
+            onChange={handleChange}
+          />
+        </Box>
+
+        <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+          Course Image:
+        </Typography>
+        <Box
+          {...getRootProps()}
+          sx={{
+            border: "2px dashed #0F3460",
+            padding: "20px",
+            textAlign: "center",
+            cursor: "pointer",
+            borderRadius: "8px",
+            backgroundColor: "#f9f9f9",
+            width: "50%",
+          }}
+          marginBottom={2}
+        >
+          <input {...getInputProps()} />
+          <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+            Drag & drop an image here, or click to upload
+          </Typography>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+          />
+
+          {formData.courseImage && (
+            <img
+              src={URL.createObjectURL(formData.courseImage)}
+              alt="Preview"
+              style={{
+                marginTop: "10px",
+                maxWidth: "100px",
+                maxHeight: "100px",
+              }}
             />
+          )}
 
-            {formData.courseImage && (
-              <img
-                src={URL.createObjectURL(formData.courseImage)}
-                alt="Preview"
-                style={{
-                  marginTop: "10px",
-                  maxWidth: "100px",
-                  maxHeight: "100px",
-                }}
-              />
-            )}
+          {formData.existingImage && !formData.courseImage && (
+            <img
+              src={formData.existingImage}
+              alt="Existing"
+              style={{
+                marginTop: "10px",
+                maxWidth: "100px",
+                maxHeight: "100px",
+              }}
+            />
+          )}
+        </Box>
 
-            {formData.existingImage && !formData.courseImage && (
-              <img
-                src={formData.existingImage}
-                alt="Existing"
-                style={{
-                  marginTop: "10px",
-                  maxWidth: "100px",
-                  maxHeight: "100px",
-                }}
-              />
-            )}
-          </Box>
+        {/* Course Video Upload */}
+        <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
+          Course Video:
+        </Typography>
+        <Box
+          {...getVideoRootProps()}
+          sx={{
+            border: "2px dashed #0F3460",
+            padding: "20px",
+            textAlign: "center",
+            cursor: "pointer",
+            borderRadius: "8px",
+            backgroundColor: "#f9f9f9",
+            width: "50%"
+          }}
+          marginBottom={2}
+        >
+          <input {...getVideoInputProps()} />
+          <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+            Drag & drop videos here, or click to upload
+          </Typography>
 
-           {/* Course Video Upload */}
-                     <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
-                       Course Video:
-                     </Typography>
-                     <Box
-                       {...getVideoRootProps()}
-                       sx={{
-                         border: "2px dashed #0F3460",
-                         padding: "20px",
-                         textAlign: "center",
-                         cursor: "pointer",
-                         borderRadius: "8px",
-                         backgroundColor: "#f9f9f9",
-                         width: "50%"
-                       }}
-                       marginBottom={2}
-                     >
-                       <input {...getVideoInputProps()} />
-                       <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
-                         Drag & drop videos here, or click to upload
-                       </Typography>
-           
-                       {/* Display selected video names */}
-                       {formData.videos && formData.videos.length > 0 && (
-                         <Box sx={{ marginTop: 1 }}>
-                           <Typography variant="body2" sx={{ color: "green" }}>Selected Videos:</Typography>
-                           {formData.videos.map((video, index) => (
-                             <Typography key={index} variant="body2" sx={{ color: "#0F3460" }}>
-                               {video.name}
-                             </Typography>
-                           ))}
-                         </Box>
-                       )}
-                     </Box>
+          {/* Display selected video names */}
+          {formData.videos && formData.videos.length > 0 && (
+            <Box sx={{ marginTop: 1 }}>
+              <Typography variant="body2" sx={{ color: "green" }}>Selected Videos:</Typography>
+              {formData.videos.map((video, index) => (
+                <Typography key={index} variant="body2" sx={{ color: "#0F3460" }}>
+                  {video.name}
+                </Typography>
+              ))}
+            </Box>
+          )}
+        </Box>
 
 
 
 
-          <Button type="submit" variant="contained" color="primary">
-            Update Course
-          </Button>
-        </form>
-      </Paper>
-    </main>
-  );
+        <Button type="submit" variant="contained" color="primary">
+          Update Course
+        </Button>
+      </form>
+    </Paper>
+  </main>
+);
 }
 
 export default UpdateCourse;
