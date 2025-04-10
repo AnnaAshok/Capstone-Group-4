@@ -8,6 +8,7 @@ import {
   BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
+  BsCreditCard 
 } from "react-icons/bs";
 import { Navbar } from "react-bootstrap";
 import logoimage from "../../Assets/images/Edu_Logo.png";
@@ -46,6 +47,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="sidebar-list-item"><Link to="/admin/Users"><BsPeopleFill className="icon" /> Users</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Questions"><BsListCheck className="icon" /> Questions</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Certificates"><BsMenuButtonWideFill className="icon" /> Certificates</Link></li>
+        <li className="sidebar-list-item"><Link to="/admin/Payments"><BsCreditCard className="icon" /> Payments</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Settings"><BsFillGearFill className="icon" /> Settings</Link></li>
       </ul>
     </aside>

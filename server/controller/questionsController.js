@@ -75,7 +75,7 @@ exports.getQuestionsByCourse = async (req, res) => {
   }
 };
 
-// Get a specific question by ID
+// Get a specific question by courseid
 exports.getQuestionById = async (req, res) => {
   try {
     const { courseID } = req.params;
@@ -91,6 +91,23 @@ exports.getQuestionById = async (req, res) => {
   }
 };
 
+//get one question by its id
+exports.getQuestionDetails = async (req, res) => {
+  try {
+    const { id } = req.params; // Use 'id' instead of 'courseID'
+    console.log("Fetching question with ID:", id); // Debugging
+
+    const questions = await Questions.findById(id).populate('courseID'); 
+        if (!questions) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    res.status(200).json(questions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error while fetching question' });
+  }
+};
 // Update a question by ID
 exports.updateQuestion = async (req, res) => {
   try {

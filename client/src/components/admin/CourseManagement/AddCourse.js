@@ -8,7 +8,6 @@ import { useDropzone } from "react-dropzone"; // Importing useDropzone
 
 function AddCourse() {
   const [categories, setCategories] = useState([]);
-
   const [formData, setFormData] = useState({
     title: "",
     shortDescription: "",
@@ -20,6 +19,7 @@ function AddCourse() {
     heading: "",
     videos: [],
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   // Fetch categories
@@ -41,9 +41,15 @@ function AddCourse() {
 
   // Handle file upload
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: ".jpg,.jpeg,.png", // Restrict file types
     onDrop: (acceptedFiles) => {
-      setFormData({ ...formData, courseImage: acceptedFiles[0] });
+      // Ensure only allowed types are accepted
+      const file = acceptedFiles[0];
+      if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+        setFormData({ ...formData, courseImage: file });
+      } else {
+        setErrors((prevErrors) => ({ ...prevErrors, courseImage: "Only JPG, JPEG, and PNG images are allowed." }));
+      }
     },
   });
 
@@ -59,15 +65,27 @@ function AddCourse() {
     },
   });
 
+  // Validate the form
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.title) newErrors.title = "Title is required";
+    if (!formData.shortDescription) newErrors.shortDescription = "Short description is required";
+    if (!formData.longDescription) newErrors.longDescription = "Long description is required";
+    if (!formData.categoryID) newErrors.categoryID = "Category is required";
+    if (!formData.price) newErrors.price = "Price is required";
+    if (!formData.courseImage) newErrors.courseImage = "Course image is required";
+    if (!formData.heading) newErrors.heading = "Heading is required";
+    if (!formData.videos.length) newErrors.videos = "At least one video is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // If there are no errors, return true
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if all fields are filled
-    if (!formData.title || !formData.shortDescription || !formData.longDescription || !formData.categoryID || !formData.price || !formData.courseImage || !formData.heading || !formData.videos.length === 0) {
-      alert("Please fill out all fields");
-      return;
+    if (!validateForm()) {
+      return; // If validation fails, stop form submission
     }
 
     const uploadData = new FormData(); // Use a different name like 'uploadData'
@@ -116,13 +134,14 @@ function AddCourse() {
 
       setFormData({
         title: "",
-        description: "",
+        shortDescription: "",
+        longDescription: "",
         categoryID: "",
         duration: "2 weeks",
         price: "",
         courseImage: null,
         heading: "",
-        videos: null,
+        videos: [],
       });
       navigate("/admin/courses");
     } catch (error) {
@@ -148,7 +167,11 @@ function AddCourse() {
               name="title"
               value={formData.title}
               onChange={handleChange}
+              
             />
+            {errors.title && (
+            <Typography variant="body2" color="error" >{errors.title}</Typography>
+          )}
           </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
@@ -163,7 +186,11 @@ function AddCourse() {
             onChange={handleChange}
             multiline
             rows={4}
+          
           />
+          {errors.shortDescription && (
+            <Typography variant="body2" color="error" >{errors.shortDescription}</Typography>
+          )}
 
           <Box marginBottom={2}>
             <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
@@ -176,7 +203,11 @@ function AddCourse() {
               name="heading"
               value={formData.heading}
               onChange={handleChange}
+              
             />
+            {errors.heading && (
+            <Typography variant="body2" color="error" >{errors.heading}</Typography>
+          )}
           </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
@@ -188,6 +219,9 @@ function AddCourse() {
             theme="snow"
             style={{ height: "200px", marginBottom: "35px" }}
           />
+          {errors.longDescription && (
+            <Typography variant="body2" color="error" style={{ marginTop: "50px" }}>{errors.longDescription}</Typography>
+          )}
 
           <Box marginBottom={2}>
             <FormControl fullWidth variant="outlined" size="small">
@@ -198,6 +232,7 @@ function AddCourse() {
                 name="categoryID"
                 value={formData.categoryID}
                 onChange={handleChange}
+                error={Boolean(errors.categoryID)}
               >
                 <MenuItem value="">
                   <em>None</em>
@@ -208,6 +243,9 @@ function AddCourse() {
                   </MenuItem>
                 ))}
               </Select>
+              {errors.categoryID && (
+                <Typography variant="body2" color="error">{errors.categoryID}</Typography>
+              )}
             </FormControl>
           </Box>
 
@@ -219,11 +257,12 @@ function AddCourse() {
               name="duration"
               value={formData.duration}
               onChange={handleChange}
-              fullWidth
+              sx={{ width: "50%" }}
             >
-              <MenuItem value="2 weeks">2 Weeks</MenuItem>
-              <MenuItem value="1 month">1 Month</MenuItem>
-              <MenuItem value="3 months">3 Months</MenuItem>
+              <MenuItem value="2 weeks">2 weeks</MenuItem>
+              <MenuItem value="1 month">1 month</MenuItem>
+              <MenuItem value="3 months">3 months</MenuItem>
+              <MenuItem value="6 months">6 months</MenuItem>
             </Select>
           </Box>
 
@@ -239,14 +278,20 @@ function AddCourse() {
               type="number"
               value={formData.price}
               onChange={handleChange}
+             
             />
+            {errors.price && (
+                <Typography variant="body2" color="error">{errors.price}</Typography>
+              )}
           </Box>
-
           <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Course Image:</Typography>
           <Box {...getRootProps()} sx={{ border: "2px dashed #0F3460", padding: "20px", textAlign: "center", cursor: "pointer", borderRadius: "8px", backgroundColor: "#f9f9f9", width: "50%" }} marginBottom={2}>
             <input {...getInputProps()} />
             <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>Drag & drop an image here, or click to upload</Typography>
             {formData.courseImage && <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>{formData.courseImage.name}</Typography>}
+            {errors.courseImage && (
+            <Typography variant="body2" color="error">{errors.courseImage}</Typography>
+          )}
           </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
@@ -279,12 +324,15 @@ function AddCourse() {
                     {video.name}
                   </Typography>
                 ))}
+                {errors.videos && (
+            <Typography variant="body2" color="error">{errors.videos}</Typography>
+          )}
               </Box>
             )}
           </Box>
 
 
-          <Button type="submit" variant="contained" color="primary">
+          <Button variant="contained" type="submit" sx={{ backgroundColor: "#0F3460" }}>
             Add Course
           </Button>
         </form>

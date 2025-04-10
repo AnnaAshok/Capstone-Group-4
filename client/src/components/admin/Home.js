@@ -23,45 +23,48 @@ function Home() {
     users: 0,
     categories: 0,
   });
+  const [userPaymentsData, setUserPaymentsData] = useState([]);
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:5000/getCourses")
-        .then((res) => res.json())
-        .catch((err) => {
-          console.error("Error fetching courses:", err);
-          return { count: 0 };
-        }),
+      fetch("http://localhost:5000/getCourses").then((res) => res.json()).catch((err) => {
+        console.error("Error fetching courses:", err);
+        return { count: 0 };
+      }),
       fetch("http://localhost:5000/getUsers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-      })
-        .then((res) => res.json())
-        .catch((err) => {
-          console.error("Error fetching users:", err);
-          return { count: 0 };
-        }),
+      }).then((res) => res.json()).catch((err) => {
+        console.error("Error fetching users:", err);
+        return { count: 0 };
+      }),
       fetch("http://localhost:5000/getCategory", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-      })
+      }).then((res) => res.json()).catch((err) => {
+        console.error("Error fetching categories:", err);
+        return { categories: [] };
+      }),
+      fetch("http://localhost:5000/getAllPayments")
         .then((res) => res.json())
         .catch((err) => {
-          console.error("Error fetching categories:", err);
-          return { categories: [] }; // Default to empty array if error
+          console.error("Error fetching user payments:", err);
+          return [];
         }),
     ])
-      .then(([courses, users, categories]) => {
-        console.log("Courses Response:", courses);
-        console.log("Users Response:", users);
-        console.log("Categories Response:", categories);
+      .then(([courses, users, categories, allPayments]) => {
+        console.log("Courses:", courses);
+        console.log("Users:", users);
+        console.log("Categories:", categories);
+        console.log("All Payments:", allPayments);
 
-        // Handle category count properly from the response
         setStats({
           courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
           users: users.count ?? (Array.isArray(users) ? users.length : 0),
           categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
         });
+
+        setUserPaymentsData(allPayments);
       })
       .catch((error) => console.error("Error in API requests:", error));
   }, []);
@@ -111,19 +114,23 @@ function Home() {
       </div>
 
       <div className="charts">
-        <div className="chart-item">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="pv" fill="#8884d8" />
-              <Bar dataKey="uv" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {userPaymentsData.length > 0 && (
+          <div className="chart-item">
+            <h3>User Payment Totals</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={userPaymentsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="email"
+                  tickFormatter={(email) => email?.split("@")[0]}
+                />
+                <YAxis />
+                <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                <Bar dataKey="amount" fill="#00C49F" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
         <div className="chart-item">
           <ResponsiveContainer width="100%" height={300}>
@@ -138,6 +145,7 @@ function Home() {
             </LineChart>
           </ResponsiveContainer>
         </div>
+        
       </div>
     </main>
   );

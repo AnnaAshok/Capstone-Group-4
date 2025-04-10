@@ -42,7 +42,7 @@ const Certificate = ({ userName, courseName, quizPassed }) => {
             doc.text(`${issueDate}`, 101, 160);
 
             // Signature Placeholder
-            doc.addImage(signature, "PNG", 172, 130, 40, 40);
+            doc.addImage(signature, "PNG", 165, 140, 55, 30);
 
             // Save PDF
             doc.save(`${userName}_Certificate.pdf`);
