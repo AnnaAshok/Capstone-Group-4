@@ -31,8 +31,14 @@ const CoursePage = () => {
   return (
     <>
       <Header />
-      <section>
-        <div className='course-page-banner-bg'></div>
+      <section className="course-page-banner-wrapper">
+        <div className="course-page-banner-bg">
+          <div></div>
+          <div className="course-page-banner-text">
+            <p className="course-page-subtitle">ELEVATE YOUR SKILLS</p>
+            <h1 className="course-page-title">EXPLORE<br />TOP<br />COURSES</h1>
+          </div>
+        </div>
       </section>
 
       <CourseList

@@ -13,6 +13,7 @@ import Profile from './components/user/profile';
 import CourseDetailsPage from './components/user/CourseDetailsPage';
 import ContactUs from './components/user/ContactUs';
 import Quiz from './components/user/Quiz';
+import AboutUs from './components/user/AboutUs.js';
 import ProceedToPay from './components/user/ProceedToPay.js';
 
 
@@ -49,6 +50,8 @@ function App() {
         <Route path="/courses" element={<CoursePage />}></Route>
         <Route path="/courses/:courseId" element={<ProtectedRoute element={<CourseDetailsPage />} allowedRoles={['Student', 'Admin']}/>}></Route>
         <Route path="/contactUs" element={<ContactUs />}></Route>
+
+        <Route path="/aboutUs" element={<AboutUs />}></Route>
         
         {/* Admin routes */}
         <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} allowedRoles={['Admin']} />} />

@@ -2,6 +2,7 @@ import React from "react";
 import { useSpring, animated } from "@react-spring/web";
 import "../../index.css";
 import logoimage from "../../Assets/images/Edu_Logo.png";
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
   const animationProps = useSpring({
@@ -11,6 +12,12 @@ const Footer = () => {
     config: { tension: 170, friction: 26 },
   });
 
+  const navigate = useNavigate();
+
+  const handleContactClick = () => {
+    navigate('/contactUs');
+  };
+
   return (
     <>
 
@@ -18,7 +25,8 @@ const Footer = () => {
       <div className="footer">
       <animated.div style={animationProps} className="floating-box">
         <p className="text-lg font-medium">Let’s talk about the courses</p>
-        <button className="contact-btn">Contact us</button>
+        <button className="contact-btn" onClick={handleContactClick}>Contact us</button>
+        
       </animated.div>
         <div className="footer-container text-center">
           <div className="row">
@@ -94,7 +102,7 @@ const Footer = () => {
                 <i className="fa-solid fa-envelope"></i>edusphere@gmail.com
               </p>
               <p>
-                <i className="fa-solid fa-location-dot"></i>62A churchill street, Ontario
+                <i className="fa-solid fa-location-dot"></i>62A Churchill street,Waterloo, Ontario
               </p>
             </div>
           </div>

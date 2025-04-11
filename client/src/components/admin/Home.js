@@ -53,25 +53,21 @@ function Home() {
         }),
     ])
       .then(([courses, users, categories, allPayments]) => {
-        console.log("Courses:", courses);
-        console.log("Users:", users);
-        console.log("Categories:", categories);
-        console.log("All Payments:", allPayments);
-
         setStats({
           courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
           users: users.count ?? (Array.isArray(users) ? users.length : 0),
           categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
         });
 
-        setUserPaymentsData(allPayments);
+        // ✅ Get latest 10 payments by createdAt
+        const latestPayments = [...allPayments]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 10);
+
+        setUserPaymentsData(latestPayments);
       })
       .catch((error) => console.error("Error in API requests:", error));
   }, []);
-
-  useEffect(() => {
-    console.log("Updated Stats:", stats);
-  }, [stats]);
 
   const data = [
     { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
@@ -95,28 +91,28 @@ function Home() {
             <h3>Courses</h3>
             <BsFillArchiveFill className="card_icon" />
           </div>
-          <h1 key={stats.courses}>{stats.courses}</h1>
+          <h1>{stats.courses}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3>Users</h3>
             <BsPeopleFill className="card_icon" />
           </div>
-          <h1 key={stats.users}>{stats.users}</h1>
+          <h1>{stats.users}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3>Categories</h3>
             <BsFillGrid3X3GapFill className="card_icon" />
           </div>
-          <h1 key={stats.categories}>{stats.categories}</h1>
+          <h1>{stats.categories}</h1>
         </div>
       </div>
 
       <div className="charts">
         {userPaymentsData.length > 0 && (
           <div className="chart-item">
-            <h3>User Payment Totals</h3>
+            <h3>Latest 10 User Payments</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={userPaymentsData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -133,6 +129,7 @@ function Home() {
         )}
 
         <div className="chart-item">
+          <h3>Site Metrics</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -145,7 +142,6 @@ function Home() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        
       </div>
     </main>
   );

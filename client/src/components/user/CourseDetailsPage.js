@@ -1,7 +1,7 @@
 // CourseDetailsPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../home.css'; 
+import '../../home.css';
 import Header from './Header';
 import Footer from './Footer';
 import LoginSignup from './LoginSignup';
@@ -78,7 +78,7 @@ const CourseDetailsPage = () => {
                     if (userID) {
                         try {
                             const response = await axios.post(`http://localhost:5000/getUserById/${userID}`);
-                            
+
                             if (response.data) {
                                 //setUserName(response.data.firstName || "User");
                                 const { firstName, lastName } = response.data;
@@ -150,7 +150,7 @@ const CourseDetailsPage = () => {
         let userID;
         try {
             const decodedToken = jwtDecode(token);  // Decode the token to extract information
-            userID = decodedToken.userId;  
+            userID = decodedToken.userId;
 
         } catch (error) {
             setError('Invalid token.');
@@ -257,18 +257,25 @@ const CourseDetailsPage = () => {
         <>
             <Header />
 
-            <section>
-                <div className="course-details-page-banner-bg"></div>
-            </section>
+            <div className="course-details-page-banner-bg">
+                <div className="course-page-banner-text">
+                    <p className="course-page-subtitle">LEARN FROM THE BEST</p>
+                    <h1 className="course-page-title">{course.title}</h1>
+                    <p className="course-page-subtitle-2">Master essential skills with industry-relevant curriculum.</p>
+                </div>
+            </div>
 
             <section className="course-details-page">
                 <div className="course-details-content">
                     <div className="course-left">
-                        <h1 className="">{course.title}</h1>
-                        <img src={course.courseImage} alt={course.title} className="course-image-details-page text-left" />
-                        <p className="course-description">{course.shortDescription}</p>
+                        <div className="course-image-wrapper">
+                            <img src={course.courseImage} alt={course.title} className="course-image-details-page" />
+                        </div>
+                        <div className="course-text-content">
+                            <h1 className="course-title-details">{course.title}</h1>
+                            <p className="course-description">{course.shortDescription}</p>
+                        </div>
                     </div>
-
                     <div className="course-right">
                         <p className=''><strong>Duration:</strong> {course.duration}</p>
                         <p className=''><strong>Price:</strong> ${course.price}</p>
@@ -293,10 +300,32 @@ const CourseDetailsPage = () => {
                         {successMessage && <p className="success-message">{successMessage}</p>}
                     </div>
                 </div>
-            </section>
-            <section>
 
-            </section>
+
+                {enrolled && !showQuiz && (
+                    <section className="course-materials mt-5">
+                        <h2 className="text-left">{course.heading ? course.heading.toUpperCase() : ''}</h2>
+                        <p>{removeHtmlTags(course.longDescription)}</p>
+                        <div className="video-container">
+                            {course.videos.length > 0 && (
+                                <div className="videos-row">
+                                    {course.videos.map((video, index) => (
+                                        <div className="video-item" key={index}>
+                                            <video width="400" controls>
+                                                <source src={video} type="video/mp4" />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="text-center mt-5">
+                            <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
+                        </div>
+                    </section>
+                )}
 
             {enrolled && !showQuiz && (
                 <section className="course-materials mt-5">
@@ -331,6 +360,49 @@ const CourseDetailsPage = () => {
                         }
                 </section>
             )}
+
+                {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} />}
+            {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course}/>}
+
+
+                {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
+
+            </section>
+            {/* <section></section> */}
+
+            {/* {enrolled && !showQuiz && (
+                <section className="course-materials mt-5">
+                    <h2 className="text-left">{course.heading ? course.heading.toUpperCase() : ''}</h2>
+                    <p>{removeHtmlTags(course.longDescription)}</p>
+                    <div className="video-container">
+                        {course.videos.length > 0 && (
+                            <div className="videos-row">
+                                {course.videos.map((video, index) => (
+                                    <div className="video-item" key={index}>
+                                        <video width="400" controls>
+                                            <source src={video} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    {
+                        quizAttemptsFetched && (
+                            attemptCount >= 5 && hasPassed ? (
+                            <div className='text-center'><p>Already attended and passed the quiz. Download the certificate</p></div>
+                            ) : attemptCount >= 5 && !hasPassed ? (
+                            <div className='text-center'><p className='text-center mb-0'>Maximum Quiz attempt reached</p></div>
+                            ) : (
+                            <div className="text-center mt-5">
+                                <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
+                            </div>
+                            )
+                        )
+                        }
+                </section>
+            )} */}
 
             {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course}/>}
 
