@@ -94,7 +94,7 @@ const Footer = () => {
                 <i className="fa-solid fa-envelope"></i>edusphere@gmail.com
               </p>
               <p>
-                <i className="fa-solid fa-location-dot"></i>abcsfhj, Ontario
+                <i className="fa-solid fa-location-dot"></i>62A churchill street, Ontario
               </p>
             </div>
           </div>

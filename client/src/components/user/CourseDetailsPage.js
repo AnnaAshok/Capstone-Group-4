@@ -39,7 +39,9 @@ const CourseDetailsPage = () => {
     const [quizPassed, setQuizPassed] = useState(false);
 
     const [userName, setUserName] = useState("User");
-
+    const [attemptCount, setAttemptCount] = useState(0); // Track the number of attempts
+    const [hasPassed, setHasPassed] = useState(false);
+    const [quizAttemptsFetched, setQuizAttemptsFetched] = useState(false);
     useEffect(() => {
         const fetchCourseDetails = async () => {
             setLoading(true);
@@ -74,7 +76,6 @@ const CourseDetailsPage = () => {
                     });
 
                     if (userID) {
-                        console.log("hai");
                         try {
                             const response = await axios.post(`http://localhost:5000/getUserById/${userID}`);
                             
@@ -98,6 +99,7 @@ const CourseDetailsPage = () => {
                     }
                 }
                 setLoading(false);
+                setQuizAttemptsFetched(true);
             } catch (error) {
                 setError(error.message);
                 setLoading(false);
@@ -114,30 +116,6 @@ const CourseDetailsPage = () => {
         const decodedToken = jwtDecode(token);
         userID = decodedToken.userId;
     }
-
-    // useEffect(() => {
-    //     console.log("hai");
-    //     if (token) {
-    //         try {
-    //             const decodedToken = jwtDecode(token);
-    //             console.log("Decoded Token:", decodedToken);
-    
-    //             if (decodedToken.userId) {
-    //                 fetch(`http://localhost:5000/getUserById/${userID}`) 
-    //                     .then(response => response.json())
-    //                     .then(data => {
-    //                         console.log("Fetched User Data:", data);
-    //                         setUserName(data.username || "User");
-    //                     })
-    //                     .catch(error => {
-    //                         console.error("Error fetching user data:", error);
-    //                     });
-    //             }
-    //         } catch (error) {
-    //             console.error("Error decoding token:", error);
-    //         }
-    //     }
-    // }, [token]);
 
     useEffect(() => {
         if (showPaymentForm && !clientSecret) {
@@ -216,6 +194,53 @@ const CourseDetailsPage = () => {
         }
     };
 
+    useEffect(()=>{
+        const fetchQuizAttempts = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setLoginModalShow(true);
+                return;
+            }
+            let userID;
+            try {
+                const decodedToken = jwtDecode(token); 
+                userID = decodedToken.userId;  
+    
+            } catch (error) {
+                setError('Invalid token.');
+                return;
+            }
+            try {
+              setLoading(true);
+              const response = await axios.get(`http://localhost:5000/getusers-quiz-results?userId=${userID}&courseId=${courseId}`, {
+                headers: {
+                  Authorization: `Bearer ${token}` // Include token in request header
+                }
+              });
+              if (response.data) {
+                const quizResult = response.data;
+                if(quizResult.message != "No quiz results found for this user and course"){
+                    setAttemptCount(quizResult.attempts.length); // Set the number of attempts from the backend
+                    setQuizPassed(quizResult.attempts.some(attempt => attempt.status === 'passed')); // Check if any attempt passed
+                }
+                else{
+                    setAttemptCount(0)
+                    setQuizPassed(false)
+                }
+              } else {
+                setError('Invalid data received from server');
+              }
+            } catch (err) {
+              setError('Error fetching quiz results');
+              console.error(err);
+            } finally {
+              setLoading(false);
+            }
+          };
+          if(userID){
+            fetchQuizAttempts();
+          }   
+     },[userID,courseId,quizPassed])
     if (loading) {
         return <p>Loading course details...</p>;
     }
@@ -291,14 +316,23 @@ const CourseDetailsPage = () => {
                             </div>
                         )}
                     </div>
-
-                    <div className="text-center mt-5">
-                        <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
-                    </div>
+                    {
+                        quizAttemptsFetched && (
+                            attemptCount >= 5 && hasPassed ? (
+                            <div className='text-center'><p>Already attended and passed the quiz. Download the certificate</p></div>
+                            ) : attemptCount >= 5 && !hasPassed ? (
+                            <div className='text-center'><p className='text-center mb-0'>Maximum Quiz attempt reached</p></div>
+                            ) : (
+                            <div className="text-center mt-5">
+                                <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
+                            </div>
+                            )
+                        )
+                        }
                 </section>
             )}
 
-            {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} />}
+            {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course}/>}
 
 
             {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}

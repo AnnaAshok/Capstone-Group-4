@@ -44,19 +44,19 @@ function App() {
         <Route path='/login' element={<LoginSignup/>}></Route>
         <Route path='/forgotpassword' element={<Forgotpassword />}></Route>
         <Route path='/' element={<Home />}></Route>
-        <Route path='/tables' element={<ProtectedRoute  element={<CustomTable />} />}></Route>
+        <Route path='/tables' element={<ProtectedRoute  element={<CustomTable />} allowedRoles={['Student', 'Admin']}/>}></Route>
         
         <Route path="/courses" element={<CoursePage />}></Route>
-        <Route path="/courses/:courseId" element={<ProtectedRoute element={<CourseDetailsPage />} />}></Route>
+        <Route path="/courses/:courseId" element={<ProtectedRoute element={<CourseDetailsPage />} allowedRoles={['Student', 'Admin']}/>}></Route>
         <Route path="/contactUs" element={<ContactUs />}></Route>
         
         {/* Admin routes */}
-        <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} />} />
-        <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-        <Route path="/checkout" element={<ProtectedRoute element={<ProceedToPay />} />} />
+        <Route path="/admin/*" element={<ProtectedRoute element={<AdminRoutes />} allowedRoles={['Admin']} />} />
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />} allowedRoles={['Student', 'Admin']} />} />
+        <Route path="/checkout" element={<ProtectedRoute element={<ProceedToPay />} allowedRoles={['Student', 'Admin']} />} />
 
         {/* Quiz route */}
-        <Route path='/quiz' element={<ProtectedRoute element={<Quiz />} />} />
+        <Route path='/quiz' element={<ProtectedRoute element={<Quiz />} allowedRoles={['Student', 'Admin']} />} />
 
 
         </Routes>

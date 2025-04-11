@@ -89,7 +89,7 @@ export default function LoginSignup({ show, handleClose,setModalShow }) {
           localStorage.setItem("token", response.data.token); // Store token
             handleClose();
             setLoginModalShow(false)
-
+            localStorage.setItem("role", response.data.user.role);
               // Redirect based on role
               if (response.data.user.role === "Admin") {
                 navigate("/admin");
