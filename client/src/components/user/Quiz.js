@@ -163,7 +163,6 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
       setError('Failed to save quiz results. Please try again.');
     }
   };
-  console.log(quizPassed,"quizPassed")
 
   useEffect(() => {
     const fetchAttempts = async () => {

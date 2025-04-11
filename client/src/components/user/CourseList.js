@@ -22,9 +22,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                 const categoryParam = selectedCategory === "All"
                     ? `?page=${currentPage}&limit=${coursesPerPage}`  // If All is selected, no category filter
                     : `?categoryID=${selectedCategoryID}&page=${currentPage}&limit=${coursesPerPage}`;
-                console.log("Selected Category", selectedCategory);
 
-                console.log("Fetching courses with URL:", `http://localhost:5000/courses${categoryParam}`);
 
                 const response = await fetch(`http://localhost:5000/courses${categoryParam}`);
 
@@ -64,16 +62,13 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
     const indexOfFirstCourse = (currentPage - 1) * limit;
     const indexOfLastCourse = Math.min(indexOfFirstCourse + limit, filteredCourses.length);
 
-    console.log("Total Pages:", totalPagesCalculated);
-    console.log("Index of First Course:", indexOfFirstCourse);
-    console.log("Index of Last Course:", indexOfLastCourse);
+
 
     // Applying pagination: if limit is provided, only show limited courses
     const displayedCourses = limit
         ? filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse) // Show courses based on pagination
         : filteredCourses.slice(0, limit); // Show limited courses if no pagination is needed
 
-    console.log("Displayed Courses:", displayedCourses);
 
     return (
         <section className='courses-section'>
@@ -110,7 +105,6 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                                 onClick={() => {
                                     setSelectedCategory(category.categoryName);
                                     setCurrentPage(1);
-                                    console.log("Selected category:", category.categoryName);  // Add this line for debugging
                                 }}
                             >
                                 {category.categoryName}

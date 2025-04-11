@@ -69,8 +69,8 @@ const PaymentList = () => {
                                 <StyledTableRow key={payment._id}>
                                     <StyledTableCell>{index + 1}</StyledTableCell>
                                     <StyledTableCell>{payment.email}</StyledTableCell>
-                                    <StyledTableCell>${payment.amount.toFixed(2)}</StyledTableCell>
-                                    <StyledTableCell>{payment.currency.toUpperCase()}</StyledTableCell>
+                                    <StyledTableCell>${payment.amount}</StyledTableCell>
+                                    <StyledTableCell>{payment.currency}</StyledTableCell>
                                     <StyledTableCell>
                                         <span className={`badge ${getStatusClass(payment.status)}`}>
                                             {payment.status}

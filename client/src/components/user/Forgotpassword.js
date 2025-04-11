@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button, Form } from "react-bootstrap";
 import LoginSignup from "././LoginSignup";
+import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 
 const Forgotpassword = ({show, handleClose,setModalShow }) => {
@@ -14,7 +15,8 @@ const [password, setPassword] = useState('')
 const [ cpassword, setCpassword] = useState('')
 const [activeLogin, setActiveLogin] = useState(true)
 const [errorMessage, setErrorMessage] = useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCPassword, setShowCPassword] = useState(false);
 
 function SwitchContent() {
   setActiveLogin(!activeLogin)
@@ -34,7 +36,6 @@ const handleUpdatePassword = async (e) => {
   try {
     const result = await axios.post('http://localhost:5000/resetpassword', { email, password });
     if (result.status === 200) {
-      console.log(result)
       setErrorMessage(result.data.message)
       navigate('/'); 
     }
@@ -70,6 +71,8 @@ const handleBacktologin=()=>{
   setActiveLogin(true); // Show password reset form
   setErrorMessage("");
   setEmail('')
+  setShowCPassword(false)
+  setShowPassword(false)
 }
 useEffect(()=>{
   if(!show){
@@ -78,6 +81,8 @@ useEffect(()=>{
     setCpassword('')
     setActiveLogin(true)
     setErrorMessage('');
+    setShowCPassword(false)
+    setShowPassword(false)
   }
 },[show])
   return (
@@ -85,8 +90,8 @@ useEffect(()=>{
     <Modal show={show} onHide={handleClose} centered dialogClassName="custom-modal">
     <Modal.Body>
     <div className={`content justify-content-center align-items-center d-flex shadow-lg ${activeLogin ? "" : "active"}`} id='content'>
-    <div className='col-md-6 d-flex justify-content-center'>
-    <form onSubmit={handleUpdatePassword}>
+    <div className='col-md-6 d-flex justify-content-center' style={{position:"relative"}}>
+      <form onSubmit={handleUpdatePassword}>
           <div className='header-text mb-4'>
             <h1>Reset Password</h1>
           </div>
@@ -100,18 +105,49 @@ useEffect(()=>{
             className='form-control bg-light'/>
           </div>
           <div className='input-group mb-3'>
-            <input type='password' 
-            name="password"
+            <input 
+                type={showPassword ? 'text' : 'password'}
+                name="password"
             id="password"
             onChange={e=>setPassword(e.target.value)}
             placeholder='New password' className='form-control  bg-light'/>
+            <span
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              zIndex:100,
+              right: '10px',
+              transform: 'translateY(-50%)',
+              cursor: 'pointer',
+              color: '#666',
+              fontSize: '1.2rem'
+            }}
+          >
+            {showPassword ? <BsEye />  :<BsEyeSlash /> }
+          </span>
           </div>
+          
           <div className='input-group mb-3'>
-            <input type='password' 
+            <input type={showCPassword ? 'text' : 'password'}
             id="cpassword"
             name="cpassword"
             onChange={e=>setCpassword(e.target.value)}
             placeholder='Confirm password' className='form-control bg-light'/>
+            <span
+              onClick={() => setShowCPassword(!showCPassword)}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                zIndex:100,
+                right: '10px',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                color: '#666',
+                fontSize: '1.2rem'
+              }}
+            >
+              {showCPassword ? <BsEye />  :<BsEyeSlash /> }</span>
           </div>
            {/* Validation error */}
 

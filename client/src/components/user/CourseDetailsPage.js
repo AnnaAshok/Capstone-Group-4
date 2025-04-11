@@ -302,30 +302,7 @@ const CourseDetailsPage = () => {
                 </div>
 
 
-                {enrolled && !showQuiz && (
-                    <section className="course-materials mt-5">
-                        <h2 className="text-left">{course.heading ? course.heading.toUpperCase() : ''}</h2>
-                        <p>{removeHtmlTags(course.longDescription)}</p>
-                        <div className="video-container">
-                            {course.videos.length > 0 && (
-                                <div className="videos-row">
-                                    {course.videos.map((video, index) => (
-                                        <div className="video-item" key={index}>
-                                            <video width="400" controls>
-                                                <source src={video} type="video/mp4" />
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="text-center mt-5">
-                            <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
-                        </div>
-                    </section>
-                )}
+               
 
             {enrolled && !showQuiz && (
                 <section className="course-materials mt-5">

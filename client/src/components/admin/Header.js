@@ -8,7 +8,7 @@ function Header({ toggleSidebar }) {
   const handleLogout = () => {
     // Clear any stored authentication data (if using localStorage/sessionStorage)
     localStorage.removeItem("authToken");
-
+    localStorage.clear();
     // Redirect to the Home page
     navigate("/");
   };

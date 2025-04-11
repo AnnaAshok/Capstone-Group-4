@@ -9,7 +9,7 @@ const Header = () => {
   const loggedIn = localStorage.getItem("token");
   const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
-
+  const role = localStorage.getItem("role")
   const handleLogout = () => {
     localStorage.clear();
     navigate(0);
@@ -93,6 +93,7 @@ const Header = () => {
             {/* Navbar Links (Right-Aligned) */}
             <Nav className="ms-auto">
               <Nav.Link href="/" style={{ color: "#0F3460", fontWeight: "bold" }}>Home</Nav.Link>
+              {role == "Admin" && <Nav.Link href="/admin" style={{color: "#0F3460", fontWeight: "bold"}}>Dashboard</Nav.Link>}
               <Nav.Link href="/courses" style={{ color: "#0F3460", fontWeight: "bold" }}>Courses</Nav.Link>
               <Nav.Link href="/aboutUs" style={{ color: "#0F3460", fontWeight: "bold" }}>About Us</Nav.Link>
               <Nav.Link href="/contactUs" style={{ color: "#0F3460", fontWeight: "bold" }}>Contact Us</Nav.Link>

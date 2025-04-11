@@ -95,7 +95,6 @@ exports.getQuestionById = async (req, res) => {
 exports.getQuestionDetails = async (req, res) => {
   try {
     const { id } = req.params; // Use 'id' instead of 'courseID'
-    console.log("Fetching question with ID:", id); // Debugging
 
     const questions = await Questions.findById(id).populate('courseID'); 
         if (!questions) {

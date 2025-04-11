@@ -69,7 +69,7 @@ const CustomTable = ({ courses, setCourses }) => {
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
-console.log(courses)
+console.log(courses.courses)
   return (
     <>
       <TableContainer component={Paper}>

@@ -58,8 +58,8 @@ const fetchUsers = async () => {
       page: currentPage,
       limit: limit,
     });
-    setUsers(response.data);
-    // setTotalPages(response.data.totalPages);
+    setUsers(response.data.filteredUsers);
+    setTotalPages(response.data.totalPages);
   } catch (error) {
     console.error('Error fetching categories:', error);
   }
@@ -82,7 +82,6 @@ const fetchUsers = async () => {
    // Handle deleting a category
    const handleDelete = async () => {
     try {
-      console.log(userToDelete)
       if (userToDelete) {
         const deletedUser = await axios.post(
           `http://localhost:5000/deleteUser/${userToDelete}`
@@ -99,6 +98,11 @@ const fetchUsers = async () => {
     navigate("/admin/addUser");
 
   }
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+        setCurrentPage(newPage);
+    }
+  };
   return (
     <main className="main-container">
       <div className="list-courses">
@@ -164,6 +168,21 @@ const fetchUsers = async () => {
             </Button>
           </DialogActions>
         </Dialog>
+        <div className="pagination">
+                <button 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+                <span> {currentPage} of {totalPages} </span>
+                <button 
+                    onClick={() => handlePageChange(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
     </main>  )
 }
 
