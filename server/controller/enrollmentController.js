@@ -119,3 +119,44 @@ exports.getEnrollmentsByUser = async (req, res) => {
       });
   }
 };
+exports.getEnrollmentSummary = async (req, res) => {
+  const { interval = 'day' } = req.query;
+
+  const validIntervals = ['day', 'week', 'month'];
+  if (!validIntervals.includes(interval)) {
+    return res.status(400).json({ message: 'Invalid interval' });
+  }
+
+  const unitMap = {
+    day: 'day',
+    week: 'week',
+    month: 'month',
+  };
+
+  try {
+    const summary = await Enrollment.aggregate([
+      {
+        $group: {
+          _id: {
+            $dateTrunc: {
+              date: "$enrollmentDate",
+              unit: unitMap[interval],
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const formatted = summary.map((entry) => ({
+      date: entry._id.toISOString().split('T')[0],
+      count: entry.count,
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error("Error aggregating enrollments:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

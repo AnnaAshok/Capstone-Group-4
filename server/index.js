@@ -124,6 +124,10 @@ app.use('/', quizController);
 // app.put('/questions/:id', questionsController.updateQuestion);
 // app.delete('/questions/:id', questionsController.deleteQuestion);
 
+app.get('/enrollments/summary', enrollmentController.getEnrollmentSummary);
+
+
+
 // Routes for profile
 app.get("/profile", authMiddleware, userController.getUserProfile); // Protected route
 app.post("/update-password", userController.updatePassword);
