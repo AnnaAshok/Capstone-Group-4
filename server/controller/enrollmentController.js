@@ -53,9 +53,6 @@ exports.enrollCourse = async (req, res) => {
 // Check if a user is enrolled in a course
 exports.checkEnrollment = async (req, res) => {
   const { courseId, userId } = req.params;
-  console.log(
-    `Checking enrollment for courseId: ${courseId}, userId: ${userId}`
-  );
 
   try {
     const enrollment = await Enrollment.findOne({
@@ -63,7 +60,6 @@ exports.checkEnrollment = async (req, res) => {
       userID: new mongoose.Types.ObjectId(userId),
     });
 
-    console.log("Enrollment result:", enrollment);
     if (enrollment) {
       return res
         .status(200)
@@ -117,5 +113,46 @@ exports.getEnrollmentsByUser = async (req, res) => {
       .json({
         message: "Server error while fetching enrollments: " + error.message,
       });
+  }
+};
+exports.getEnrollmentSummary = async (req, res) => {
+  const { interval = 'day' } = req.query;
+
+  const validIntervals = ['day', 'week', 'month'];
+  if (!validIntervals.includes(interval)) {
+    return res.status(400).json({ message: 'Invalid interval' });
+  }
+
+  const unitMap = {
+    day: 'day',
+    week: 'week',
+    month: 'month',
+  };
+
+  try {
+    const summary = await Enrollment.aggregate([
+      {
+        $group: {
+          _id: {
+            $dateTrunc: {
+              date: "$enrollmentDate",
+              unit: unitMap[interval],
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const formatted = summary.map((entry) => ({
+      date: entry._id.toISOString().split('T')[0],
+      count: entry.count,
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error("Error aggregating enrollments:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

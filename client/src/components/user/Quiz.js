@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import Certificate from './Certificate';
 
 function cn(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
+const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
@@ -20,6 +21,8 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
   const [certificateGenerated, setCertificateGenerated] = useState(false);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [userId, setUserId] = useState(null); // Get User ID
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [quizPassed, setQuizPassed] = useState(false);
 
   useEffect(() => {
     // Get the user ID from the token
@@ -123,7 +126,8 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
     const status = percentage >= 60 ? "passed" : "failed";
 
     if (status === "passed") {
-      onQuizComplete(true);
+      // onQuizComplete(true);
+      setQuizPassed(true)
     }
 
     setResultMessage(status === "passed" ? "Congratulations! You passed!" : "Sorry, you failed. Please try again next time.");
@@ -136,7 +140,6 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
       receivedMarks: correctAnswers,
       status: status
     };
-    console.log("quizData:", quizData);
 
     try {
       const response = await axios.post("http://localhost:5000/quiz-results", quizData);
@@ -145,7 +148,11 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
         throw new Error(`Failed to save quiz results: ${response.status}`);
       }
       const responseData = response.data;  // Capture the response data
-      console.log("Response Data:", responseData); // Log the response
+      if(responseData){
+        setAttemptCount(responseData.quiz?.attempts?.length)
+        setQuizCompleted(true);
+  
+      }
       if (!responseData)
       {
         setError("Empty response from server");
@@ -157,6 +164,22 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchAttempts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/getusers-quiz-results?userId=${userId}&courseId=${courseId}`);
+        if (response.data && response.data.attempts) {
+          setAttemptCount(response.data.attempts.length);
+        }
+      } catch (err) {
+        console.error("Failed to fetch attempts", err);
+      }
+    };
+  
+    if (userId && courseId) {
+      fetchAttempts();
+    }
+  }, [userId, courseId]);
   const progress = questions.length ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
 
   const formatTime = (seconds) => {
@@ -215,12 +238,38 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
       </div>
     );
   }
+  if (quizCompleted) {
+    return (
+      <>
+      <div className='flex items-center justify-center p-4 mb-6'>
+        <div className="mt-2 text-center space-y-4 w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 space-y-6">
+          <p className="text-xl font-semibold">{resultMessage}</p>
+          <p className="text-lg">
+            You scored {correctAnswersCount} out of {questions.length}.
+          </p>
+          {attemptCount < 5 ? (
+            <button
+              onClick={handleReset}
+              className="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+            >
+              Re-try Quiz
+            </button>
+          ) : (
+            <p className="text-red-500">You have reached the maximum number of attempts.</p>
+          )}
+        </div>
+      </div>
+      {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
+      </>
+  )}
 
   const currentQuestion = questions[currentQuestionIndex];
   const userChoice = userAnswers[currentQuestion._id];
 
   return (
-    <div className="flex items-center justify-center p-4">
+    <>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 space-y-6">
         <div className="flex justify-between items-center mb-4">
           <p className="text-md text-gray-600">Time Remaining: {formatTime(timer)}</p>
@@ -274,6 +323,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
         </div>
 
         <div className="flex justify-between mt-4">
+          {!quizCompleted && 
           <button
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
@@ -286,6 +336,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
           >
             Previous
           </button>
+          }
           {currentQuestionIndex < questions.length - 1 ? (
             <button
               onClick={handleNext}
@@ -318,14 +369,15 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
           </div>
         )}
 
-        <button
-          onClick={handleReset}
-          className="mt-6 w-full py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500"
-        >
-          Reset Quiz
-        </button>
       </div>
     </div>
+    {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
+
+</>
+    
+
+
+
   );
 };
 

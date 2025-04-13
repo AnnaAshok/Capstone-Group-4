@@ -206,26 +206,26 @@ const Home = () => {
 
 
       {/* Why choose Us section  */}
-      <section class="why-choose-us">
-        <div class="why-choose-us-div">
-          <h2 class="section-title">Why Choose Us</h2>
-          <p class="section-subtitle">Our platform is trusted by thousands of learners across the globe.</p>
-          <div class="stats-grid">
-            <div class="stat-box">
-              <img src={courses_icon} alt="icon for courses" class="stat-icon" />
+      <section className="why-choose-us">
+        <div className="why-choose-us-div">
+          <h2 className="section-title">Why Choose Us</h2>
+          <p className="section-subtitle">Our platform is trusted by thousands of learners across the globe.</p>
+          <div className="stats-grid">
+            <div className="stat-box">
+              <img src={courses_icon} alt="icon for courses" className="stat-icon" />
 
               <h3 className="stat-number">{stats.courses}+</h3>
-              <p class="stat-label">Courses Offered</p>
+              <p className="stat-label">Courses Offered</p>
             </div>
-            <div class="stat-box">
-              <img src={categories_icon} alt="icon for categories" class="stat-icon" />
+            <div className="stat-box">
+              <img src={categories_icon} alt="icon for categories" className="stat-icon" />
               <h3 className="stat-number">{stats.categories}+</h3>
-              <p class="stat-label">Categories</p>
+              <p className="stat-label">Categories</p>
             </div>
-            <div class="stat-box">
-              <img src={users_icon} alt="icon for users" class="stat-icon" />
+            <div className="stat-box">
+              <img src={users_icon} alt="icon for users" className="stat-icon" />
               <h3 className="stat-number">{stats.users}+</h3>
-              <p class="stat-label">Registered Users</p>
+              <p className="stat-label">Registered Users</p>
             </div>
           </div>
         </div>

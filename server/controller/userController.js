@@ -5,9 +5,12 @@ const jwt = require("jsonwebtoken");
 // Get all users
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().populate("roleID");
+    const { page = 1, limit = 10 } = req.body;  // Pagination defaults
+    const skip = (page - 1) * limit; // Pagination logic
+    const users = await User.find().populate("roleID").skip(skip)
+    .limit(limit);
     const filteredUsers = users
-      .filter(user => user.roleID && user.roleID.role === "Student")
+      // .filter(user => user.roleID && user.roleID.role === "Student")
       .map(user => ({
         _id: user._id,
         firstName: user.firstName,
@@ -16,8 +19,12 @@ exports.getUsers = async (req, res) => {
         roleID: user.roleID._id,
         role: user.roleID.role
       }));
-
-    res.status(200).json(filteredUsers);
+      const totalUsers = await User.countDocuments();
+      // const totalPages = Math.ceil(totalUsers / limit);
+    res.status(200).json({filteredUsers,
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit)
+  });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch users", error: err.message });
   }

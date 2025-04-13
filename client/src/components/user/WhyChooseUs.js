@@ -52,9 +52,7 @@ function Home() {
         }),
     ])
       .then(([courses, users, categories]) => {
-        console.log("Courses Response:", courses);
-        console.log("Users Response:", users);
-        console.log("Categories Response:", categories);
+
 
         // Handle category count properly from the response
         setStats({
@@ -66,9 +64,6 @@ function Home() {
       .catch((error) => console.error("Error in API requests:", error));
   }, []);
 
-  useEffect(() => {
-    console.log("Updated Stats:", stats);
-  }, [stats]);
 
   const data = [
     { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },

@@ -236,6 +236,13 @@ body {
     color: #ff6d00 !important;
     text-align: center;
   }
+  .drop {
+    border: 2px solid #0F3460;
+  }
+  .drop option{
+    background-color: #0F3460;
+    color: white;
+  }
   
   
   /* End Main  */

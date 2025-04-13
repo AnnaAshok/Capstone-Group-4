@@ -52,8 +52,15 @@ const videoUpload = multer({ storage: videoStorage });
 // Get all courses
 exports.getCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate("categoryID"); // Populate category details
-    res.status(200).json(courses);
+    const { page = 1, limit = 5 } = req.query; 
+    const skip = (page - 1) * limit;
+    const courses = await Course.find().populate("categoryID").skip(skip).limit(limit); // Populate category details
+    // Count total courses for pagination
+      const totalCourses = await Course.countDocuments();
+    res.status(200).json({courses,
+      currentPage: page,
+      totalPages: Math.ceil(totalCourses / limit)
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

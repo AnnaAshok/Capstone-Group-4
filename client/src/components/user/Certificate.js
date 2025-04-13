@@ -5,8 +5,7 @@ import greatVibesBase64 from '../../Assets/Fonts/greatVibesBase64';
 import signature from "../../Assets/images/signature-3.png";
 
 const Certificate = ({ userName, courseName, quizPassed }) => {
-    console.log("Quiz Passed Status:", quizPassed); 
-    console.log("User Name:", userName); 
+
 
     const generateCertificate = () => {
         const doc = new jsPDF("landscape", "mm", "a4"); // Landscape mode, A4 size

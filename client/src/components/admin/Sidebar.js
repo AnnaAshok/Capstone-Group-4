@@ -19,7 +19,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       <div className="sidebar-title">
         <div className="sidebar-brand">
           <div className="d-flex align-items-center logo">
-            <Navbar.Brand href="/admin" className="align-items-center">
+            <Navbar.Brand href="/" className="align-items-center">
               <img
                 src={logoimage}
                 alt="EduSphere Logo"

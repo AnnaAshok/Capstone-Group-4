@@ -64,7 +64,7 @@ const ListQuestions = () => {
                 limit: limit,
             });
             setQuestions(response.data.questions);
-            // setTotalPages(response.data.totalPages);
+            setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Error fetching questions:', error);
         }
@@ -72,7 +72,7 @@ const ListQuestions = () => {
 
     useEffect(() => {
         axios.get("http://localhost:5000/getCourses")
-          .then(response => setCourses(response.data))
+          .then(response => setCourses(response.data.courses))
           .catch(error => console.error("Error fetching courses:", error));
       }, []);
 
@@ -91,7 +91,11 @@ const ListQuestions = () => {
         setQuestionToDelete(id);
         setOpenDialog(true);
     };
-
+    const handlePageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+      };
     // Handle deleting a question
     const handleDelete = async () => {
         try {
@@ -133,7 +137,7 @@ const ListQuestions = () => {
                         {questions.length > 0 ? (
                             questions.map((question, index) => (
                                 <StyledTableRow key={question._id}>
-                                    <StyledTableCell>{index + 1}</StyledTableCell>
+                                    <StyledTableCell>{index + 1 + (currentPage - 1) * limit}</StyledTableCell>
                                     <StyledTableCell>         
                                          {courses.find((c) => c._id === question.courseID._id)?.title || 'Unknown'}
                                     </StyledTableCell>
@@ -184,6 +188,21 @@ const ListQuestions = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <div className="pagination">
+                <button 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+                <span> {currentPage} of {totalPages} </span>
+                <button 
+                    onClick={() => handlePageChange(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
         </main>
     );
 };

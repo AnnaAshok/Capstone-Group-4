@@ -24,6 +24,8 @@ function Home() {
     categories: 0,
   });
   const [userPaymentsData, setUserPaymentsData] = useState([]);
+  const [enrollmentData, setEnrollmentData] = useState([]);
+  const [interval, setInterval] = useState("day");
 
   useEffect(() => {
     Promise.all([
@@ -53,35 +55,30 @@ function Home() {
         }),
     ])
       .then(([courses, users, categories, allPayments]) => {
-        console.log("Courses:", courses);
-        console.log("Users:", users);
-        console.log("Categories:", categories);
-        console.log("All Payments:", allPayments);
-
         setStats({
-          courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
-          users: users.count ?? (Array.isArray(users) ? users.length : 0),
+          courses: courses?.courses.count ?? (Array.isArray(courses.courses) ? courses?.courses.length : 0),
+          users: users?.filteredUsers.count ?? (Array.isArray(users?.filteredUsers) ? users?.filteredUsers.length : 0),
           categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
         });
 
-        setUserPaymentsData(allPayments);
+console.log(users.filteredUsers)
+        // ✅ Get latest 10 payments by createdAt
+        const latestPayments = [...allPayments]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 10);
+
+        setUserPaymentsData(latestPayments);
       })
       .catch((error) => console.error("Error in API requests:", error));
   }, []);
 
+  // Fetch enrollment chart data
   useEffect(() => {
-    console.log("Updated Stats:", stats);
-  }, [stats]);
-
-  const data = [
-    { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
-    { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
-    { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
-    { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
-    { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
-    { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
-    { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
-  ];
+    fetch(`http://localhost:5000/enrollments/summary?interval=${interval}`)
+      .then((res) => res.json())
+      .then((data) => setEnrollmentData(data))
+      .catch((err) => console.error("Error fetching enrollment summary:", err));
+  }, [interval]);
 
   return (
     <main className="main-container">
@@ -95,28 +92,28 @@ function Home() {
             <h3>Courses</h3>
             <BsFillArchiveFill className="card_icon" />
           </div>
-          <h1 key={stats.courses}>{stats.courses}</h1>
+          <h1>{stats.courses}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3>Users</h3>
             <BsPeopleFill className="card_icon" />
           </div>
-          <h1 key={stats.users}>{stats.users}</h1>
+          <h1>{stats.users}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3>Categories</h3>
             <BsFillGrid3X3GapFill className="card_icon" />
           </div>
-          <h1 key={stats.categories}>{stats.categories}</h1>
+          <h1>{stats.categories}</h1>
         </div>
       </div>
 
       <div className="charts">
         {userPaymentsData.length > 0 && (
           <div className="chart-item">
-            <h3>User Payment Totals</h3>
+            <h3>Latest 10 User Payments</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={userPaymentsData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -132,20 +129,31 @@ function Home() {
           </div>
         )}
 
+
+        {/*  Enrollments Over Time Chart */}
         <div className="chart-item">
+          <div className="flex items-center justify-between mb-2">
+            <h3>Total Enrollments Over Time</h3>
+            <select
+              value={interval}
+              onChange={(e) => setInterval(e.target.value)}
+              className=" drop border px-2 py-1 rounded"
+            >
+              <option value="day">Daily</option>
+              <option value="week">Weekly</option>
+              <option value="month">Monthly</option>
+            </select>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data}>
+            <LineChart data={enrollmentData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="date" />
+              <YAxis allowDecimals={false} />
               <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-              <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="count" stroke="#007bff" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
-        
       </div>
     </main>
   );

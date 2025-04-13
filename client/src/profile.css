@@ -1,25 +1,27 @@
 .profile-page {
   display: flex;
   justify-content: center;
-  align-items: center; /* Center all content */
+  align-items: stretch; 
   gap: 20px;
   padding: 20px;
-  min-height: 110vh;
-  flex-wrap: wrap; /* Allow content to wrap on smaller screens */
+  min-height: 90vh; /* Ensure parent has a height to stretch within */
+  flex-wrap: wrap;
+  margin-bottom: 30px;
 }
+
 
 .profile-left {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 90vh;
   background: #2c4b70;
-  width: 20%; /* Reduced width */
-  padding: 50px; /* Adjusted padding */
+  width: 25%;
+  padding: 50px;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center; /* Center text */
+  text-align: center;
 }
+
 
 .profile-image img {
   width: 150px;
@@ -37,14 +39,14 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 40%; /* Reduced width */
+  width: 40%; 
   background: #ffffff;
   padding: 20px;
-  height: 90vh;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center; /* Center text */
+  text-align: center;
 }
+
 
 .profile-details {
   text-align: center;
