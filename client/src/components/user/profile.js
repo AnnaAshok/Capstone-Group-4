@@ -90,7 +90,6 @@ const Profile = () => {
       if (response.data && response.data.length > 0) {
         const courseDetails = await Promise.all(
           response.data.map(async (enrollment) => {
-            console.log('Enrollment Data:', enrollment);
             const courseResponse = await axios.get(`http://localhost:5000/courses/${enrollment._id}`);
             return courseResponse.data;
           })

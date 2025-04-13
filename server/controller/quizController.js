@@ -6,11 +6,9 @@ const QuizResult = require('../models/quizzes');
 const saveQuizResult = async (req, res) => {
   try {
     const { userId, courseId, totalMarks, receivedMarks, status } = req.body;
-    console.log("Received data:", req.body); // 1. Debug: Check ALL received data
 
     // Basic validation
     if (!userId || !courseId || totalMarks == null || receivedMarks == null) {
-      console.warn("Missing fields:", { userId, courseId, totalMarks, receivedMarks, status }); 
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -20,23 +18,47 @@ const saveQuizResult = async (req, res) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    const quizResult = new QuizResult({
-      userId,
-      courseID: courseId,
-      totalMarks,
-      receivedMarks,
-      status: status || 'pending',
-    });
+    let quiz = await QuizResult.findOne({ userID: userId, courseID: courseId });
 
-    try{
-        const savedQuizResult = await quizResult.save();
-        console.log("Saved result:", savedQuizResult); // 4. Debug: Log saved result
-        res.status(201).json(savedQuizResult);
-      } catch(dbError){
-        console.error("Database error:", dbError); // 5. Debug: Catch and log DB errors
-        res.status(500).json({ error: 'Database error while saving quiz result' });
+    if (quiz) {
+      // Check if 5 attempts already made
+      if (quiz.attemptCount >= 5) {
+        return res.status(201).json({ message: 'Maximum 5 attempts reached. Cannot take quiz again.' });
       }
 
+      // Add new attempt to history
+      quiz.attempts.push({
+        receivedMarks,
+        status,
+        date: new Date()
+      });
+
+      quiz.attemptCount += 1;
+      quiz.totalMarks = totalMarks;
+      quiz.receivedMarks = receivedMarks;
+
+      // If any attempt passed, overall is passed
+      const hasPassed = quiz.attempts.some(a => a.status === 'passed');
+      quiz.status = hasPassed ? 'passed' : 'failed';
+
+      await quiz.save();
+      return res.status(200).json({ message: 'Quiz attempt updated', quiz });
+    } else {
+      // First time taking quiz
+      const newQuiz = new QuizResult({
+        userID: userId,
+        courseID: courseId,
+        totalMarks,
+        receivedMarks,
+        status,
+        attemptCount: 1,
+        attempts: [{ receivedMarks, status }]
+      });
+
+      const saved = await newQuiz.save();
+      return res.status(201).json({ message: 'Quiz result created', quiz: saved });
+    }
+  
   } catch (error) {
     console.error("Error in saveQuizResult:", error); // 6. Debug: General error
     res.status(500).json({ error: 'Server error while creating quiz result' });
@@ -57,9 +79,32 @@ const getQuizResults = async (req, res) => {
   }
 };
 
+const getQuizAttemptsByUser = async (req, res) => {
+  try {
+    const { userId, courseId } = req.query; // Get userId and courseId from query parameters
+
+    if (!userId || !courseId) {
+      return res.status(400).json({ error: 'userId and courseId are required' });
+    }
+       const quizResult = await QuizResult.findOne({ userID: userId, courseID: courseId });
+
+       // If no quiz result is found for this user and course
+       if (!quizResult) {
+         return res.status(201).json({ message: 'No quiz results found for this user and course' });
+       }
+
+    // Return the quiz result including all attempts
+    res.status(200).json(quizResult);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error while fetching quiz results' });
+  }
+};
+
 // Define routes using the router
 router.post('/quiz-results', saveQuizResult);
 router.get('/quiz-results', getQuizResults);
+router.get('/getusers-quiz-results',getQuizAttemptsByUser);
 
 // Export the router
 module.exports = router;

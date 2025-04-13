@@ -11,6 +11,14 @@ const QuizzesModel = new mongoose.Schema({
     required: true, 
     default: 'pending' 
   },
+  attemptCount: { type: Number, default: 1, min: 1, max: 5 },
+  attempts: [
+    {
+      receivedMarks: { type: Number, required: true },
+      status: { type: String, enum: ['passed', 'failed'], required: true },
+      date: { type: Date, default: Date.now }
+    }
+  ],
   date: { type: Date, default: Date.now }
 });
 

@@ -101,10 +101,9 @@ const getPaymentsWithUserEmails = async (req, res) => {
           select: "email", // Fetch only the email field from User
         })
         .select("amount currency status userId"); // Select required fields from Payment
-  console.log(payments)
       // Formatting response to include user email directly
       const formattedPayments = payments.map(payment => ({
-        email: payment.userId.email, 
+        email: payment.userId?.email, 
         amount: payment.amount,
         currency: payment.currency,
         status: payment.status

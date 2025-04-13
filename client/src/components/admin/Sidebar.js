@@ -19,7 +19,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       <div className="sidebar-title">
         <div className="sidebar-brand">
           <div className="d-flex align-items-center logo">
-            <Navbar.Brand href="/admin" className="align-items-center">
+            <Navbar.Brand href="/" className="align-items-center">
               <img
                 src={logoimage}
                 alt="EduSphere Logo"
@@ -46,9 +46,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="sidebar-list-item"><Link to="/admin/Category"><BsFillGrid3X3GapFill className="icon" /> Category</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Users"><BsPeopleFill className="icon" /> Users</Link></li>
         <li className="sidebar-list-item"><Link to="/admin/Questions"><BsListCheck className="icon" /> Questions</Link></li>
-        <li className="sidebar-list-item"><Link to="/admin/Certificates"><BsMenuButtonWideFill className="icon" /> Certificates</Link></li>
+        {/* <li className="sidebar-list-item"><Link to="/admin/Certificates"><BsMenuButtonWideFill className="icon" /> Certificates</Link></li> */}
         <li className="sidebar-list-item"><Link to="/admin/Payments"><BsCreditCard className="icon" /> Payments</Link></li>
-        <li className="sidebar-list-item"><Link to="/admin/Settings"><BsFillGearFill className="icon" /> Settings</Link></li>
+        {/* <li className="sidebar-list-item"><Link to="/admin/Settings"><BsFillGearFill className="icon" /> Settings</Link></li> */}
       </ul>
     </aside>
   );

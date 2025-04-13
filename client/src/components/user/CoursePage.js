@@ -14,7 +14,6 @@ const CoursePage = () => {
     fetch("http://localhost:5000/categories")
       .then(response => response.json())
       .then(data => {
-        console.log("Fetched categories:", data);
         if (Array.isArray(data)) {
           setCategories(data);
         } else {

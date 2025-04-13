@@ -56,11 +56,13 @@ function Home() {
     ])
       .then(([courses, users, categories, allPayments]) => {
         setStats({
-          courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
-          users: users.count ?? (Array.isArray(users) ? users.length : 0),
+          courses: courses?.courses.count ?? (Array.isArray(courses.courses) ? courses?.courses.length : 0),
+          users: users?.filteredUsers.count ?? (Array.isArray(users?.filteredUsers) ? users?.filteredUsers.length : 0),
           categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
         });
 
+console.log(users.filteredUsers)
+        // ✅ Get latest 10 payments by createdAt
         const latestPayments = [...allPayments]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 10);

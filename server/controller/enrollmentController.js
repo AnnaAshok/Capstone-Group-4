@@ -53,9 +53,6 @@ exports.enrollCourse = async (req, res) => {
 // Check if a user is enrolled in a course
 exports.checkEnrollment = async (req, res) => {
   const { courseId, userId } = req.params;
-  console.log(
-    `Checking enrollment for courseId: ${courseId}, userId: ${userId}`
-  );
 
   try {
     const enrollment = await Enrollment.findOne({
@@ -63,7 +60,6 @@ exports.checkEnrollment = async (req, res) => {
       userID: new mongoose.Types.ObjectId(userId),
     });
 
-    console.log("Enrollment result:", enrollment);
     if (enrollment) {
       return res
         .status(200)
