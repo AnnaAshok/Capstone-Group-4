@@ -1,7 +1,7 @@
 import React from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { motion } from "framer-motion";
-import BannerPng from "../../Assets/images/banner.png";
+import BannerPng from "../../Assets/images/banner-img-icon-1.png";
 import Blob from "../../Assets/images/blob.png";
 import { useNavigate } from "react-router-dom";
 

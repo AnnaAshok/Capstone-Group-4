@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-// import Certificate from './Certificate';
 
 function cn(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -316,17 +315,6 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
             <p className="text-lg mt-2">
               You scored {correctAnswersCount} out of {questions.length}.
             </p>
-            {/* {resultMessage === "Congratulations! You passed!" && !certificateGenerated && (
-              <button
-                onClick={() => setCertificateGenerated(true)}
-                className="mt-4 px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
-              >
-                Generate Certificate
-              </button>
-            )}
-            {certificateGenerated && (
-              <p className="text-lg text-green-500 mt-2">Certificate Generated!</p>
-            )} */}
           </div>
         )}
 
@@ -337,13 +325,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete }) => {
           Reset Quiz
         </button>
       </div>
-
     </div>
-
-    
-
-
-
   );
 };
 

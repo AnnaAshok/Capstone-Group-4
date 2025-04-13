@@ -4,7 +4,6 @@ import certificateBg from "../../Assets/images/certificate-template-2.png";
 import greatVibesBase64 from '../../Assets/Fonts/greatVibesBase64';
 import signature from "../../Assets/images/signature-3.png";
 
-// const Certificate = ({
 const Certificate = ({ userName, courseName, quizPassed }) => {
     console.log("Quiz Passed Status:", quizPassed); 
     console.log("User Name:", userName); 
@@ -18,7 +17,6 @@ const Certificate = ({ userName, courseName, quizPassed }) => {
         img.crossOrigin = "anonymous"; // Avoid CORS issues
 
         img.onload = () => {
-            // Add background image
             doc.addImage(img, "PNG", 0, 0, 297, 210); // Full page background 
 
             // Add the custom font to the VFS (Virtual Font Storage)
@@ -28,7 +26,7 @@ const Certificate = ({ userName, courseName, quizPassed }) => {
             // User Name
             doc.setTextColor(0, 102, 204);
             doc.setFont("times", "bold");
-            doc.setFontSize(22);
+            doc.setFontSize(30);
             doc.text(userName, 148, 110, null, null, "center");
            
             doc.setTextColor(0, 0, 0);

@@ -180,6 +180,7 @@ exports.courseListfilter = async (req, res) => {
   }
 };
 
+// Fetching course details by ID
 exports.courseDetailsById = async (req, res) => {
   const courseId = req.params.id;
 
