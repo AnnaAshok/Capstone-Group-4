@@ -45,7 +45,6 @@ const CustomTable = ({ courses, setCourses }) => {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
 
   const handleEdit = (id) => {
-    console.log("Edit course ID:", id);
     navigate(`/admin/updateCourse/${id}`);
   };
 
@@ -69,7 +68,6 @@ const CustomTable = ({ courses, setCourses }) => {
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
-console.log(courses.courses)
   return (
     <>
       <TableContainer component={Paper}>

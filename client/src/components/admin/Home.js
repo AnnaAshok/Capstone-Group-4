@@ -61,7 +61,6 @@ function Home() {
           categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
         });
 
-console.log(users.filteredUsers)
         // ✅ Get latest 10 payments by createdAt
         const latestPayments = [...allPayments]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

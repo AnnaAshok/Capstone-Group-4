@@ -40,7 +40,6 @@ const PaymentList = () => {
     const fetchPayments = async () => {
         try {
             const response = await axios.get('http://localhost:5000/getAllPayments');
-            console.log(response)
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
