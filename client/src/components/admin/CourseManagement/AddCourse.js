@@ -5,6 +5,14 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone"; // Importing useDropzone
+import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
+} from '@mui/material';
+
 
 function AddCourse() {
   const [categories, setCategories] = useState([]);
@@ -22,6 +30,40 @@ function AddCourse() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const API_BASE = process.env.REACT_APP_API_URL;
+
+  // Video progress tracking state
+  const [uploadProgress, setUploadProgress] = useState([]);
+
+  // Image progress tracking state
+  const [imageUploadProgress, setImageUploadProgress] = useState(0);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [videoToDeleteIndex, setVideoToDeleteIndex] = useState(null);
+
+  const handleDeleteIconClick = (e, index) => {
+    e.stopPropagation(); // prevent file input popup
+    setVideoToDeleteIndex(index);
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setVideoToDeleteIndex(null);
+  };
+
+  const handleDelete = () => {
+    if (videoToDeleteIndex !== null) {
+      const updatedVideos = formData.videos.filter((_, index) => index !== videoToDeleteIndex);
+      setFormData({ ...formData, videos: updatedVideos });
+
+      const updatedProgress = uploadProgress.filter((_, index) => index !== videoToDeleteIndex);
+      setUploadProgress(updatedProgress);
+    }
+
+    setOpenDialog(false);
+    setVideoToDeleteIndex(null);
+  };
+
 
   // Fetch categories
   useEffect(() => {
@@ -89,27 +131,41 @@ function AddCourse() {
       return; // If validation fails, stop form submission
     }
 
-    const uploadData = new FormData(); // Use a different name like 'uploadData'
+    const uploadData = new FormData();
     uploadData.append("file", formData.courseImage);
     uploadData.append("upload_preset", "eduSphere");
 
     try {
       const cloudinaryResponse = await axios.post(
         "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
-        uploadData
+        uploadData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setImageUploadProgress(percent);
+          }
+        }
       );
+
+
       const imageUrl = cloudinaryResponse.data.secure_url; // Get the uploaded image URL from Cloudinary response
 
       // Upload multiple videos
       const videoUrls = await Promise.all(
-        formData.videos.map(async (video) => {
+        formData.videos.map(async (video, index) => {
           const videoUploadData = new FormData();
           videoUploadData.append("file", video);
           videoUploadData.append("upload_preset", "eduSphere");
 
           const videoResponse = await axios.post(
             "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
-            videoUploadData
+            videoUploadData,
+            {
+              onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setUploadProgress((prev) => ({ ...prev, [index]: percentCompleted }));
+              },
+            }
           );
 
           return videoResponse.data.secure_url; // Return video URL after upload
@@ -167,11 +223,11 @@ function AddCourse() {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              
+
             />
             {errors.title && (
-            <Typography variant="body2" color="error" >{errors.title}</Typography>
-          )}
+              <Typography variant="body2" color="error" >{errors.title}</Typography>
+            )}
           </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
@@ -186,7 +242,7 @@ function AddCourse() {
             onChange={handleChange}
             multiline
             rows={4}
-          
+
           />
           {errors.shortDescription && (
             <Typography variant="body2" color="error" >{errors.shortDescription}</Typography>
@@ -203,11 +259,11 @@ function AddCourse() {
               name="heading"
               value={formData.heading}
               onChange={handleChange}
-              
+
             />
             {errors.heading && (
-            <Typography variant="body2" color="error" >{errors.heading}</Typography>
-          )}
+              <Typography variant="body2" color="error" >{errors.heading}</Typography>
+            )}
           </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
@@ -278,20 +334,83 @@ function AddCourse() {
               type="number"
               value={formData.price}
               onChange={handleChange}
-             
+
             />
             {errors.price && (
-                <Typography variant="body2" color="error">{errors.price}</Typography>
-              )}
+              <Typography variant="body2" color="error">{errors.price}</Typography>
+            )}
           </Box>
-          <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>Course Image:</Typography>
-          <Box {...getRootProps()} sx={{ border: "2px dashed #0F3460", padding: "20px", textAlign: "center", cursor: "pointer", borderRadius: "8px", backgroundColor: "#f9f9f9", width: "50%" }} marginBottom={2}>
+
+          <Typography
+            variant="body1"
+            sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}
+          >
+            Course Image:
+          </Typography>
+
+          <Box
+            {...getRootProps()}
+            sx={{
+              border: "2px dashed #0F3460",
+              padding: "20px",
+              textAlign: "center",
+              cursor: "pointer",
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9",
+              width: "50%",
+            }}
+            marginBottom={2}
+          >
             <input {...getInputProps()} />
-            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>Drag & drop an image here, or click to upload</Typography>
-            {formData.courseImage && <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>{formData.courseImage.name}</Typography>}
+            <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px" }}>
+              Drag & drop an image here, or click to upload
+            </Typography>
+
+            {/* Show selected image name */}
+            {formData.courseImage && (
+              <Box sx={{ marginTop: 1 }}>
+                <Typography variant="body2" sx={{ color: "green" }}>
+                  {formData.courseImage.name}
+                </Typography>
+
+                {/* Progress bar */}
+                <Box
+                  sx={{
+                    marginTop: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Box
+                      sx={{
+                        height: 10,
+                        backgroundColor: "#ccc",
+                        borderRadius: 5,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          height: "100%",
+                          width: `${imageUploadProgress || 0}%`,
+                          backgroundColor: "#0F3460",
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Typography variant="caption">{imageUploadProgress || 0}%</Typography>
+                </Box>
+              </Box>
+            )}
+
+            {/* Show error if any */}
             {errors.courseImage && (
-            <Typography variant="body2" color="error">{errors.courseImage}</Typography>
-          )}
+              <Typography variant="body2" color="error">
+                {errors.courseImage}
+              </Typography>
+            )}
           </Box>
 
           <Typography variant="body1" sx={{ color: "#0F3460", marginBottom: "8px", fontSize: "18px" }}>
@@ -318,26 +437,91 @@ function AddCourse() {
             {/* Display selected video names */}
             {formData.videos && formData.videos.length > 0 && (
               <Box sx={{ marginTop: 1 }}>
-                <Typography variant="body2" sx={{ color: "green" }}>Selected Videos:</Typography>
+                <Typography variant="body2" sx={{ color: "green", mb: 1 }}>
+                  Selected Videos:
+                </Typography>
+
                 {formData.videos.map((video, index) => (
-                  <Typography key={index} variant="body2" sx={{ color: "#0F3460" }}>
-                    {video.name}
-                  </Typography>
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 1,
+                    }}
+                  >
+                    {/* Video Name */}
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#0F3460", minWidth: "150px", wordBreak: "break-word" }}
+                    >
+                      {video.name}
+                    </Typography>
+
+                    {/* Progress Bar */}
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Box sx={{ height: 10, backgroundColor: "#ccc", borderRadius: 5 }}>
+                        <Box
+                          sx={{
+                            height: "100%",
+                            width: `${uploadProgress[index] || 0}%`,
+                            backgroundColor: "#0F3460",
+                            borderRadius: 5,
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    {/* Percentage */}
+                    <Typography variant="caption" sx={{ minWidth: "35px" }}>
+                      {uploadProgress[index] || 0}%
+                    </Typography>
+
+                    {/* Delete Icon */}
+                    <DeleteIcon
+                      sx={{ color: "#D32F2F", cursor: "pointer" }}
+                      onClick={(e) => handleDeleteIconClick(e, index)} color="error"
+                    />
+
+                  </Box>
                 ))}
-                {errors.videos && (
-            <Typography variant="body2" color="error">{errors.videos}</Typography>
-          )}
               </Box>
             )}
-          </Box>
 
+            {errors.videos && (
+              <Typography variant="body2" color="error">
+                {errors.videos}
+              </Typography>
+            )}
+
+          </Box>
 
           <Button variant="contained" type="submit" sx={{ backgroundColor: "#0F3460" }}>
             Add Course
           </Button>
         </form>
+
+        {/* Confirmation Dialog */}
+        <Dialog
+          open={openDialog}
+          onClose={handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+          <DialogContent>
+            Are you sure you want to delete this video?
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">Cancel</Button>
+            <Button onClick={handleDelete} color="warning" autoFocus>Confirm</Button>
+          </DialogActions>
+        </Dialog>
+
       </Paper>
     </main>
+
   );
 }
 

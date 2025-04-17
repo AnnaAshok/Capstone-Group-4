@@ -361,6 +361,14 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
           )}
         </div>
 
+        {quizCompleted && (
+          <div className="mt-6 text-center">
+            <p className="text-xl font-semibold">{resultMessage}</p>
+            <p className="text-lg mt-2">
+              You scored {correctAnswersCount} out of {questions.length}.
+            </p>
+          </div>
+        )}
 
       </div>
     </div>
