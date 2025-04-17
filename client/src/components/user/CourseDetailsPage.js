@@ -13,8 +13,6 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 
-
-
 const stripePromise = loadStripe("pk_test_51R6wQSQcPPmDfWJk5KDjPCcTRcmg8kiv55ZACiHCR9CX56h7gMPcJNOiRaCoNRQrjH0cbdpHpuh2b2wRSN00PIA500YP74CTjf");
 
 // To remove <p> from long description
@@ -43,6 +41,8 @@ const CourseDetailsPage = () => {
     const [hasPassed, setHasPassed] = useState(false);
     const [quizAttemptsFetched, setQuizAttemptsFetched] = useState(false);
     const API_BASE = process.env.REACT_APP_API_URL;
+
+    const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -188,6 +188,7 @@ const CourseDetailsPage = () => {
 
     const handleAttendQuiz = () => {
         setShowQuiz(true);
+        setActiveTab('quiz');
     };
 
     const handleQuizCompletion = (isPassed) => {
@@ -196,7 +197,7 @@ const CourseDetailsPage = () => {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         const fetchQuizAttempts = async () => {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -205,44 +206,45 @@ const CourseDetailsPage = () => {
             }
             let userID;
             try {
-                const decodedToken = jwtDecode(token); 
-                userID = decodedToken.userId;  
-    
+                const decodedToken = jwtDecode(token);
+                userID = decodedToken.userId;
+
             } catch (error) {
                 setError('Invalid token.');
                 return;
             }
             try {
-              setLoading(true);
-              const response = await axios.get(`http://localhost:5000/getusers-quiz-results?userId=${userID}&courseId=${courseId}`, {
-                headers: {
-                  Authorization: `Bearer ${token}` // Include token in request header
+                setLoading(true);
+                const response = await axios.get(`http://localhost:5000/getusers-quiz-results?userId=${userID}&courseId=${courseId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}` // Include token in request header
+                    }
+                });
+                if (response.data) {
+                    const quizResult = response.data;
+                    if (quizResult.message != "No quiz results found for this user and course") {
+                        setAttemptCount(quizResult.attempts.length); // Set the number of attempts from the backend
+                        setQuizPassed(quizResult.attempts.some(attempt => attempt.status === 'passed')); // Check if any attempt passed
+                    }
+                    else {
+                        setAttemptCount(0)
+                        setQuizPassed(false)
+                    }
+                } else {
+                    setError('Invalid data received from server');
                 }
-              });
-              if (response.data) {
-                const quizResult = response.data;
-                if(quizResult.message != "No quiz results found for this user and course"){
-                    setAttemptCount(quizResult.attempts.length); // Set the number of attempts from the backend
-                    setQuizPassed(quizResult.attempts.some(attempt => attempt.status === 'passed')); // Check if any attempt passed
-                }
-                else{
-                    setAttemptCount(0)
-                    setQuizPassed(false)
-                }
-              } else {
-                setError('Invalid data received from server');
-              }
             } catch (err) {
-              setError('Error fetching quiz results');
-              console.error(err);
+                setError('Error fetching quiz results');
+                console.error(err);
             } finally {
-              setLoading(false);
+                setLoading(false);
             }
-          };
-          if(userID){
+        };
+        if (userID) {
             fetchQuizAttempts();
-          }   
-     },[userID,courseId,quizPassed])
+        }
+    }, [userID, courseId, quizPassed])
+
     if (loading) {
         return <p>Loading course details...</p>;
     }
@@ -281,6 +283,8 @@ const CourseDetailsPage = () => {
                     <div className="course-right">
                         <p className=''><strong>Duration:</strong> {course.duration}</p>
                         <p className=''><strong>Price:</strong> ${course.price}</p>
+                        
+                        
                         {!enrolled && !showPaymentForm && (
                             <button onClick={handleEnrollment} className="enroll-button">Enroll</button>
                         )}
@@ -303,89 +307,82 @@ const CourseDetailsPage = () => {
                     </div>
                 </div>
 
+                {enrolled && !showQuiz && (
+                    <section className="course-materials mt-5">
+                        {/* Tab Navigation (Tabs as a navigation bar) */}
+                        <nav className="course-tabs">
+                            <div
+                                className={`tab-item ${activeTab === 'overview' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('overview')}
+                            >
+                                Overview
+                            </div>
+                            <div
+                                className={`tab-item ${activeTab === 'videos' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('videos')}
+                            >
+                                Videos
+                            </div>
+                            <div
+                                className={`tab-item ${activeTab === 'quiz' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('quiz')}
+                            >
+                                Quiz/Certificate
+                            </div>
+                        </nav>
 
-               
-
-            {enrolled && !showQuiz && (
-                <section className="course-materials mt-5">
-                    <h2 className="text-left">{course.heading ? course.heading.toUpperCase() : ''}</h2>
-                    <p>{removeHtmlTags(course.longDescription)}</p>
-                    <div className="video-container">
-                        {course.videos.length > 0 && (
-                            <div className="videos-row">
-                                {course.videos.map((video, index) => (
-                                    <div className="video-item" key={index}>
-                                        <video width="400" controls>
-                                            <source src={video} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </div>
-                                ))}
+                        {/* Tab Content */}
+                        {activeTab === 'overview' && (
+                            <div className="tab-content">
+                                <h2>{course.heading ? course.heading.toUpperCase() : ''}</h2>
+                                <p>{removeHtmlTags(course.longDescription)}</p>
                             </div>
                         )}
-                    </div>
-                    {
-                        quizAttemptsFetched && (
-                            attemptCount >= 5 && hasPassed ? (
-                            <div className='text-center'><p>Already attended and passed the quiz. Download the certificate</p></div>
-                            ) : attemptCount >= 5 && !hasPassed ? (
-                            <div className='text-center'><p className='text-center mb-0'>Maximum Quiz attempt reached</p></div>
-                            ) : (
-                            <div className="text-center mt-5">
-                                <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
+
+                        {activeTab === 'videos' && (
+                            <div className="tab-content">
+                                <h3>COURSE VIDEOS</h3>
+                                <div className="video-container">
+                                    {course.videos.length > 0 && (
+                                        <div className="videos-row">
+                                            {course.videos.map((video, index) => (
+                                                <div className="video-item" key={index}>
+                                                    <video width="400" controls>
+                                                        <source src={video} type="video/mp4" />
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            )
-                        )
-                        }
-                </section>
-            )}
+                        )}
 
-                {/* {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} />} */}
-            {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course}/>}
+                        {activeTab === 'quiz' && (
+                            <div className="tab-content">
+                                {
+                                    quizAttemptsFetched && (
+                                        attemptCount >= 5 && hasPassed ? (
+                                            <div className='text-center'><p>Already attended and passed the quiz. Download the certificate</p></div>
+                                        ) : attemptCount >= 5 && !hasPassed ? (
+                                            <div className='text-center'><p className='text-center mb-0'>Maximum Quiz attempt reached</p></div>
+                                        ) : (
+                                            <div className="attend-qquiz-div text-center mt-5">
+                                                <button onClick={handleAttendQuiz} className="attend-quiz-button">ATTEND QUIZ</button>
+                                            </div>
+                                        )
+                                    )
+                                }
+                                {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
+                            </div>
+                        )}
+                    </section>
+                )}
 
-
-                {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
+                {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course} />}
 
             </section>
-            {/* <section></section> */}
-
-            {/* {enrolled && !showQuiz && (
-                <section className="course-materials mt-5">
-                    <h2 className="text-left">{course.heading ? course.heading.toUpperCase() : ''}</h2>
-                    <p>{removeHtmlTags(course.longDescription)}</p>
-                    <div className="video-container">
-                        {course.videos.length > 0 && (
-                            <div className="videos-row">
-                                {course.videos.map((video, index) => (
-                                    <div className="video-item" key={index}>
-                                        <video width="400" controls>
-                                            <source src={video} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    {
-                        quizAttemptsFetched && (
-                            attemptCount >= 5 && hasPassed ? (
-                            <div className='text-center'><p>Already attended and passed the quiz. Download the certificate</p></div>
-                            ) : attemptCount >= 5 && !hasPassed ? (
-                            <div className='text-center'><p className='text-center mb-0'>Maximum Quiz attempt reached</p></div>
-                            ) : (
-                            <div className="text-center mt-5">
-                                <button onClick={handleAttendQuiz} className="attend-quiz-button">Attend Quiz</button>
-                            </div>
-                            )
-                        )
-                        }
-                </section>
-            )} */}
-
-
-
-
 
             {loginModalShow && (
                 <LoginSignup show={loginModalShow} handleClose={() => setLoginModalShow(false)} />
@@ -397,3 +394,4 @@ const CourseDetailsPage = () => {
 };
 
 export default CourseDetailsPage;
+

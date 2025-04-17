@@ -102,6 +102,11 @@
   text-align: left;
 }
 
+.profile-btn-div {
+  display: flex;
+  gap: 2rem;
+}
+
 .update-button {
   display: flex;
   justify-content: center;
@@ -117,8 +122,28 @@
   transition: background 0.3s;
 }
 
+.cancel-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%; /* Increased width for centering */
+  margin: 15px auto 0;
+  padding: 10px;
+  color: #0F3460;
+  border: none;
+  border-radius: 5px;
+  border: 1px solid #0F3460;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
 .update-button:hover {
   background: #092c50;
+}
+
+.cancel-button:hover {
+  background: #092c50;
+  color: white;
 }
 
 .password-update {

@@ -30,7 +30,7 @@ const Profile = () => {
   const token = localStorage.getItem("token");
   const [userId, setUserId] = useState(null);
   const [errors, setErrors] = useState({});
-  
+
   const navigate = useNavigate(); // Use useNavigate for redirection
   const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -73,7 +73,7 @@ const Profile = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "An error occurred while fetching user details."
+        "An error occurred while fetching user details."
       );
     }
   };
@@ -118,18 +118,18 @@ const Profile = () => {
       const file = e.target.files[0];
       const fileType = file.type;
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  
+
       // Check if the uploaded file is of the allowed types
       if (!allowedTypes.includes(fileType)) {
         toast.error("Please upload a valid image file (JPG, JPEG, or PNG).");
         return;
       }
-  
+
       setImage(file);
       setPreview(URL.createObjectURL(file));
     }
   };
-  
+
 
   const validateFields = () => {
     let tempErrors = {};
@@ -213,7 +213,7 @@ const Profile = () => {
   return (
     <>
       <Header />
-   
+
       <div className="profile-page">
         <div className="profile-left">
           <div className="profile-image">
@@ -301,12 +301,15 @@ const Profile = () => {
               <input type="file" id="image" accept="image/*" onChange={handleImageChange} />
               {errors.image && <p className="error">{errors.image}</p>}
 
+              <div className="profile-btn-div">
               <button className="update-button" onClick={updateUserDetails}>Update</button>
+              <button onClick={() => navigate("/")} className="cancel-button" >Cancel</button>
+              </div>
             </div>
           )}
 
 
-{activeTab === "passwordUpdate" && (
+          {activeTab === "passwordUpdate" && (
             <div className="password-update">
               {errorMessage && <p className="error-message">{errorMessage}</p>}
               <label>New Password</label>
@@ -378,26 +381,27 @@ const Profile = () => {
               </div>
 
               <button onClick={updateUserDetails} className="update-button">Update Password</button>
+             
             </div>
           )}
 
 
-{activeTab === "courseInfo" && (
-  <div className="course-info">
-    <h4>Enrolled Courses</h4>
-    {enrolledCourses.length > 0 ? (
-      <div className="enrolled-courses-scroll">
-        {enrolledCourses.map((course) => (
-          <div key={course._id} className="course-card">
-            <h5>{course.title}</h5>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p>No courses enrolled yet.</p>
-    )}
-  </div>
-)}
+          {activeTab === "courseInfo" && (
+            <div className="course-info">
+              <h4>Enrolled Courses</h4>
+              {enrolledCourses.length > 0 ? (
+                <div className="enrolled-courses-scroll">
+                  {enrolledCourses.map((course) => (
+                    <div key={course._id} className="course-card">
+                      <h5>{course.title}</h5>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p>No courses enrolled yet.</p>
+              )}
+            </div>
+          )}
 
         </div>
       </div>

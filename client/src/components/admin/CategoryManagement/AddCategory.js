@@ -111,7 +111,7 @@ const AddCategory = () => {
     <main className="main-container">
       <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>
         <div className="list-category">
-          <h3>Add new category</h3>
+          <h3>Add New Category</h3>
         </div>
         <form onSubmit={handleSubmit}>
           <Box marginBottom={2}>

@@ -499,7 +499,7 @@ function AddCourse() {
 
              <Box display="flex" gap={2} marginTop={2}>
             <Button type="submit" variant="contained" sx={{ backgroundColor: "#0F3460" }}>
-              Add Course
+              Add New Course
             </Button>
             <Button
               variant="outlined"

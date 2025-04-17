@@ -76,13 +76,11 @@ const CustomTable = ({ courses, setCourses }) => {
           <TableHead>
             <TableRow>
               <StyledTableCell>Title</StyledTableCell>
-              <StyledTableCell>Short Description</StyledTableCell>
+              <StyledTableCell>Description</StyledTableCell>
               <StyledTableCell>Heading</StyledTableCell>
-              <StyledTableCell>Long Description</StyledTableCell>
               <StyledTableCell>Duration</StyledTableCell>
               <StyledTableCell>Price</StyledTableCell>
               <StyledTableCell>Image</StyledTableCell>
-              {/* <StyledTableCell>Video</StyledTableCell> */}
               <StyledTableCell>Actions</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -95,9 +93,6 @@ const CustomTable = ({ courses, setCourses }) => {
                   <StyledTableCell>{course.shortDescription}</StyledTableCell>
                   {/* Display long description with HTML rendering */}
                   <StyledTableCell>{course.heading}</StyledTableCell>
-                  <StyledTableCell>
-                    <div dangerouslySetInnerHTML={{__html: course.longDescription}} />
-                  </StyledTableCell>
                   <StyledTableCell>{course.duration}</StyledTableCell>
                   <StyledTableCell>{course.price}</StyledTableCell>
                   <StyledTableCell>
@@ -107,13 +102,6 @@ const CustomTable = ({ courses, setCourses }) => {
                       style={{ width: "50px", height: "50px", borderRadius: "5px" }}
                     />
                   </StyledTableCell>
-                  {/* <StyledTableCell>
-                    <img
-                      src={course.video ? course.courseImage :""}
-                      alt={course.title}
-                      style={{ width: "50px", height: "50px", borderRadius: "5px" }}
-                    />
-                  </StyledTableCell> */}
                   <StyledTableCell>
                     <IconButton color="primary" onClick={() => handleEdit(course._id)}>
                       <EditIcon />

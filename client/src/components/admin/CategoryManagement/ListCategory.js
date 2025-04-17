@@ -43,7 +43,7 @@ const ListCategory = () => {
     <main className="main-container">
          <div className='list-category'>
             <h3>List of Category</h3>
-            <button onClick={handleAddcategory}>Add new</button>
+            <button onClick={handleAddcategory}>Add New Category</button>
         </div>
         <CustomTable categories={categories} setCategories={setCategories} currentPage={currentPage} itemsPerPage={limit} />
         <div className="pagination">

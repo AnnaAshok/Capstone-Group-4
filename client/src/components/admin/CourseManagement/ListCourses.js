@@ -42,7 +42,7 @@ const ListCourses = () => {
     <main className="main-container">
       <div className="list-courses">
         <h3>List of Courses</h3>
-        <button onClick={handleAddCourse}>Add new Course</button>
+        <button onClick={handleAddCourse}>Add New Course</button>
       </div>
       <CustomCourseTable courses={courses} setCourses={setCourses} currentPage={currentPage} itemsPerPage={limit}/> {/* Use CustomTable for courses */}
       <div className="pagination">

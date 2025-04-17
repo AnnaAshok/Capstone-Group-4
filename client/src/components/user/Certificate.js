@@ -27,7 +27,7 @@ const Certificate = ({ userName, courseName, quizPassed }) => {
             doc.setFont("times", "bold");
             doc.setFontSize(30);
             doc.text(userName, 148, 110, null, null, "center");
-           
+
             doc.setTextColor(0, 0, 0);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(16);
@@ -50,7 +50,7 @@ const Certificate = ({ userName, courseName, quizPassed }) => {
         <div className="certificate-div">
             {quizPassed && (
                 <button onClick={generateCertificate} className="attend-quiz-button">
-                    Download Certificate
+                    DOWNLOAD CERTIFICATE
                 </button>
             )}
         </div>
