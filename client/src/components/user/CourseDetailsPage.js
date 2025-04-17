@@ -163,7 +163,7 @@ const CourseDetailsPage = () => {
             const paymentID = null;
 
             try {
-                const response = await fetch('http://localhost:5000/enroll', {
+                const response = await fetch(`${API_BASE}/enroll`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -215,7 +215,7 @@ const CourseDetailsPage = () => {
             }
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:5000/getusers-quiz-results?userId=${userID}&courseId=${courseId}`, {
+                const response = await axios.get(`${API_BASE}/getusers-quiz-results?userId=${userID}&courseId=${courseId}`, {
                     headers: {
                         Authorization: `Bearer ${token}` // Include token in request header
                     }
