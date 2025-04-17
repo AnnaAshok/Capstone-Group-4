@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
 import Forgotpassword from './Forgotpassword';
+import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 export default function LoginSignup({ show, handleClose, setModalShow }) {
     const navigate = useNavigate();
@@ -16,7 +17,9 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
     const [message, setMessage] = useState("");
     const [errors, setErrors] = useState({});
     const [showForgotModal, setShowForgotModal] = useState(false);
-
+    const [showPassword, setShowPassword] = useState(false);
+    const [showCPassword, setShowCPassword] = useState(false);
+    const [showLPassword, setShowLPassword] = useState(false);
     function SwitchContent() {
         setActiveLogin(!activeLogin);
         setMessage("");
@@ -26,6 +29,9 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
         setEmail("");
         setPassword("");
         setConfirmPassword("");
+        setShowCPassword(false)
+        setShowPassword(false)
+        setShowLPassword(false)
     }
 
     const isValidEmail = (email) => {
@@ -82,6 +88,8 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
             const response = await axios.post('http://localhost:5000/login', { email, password });
             if (response.data.message === "Success") {
                 localStorage.setItem("token", response.data.token);
+                localStorage.setItem("role", response.data?.user?.role);
+
                 handleClose();
                 if (response.data.user.role === "Admin") {
                     navigate("/admin");
@@ -162,7 +170,8 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
                                     {errors.email && <p className="text-danger small m-0 w-100">{errors.email}</p>}
                                 </div>
                                 <div className='input-group mb-3'>
-                                    <input type='password'
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
                                         placeholder='Enter Your Password'
                                         name="password"
                                         id="password"
@@ -170,10 +179,26 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
                                         onChange={(e) => setPassword(e.target.value)}
                                         className='form-control bg-light'
                                     />
+                                     <span
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            zIndex:100,
+                                            right: '10px',
+                                            transform: 'translateY(-50%)',
+                                            cursor: 'pointer',
+                                            color: '#666',
+                                            fontSize: '1.2rem'
+                                        }}
+                                        >
+                                        {showPassword ? <BsEye />  :<BsEyeSlash /> }
+                                        </span>
                                     {errors.password && <p className="text-danger small m-0 w-100">{errors.password}</p>}
                                 </div>
                                 <div className='input-group mb-3'>
-                                    <input type='password'
+                                    <input 
+                                        type={showCPassword ? 'text' : 'password'}
                                         placeholder='Confirm Password'
                                         id='confirmpassword'
                                         name="confirmpassword"
@@ -181,6 +206,20 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         className='form-control bg-light'
                                     />
+                                    <span
+                                    onClick={() => setShowCPassword(!showCPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        zIndex:100,
+                                        right: '10px',
+                                        transform: 'translateY(-50%)',
+                                        cursor: 'pointer',
+                                        color: '#666',
+                                        fontSize: '1.2rem'
+                                    }}
+                                    >
+                                    {showCPassword ? <BsEye />  :<BsEyeSlash /> }</span>
                                     {errors.confirmpassword && <p className="text-danger small m-0 w-100">{errors.confirmpassword}</p>}
                                 </div>
                                 <div className='input-group mb-3 justify-content-center'>
@@ -213,11 +252,26 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
                                     {errors.email && <p className="text-danger small m-0 w-100">{errors.email}</p>}
                                 </div>
                                 <div className='input-group mb-3'>
-                                    <input type='password'
+                                    <input 
+                                       type={showLPassword ? 'text' : 'password'}    
                                         name="password"
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
                                         placeholder='Enter Your Password' className='form-control bg-light' />
+                                        <span
+                                        onClick={() => setShowLPassword(!showLPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            zIndex:100,
+                                            right: '10px',
+                                            transform: 'translateY(-50%)',
+                                            cursor: 'pointer',
+                                            color: '#666',
+                                            fontSize: '1.2rem'
+                                        }}
+                                        >
+                                        {showLPassword ? <BsEye />  :<BsEyeSlash /> }</span>
                                     {errors.password && <p className="text-danger small m-0 w-100">{errors.password}</p>}
                                 </div>
                                 <div className='input-group justify-content-end'>

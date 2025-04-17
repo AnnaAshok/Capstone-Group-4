@@ -3,6 +3,7 @@ import '../../index.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
+import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 const Forgotpassword = ({ show, handleClose, setModalShow }) => {
   const [email, setEmail] = useState('');
@@ -11,6 +12,8 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
   const [activeLogin, setActiveLogin] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCPassword, setShowCPassword] = useState(false);
 
   function SwitchContent() {
     setActiveLogin(!activeLogin);
@@ -63,6 +66,8 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
     setActiveLogin(true);
     setErrorMessage("");
     setEmail('');
+    setShowCPassword(false)
+    setShowPassword(false)
   };
 
   useEffect(() => {
@@ -72,6 +77,8 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
       setCpassword('');
       setActiveLogin(true);
       setErrorMessage('');
+      setShowCPassword(false)
+      setShowPassword(false)
     }
   }, [show]);
 
@@ -96,22 +103,52 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
                   />
                 </div>
                 <div className="input-group mb-3">
-                  <input type="password"
+                  <input 
+                  type={showPassword ? 'text' : 'password'}
                     name="password"
                     id="password"
                     onChange={e => setPassword(e.target.value)}
                     placeholder="New password"
                     className="form-control bg-light"
                   />
+                   <span
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        zIndex:100,
+                        right: '10px',
+                        transform: 'translateY(-50%)',
+                        cursor: 'pointer',
+                        color: '#666',
+                        fontSize: '1.2rem'
+                      }}
+                    >
+                      {showPassword ? <BsEye />  :<BsEyeSlash /> }
+                    </span>
                 </div>
                 <div className="input-group mb-3">
-                  <input type="password"
+                  <input type={showCPassword ? 'text' : 'password'}
                     id="cpassword"
                     name="cpassword"
                     onChange={e => setCpassword(e.target.value)}
                     placeholder="Confirm password"
                     className="form-control bg-light"
                   />
+                   <span
+                      onClick={() => setShowCPassword(!showCPassword)}
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        zIndex:100,
+                        right: '10px',
+                        transform: 'translateY(-50%)',
+                        cursor: 'pointer',
+                        color: '#666',
+                        fontSize: '1.2rem'
+                      }}
+                    >
+                      {showCPassword ? <BsEye />  :<BsEyeSlash /> }</span>
                 </div>
                 {errorMessage && <div className="text-danger mb-3">{errorMessage}</div>}
                 <div className="input-group justify-content-end">
