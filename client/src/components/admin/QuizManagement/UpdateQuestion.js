@@ -19,7 +19,7 @@ const UpdateQuestion = () => {
 
   useEffect(() => {
     axios.get(`${API_BASE}/getCourses`)
-      .then(response => setCourses(response.data))
+      .then(response => setCourses(response.data.courses))
       .catch(error => console.error("Error fetching courses:", error));
   }, []);
 

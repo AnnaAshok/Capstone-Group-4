@@ -49,6 +49,15 @@ const ListCourses = () => {
                 <button 
                     onClick={() => handlePageChange(currentPage - 1)} 
                     disabled={currentPage === 1}
+                    style={{
+                      backgroundColor: currentPage === 1 ? '#d3d3d3' : '#0c2a47',
+                      color: currentPage === 1 ? '#666' : '#fff',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      cursor: currentPage === 1? 'not-allowed' : 'pointer',
+                      border: 'none',
+                      marginRight: '10px'
+                    }}
                 >
                     Previous
                 </button>
@@ -56,6 +65,15 @@ const ListCourses = () => {
                 <button 
                     onClick={() => handlePageChange(currentPage + 1)} 
                     disabled={currentPage === totalPages}
+                    style={{
+                      backgroundColor: currentPage === totalPages ? '#d3d3d3' : '#0c2a47',
+                      color: currentPage === totalPages ? '#666' : '#fff',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      cursor: currentPage === totalPages? 'not-allowed' : 'pointer',
+                      border: 'none',
+                      marginRight: '10px'
+                    }}
                 >
                     Next
                 </button>
