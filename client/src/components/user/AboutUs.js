@@ -16,7 +16,7 @@ const AboutUs = () => {
                 <div className="about-us-banner-bg">
                     <div className="contact-page-banner-text">
                         <p className="contact-page-subtitle">DISCOVER OUR STORY</p>
-                        <h1 className="contact-page-title">WHO<br />WE<br />ARE</h1>
+                        <h1 className="contact-page-title">WHO<br />WE ARE</h1>
                     </div>
                 </div>
             </section>
@@ -54,10 +54,6 @@ const AboutUs = () => {
                     </div>
                 </div>
 
-                {/* <div className="mission-info-container">
-                    <h2>Our Mission</h2>
-                    <p>Our mission is to make high-quality education accessible to everyone, anywhere. We believe in empowering individuals with the skills they need to thrive in the modern workforce.</p>
-                </div> */}
             </section>
 
             <Footer />
