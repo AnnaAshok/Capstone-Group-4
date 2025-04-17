@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   FormControl,
+  helperText
 } from "@mui/material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -27,6 +28,7 @@ function UpdateCourse() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null); // Reference for file input
   const API_BASE = process.env.REACT_APP_API_URL;
+  const [errors, setErrors] = useState({});
 
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
@@ -51,7 +53,25 @@ function UpdateCourse() {
   const [openDialog, setOpenDialog] = useState(false);
   const [videoToDeleteIndex, setVideoToDeleteIndex] = useState(null);
   const [isExistingVideo, setIsExistingVideo] = useState(false);
-
+  const validateForm = () => {
+    const newErrors = {};
+  
+    if (!formData.title.trim()) newErrors.title = "Title is required.";
+    if (!formData.shortDescription.trim()) newErrors.shortDescription = "Short description is required.";
+    if (!formData.heading.trim()) newErrors.heading = "Heading is required.";
+    if (!formData.longDescription.trim()) newErrors.longDescription = "Long description is required.";
+    if (!formData.categoryID) newErrors.categoryID = "Please select a category.";
+    if (formData.price === null || formData.price === undefined || formData.price === '') {
+      newErrors.price = "Price is required.";
+    } else if (isNaN(formData.price)) {
+      newErrors.price = "Price must be a number.";
+    } else if (Number(formData.price) < 0) {
+      newErrors.price = "Price cannot be negative.";
+    }
+    setErrors(newErrors);
+  
+    return Object.keys(newErrors).length === 0;
+  };
   const handleDeleteIconClick = (e, index, isExisting = false) => {
     e.stopPropagation(); // prevent file input popup
     setVideoToDeleteIndex(index);
@@ -182,83 +202,12 @@ function UpdateCourse() {
     },
   });
 
-  // Handle form submission
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
 
-  //   try {
-  //     // Handle image upload if a new one is provided
-  //     let imageUrl = formData.existingImage;
-  //     if (formData.courseImage && formData.courseImage !== formData.existingImage) {
-  //       const uploadData = new FormData();
-  //       uploadData.append("file", formData.courseImage);
-  //       uploadData.append("upload_preset", "eduSphere");
-
-  //       const cloudinaryResponse = await axios.post(
-  //         "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
-  //         uploadData,
-  //         {
-  //           onUploadProgress: (progressEvent) => {
-  //             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-  //             setImageUploadProgress(percent);
-  //           },
-  //         }
-  //       );
-  //       imageUrl = cloudinaryResponse.data.secure_url;
-  //     }
-
-  //     // Start with existing videos
-  //     const videoUrls = [...formData.existingVideos];
-
-  //     // Upload new videos if provided
-  //     if (formData.videos && formData.videos.length > 0) {
-  //       for (let i = 0; i < formData.videos.length; i++) {
-  //         const video = formData.videos[i];
-  //         const uploadData = new FormData();
-  //         uploadData.append("file", video);
-  //         uploadData.append("upload_preset", "eduSphere");
-
-  //         const cloudinaryVideoResponse = await axios.post(
-  //           "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
-  //           uploadData,
-  //           {
-  //             onUploadProgress: (progressEvent) => {
-  //               const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-  //               setUploadProgress(prev => {
-  //                 const updated = [...prev];
-  //                 updated[i] = percentCompleted;
-  //                 return updated;
-  //               });
-  //             },
-  //           }
-  //         );
-  //         videoUrls.push(cloudinaryVideoResponse.data.secure_url);
-  //       }
-  //     }
-
-  //     const courseData = {
-  //       title: formData.title,
-  //       shortDescription: formData.shortDescription,
-  //       heading: formData.heading,
-  //       longDescription: formData.longDescription,
-  //       categoryID: formData.categoryID,
-  //       duration: formData.duration,
-  //       price: formData.price,
-  //       courseImage: imageUrl,
-  //       videos: videoUrls,
-  //     };
-
-  //     //await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
-  //     axios.post(`${API_BASE}/updateCourse/${id}`, courseData);
-  //     navigate("/admin/courses");
-  //   } catch (error) {
-  //     console.error("Error updating course:", error);
-  //   }
-  // };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
     try {
       // Handle image upload if a new one is provided
@@ -347,6 +296,8 @@ function UpdateCourse() {
               name="title"
               value={formData.title}
               onChange={handleChange}
+              error={!!errors.title}
+              helperText={errors.title}
             />
           </Box>
 
@@ -362,6 +313,8 @@ function UpdateCourse() {
             onChange={handleChange}
             multiline
             rows={4}
+            error={!!errors.shortDescription}
+            helperText={errors.shortDescription}
           />
 
           <Box marginBottom={2}>
@@ -389,7 +342,7 @@ function UpdateCourse() {
           />
 
           <Box marginBottom={2}>
-            <FormControl fullWidth variant="outlined" size="small">
+            <FormControl fullWidth variant="outlined" size="small"  error={!!errors.categoryID}>
               <Typography variant="body1" sx={{ color: "#0F3460", fontSize: "18px", marginTop: "25px" }}>
                 Select Category:
               </Typography>
@@ -407,6 +360,7 @@ function UpdateCourse() {
                   </MenuItem>
                 ))}
               </Select>
+              {errors.categoryID && <Typography variant="caption" color="error">{errors.categoryID}</Typography>}
             </FormControl>
           </Box>
 
@@ -439,6 +393,8 @@ function UpdateCourse() {
               type="number"
               value={formData.price}
               onChange={handleChange}
+              error={!!errors.price}
+              helperText={errors.price}
             />
           </Box>
 
