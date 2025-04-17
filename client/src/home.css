@@ -1179,27 +1179,6 @@ body p {
     margin: 10px;
 }
 
-/* Buttons */
-/* .attend-quiz-button,
-.enroll-button,
-.back-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 25px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-transform: uppercase;
-} */
-
-/* .attend-quiz-button:hover,
-.enroll-button:hover,
-.back-button:hover {
-    background-color: #0056b3;
-} */
-
 .success-message {
     margin-top: 20px;
     font-size: 18px;
@@ -1276,7 +1255,33 @@ body p {
     }
 }
 
+@media (max-width: 600px) {
+    .contact-us-section {
+        padding: 4rem 1rem !important;
+        margin-top: 0 !important;
+    }
 
+    .contact-info-box {
+        min-width: -webkit-fill-available;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .contact-page-title {
+        font-size: 2.5rem !important;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .contact-info-box {
+        min-width: unset !important;
+    }
+    .contact-page-title {
+        font-size: 2.5rem;
+    }
+}
 /*************************************************
                 CONTACT US PAGE
 *************************************************/
@@ -1296,7 +1301,7 @@ body p {
 }
 
 .contact-page-banner-text {
-    padding: 5rem;
+    padding: 5rem 5rem 5rem 13rem;
 }
 
 .contact-page-subtitle {
@@ -1308,6 +1313,7 @@ body p {
 
 .contact-page-title {
     font-size: 3.5rem;
+    /* font-size: calc(1.5rem + 2vw); */
     font-weight: 700;
     line-height: 1.2;
     color: #f7c221 !important;
@@ -1453,6 +1459,12 @@ body p {
 
     .contact-map iframe {
         height: 300px;
+    }
+}
+
+@media (max-width: 400px) {
+    .contact-page-banner-text {
+        padding: 5rem 5rem 5rem 7rem;
     }
 }
 
