@@ -20,6 +20,8 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showCPassword, setShowCPassword] = useState(false);
     const [showLPassword, setShowLPassword] = useState(false);
+    const API_BASE = process.env.REACT_APP_API_URL;
+
     function SwitchContent() {
         setActiveLogin(!activeLogin);
         setMessage("");
@@ -59,7 +61,7 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const response = await axios.post('http://localhost:5000/register', { firstName, lastName, email, password });
+                const response = await axios.post(`${API_BASE}/register`, { firstName, lastName, email, password });
                 setMessage(response.data.message);
                 if (response.status === 201) {
                     setFirstName("");
@@ -85,7 +87,7 @@ export default function LoginSignup({ show, handleClose, setModalShow }) {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:5000/login', { email, password });
+            const response = await axios.post(`${API_BASE}/login`, { email, password });
             if (response.data.message === "Success") {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("role", response.data?.user?.role);

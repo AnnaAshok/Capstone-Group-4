@@ -23,6 +23,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
   const [userId, setUserId] = useState(null); // Get User ID
   const [attemptCount, setAttemptCount] = useState(0);
   const [quizPassed, setQuizPassed] = useState(false);
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     // Get the user ID from the token
@@ -46,7 +47,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/questions/${courseId}`);
+        const response = await axios.get(`${API_BASE}/questions/${courseId}`);
         if (response.data) {
           setQuestions(response.data);
         } else {
@@ -142,7 +143,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/quiz-results", quizData);
+      const response = await axios.post(`${API_BASE}/quiz-results`, quizData);
       // Check for HTTP status codes outside the 200 range
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Failed to save quiz results: ${response.status}`);
@@ -167,7 +168,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
   useEffect(() => {
     const fetchAttempts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/getusers-quiz-results?userId=${userId}&courseId=${courseId}`);
+        const response = await axios.get(`${API_BASE}/getusers-quiz-results?userId=${userId}&courseId=${courseId}`);
         if (response.data && response.data.attempts) {
           setAttemptCount(response.data.attempts.length);
         }
@@ -200,7 +201,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
     setCertificateGenerated(false);
     setCorrectAnswersCount(0);
     try {
-      const response = await axios.get(`http://localhost:5000/questions/${courseId}`);
+      const response = await axios.get(`${API_BASE}/questions/${courseId}`);
 
       if (response.data) {
         setQuestions(response.data);
@@ -268,7 +269,7 @@ const SimpleQuizUI = ({ courseId,  onQuizComplete,userName,course}) => {
 
   return (
     <>
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className=" flex items-center justify-center p-4">
       
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 space-y-6">
         <div className="flex justify-between items-center mb-4">

@@ -9,13 +9,14 @@ const ProceedToPay = () => {
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
     const [error, setError] = useState("");
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const amount = 200; // Amount in cents ($50.00)
     const userId = "65b2a12d2a5b5f001f8e6c2a"; // Replace with actual user ID
 
     useEffect(() => {
         if (showPaymentForm && !clientSecret) {
-            fetch("http://localhost:5000/create-payment-intent", {
+            fetch(`${API_BASE}/create-payment-intent`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount, userId }),

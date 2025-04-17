@@ -43,6 +43,7 @@ const CustomTable = (props) => {
   const [openDialog, setOpenDialog] = useState(false); // State to control the dialog
   const [categoryToDelete, setCategoryToDelete] = useState(null); // Track the category to delete
   const navigate = useNavigate(); // initialize navigate
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   // Safeguard if categories is undefined or null
   const categories = props.categories || [];
@@ -57,7 +58,7 @@ const CustomTable = (props) => {
     try {
       if (categoryToDelete) {
         const deletedCategory = await axios.post(
-          `http://localhost:5000/deleteCategory/${categoryToDelete._id}`
+          `${API_BASE}/deleteCategory/${categoryToDelete._id}`
         );
 
         // Remove deleted category from the list in the parent component

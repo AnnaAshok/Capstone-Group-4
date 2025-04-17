@@ -8,10 +8,11 @@ import { useEffect, useState } from 'react';
 const CoursePage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   // Fetch categories from backend
   useEffect(() => {
-    fetch("http://localhost:5000/categories")
+    fetch(`${API_BASE}/categories`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data)) {

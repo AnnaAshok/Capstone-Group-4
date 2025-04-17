@@ -9,6 +9,7 @@ const ListCategory = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate()
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const limit = 10;
 
@@ -18,7 +19,7 @@ const ListCategory = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/getCategory', {
+      const response = await axios.post(`${API_BASE}/getCategory`, {
         page: currentPage,
         limit: limit,
       });

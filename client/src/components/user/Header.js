@@ -72,20 +72,6 @@ const Header = () => {
               </h3>
             </Navbar.Brand>
 
-            {/* Search Bar */}
-            {/* <Form className="d-flex ms-5">
-              <Form.Control type="search" placeholder="Search" className="me-2" />
-              <Button
-                style={{
-                  border: "2px solid #f7c221",
-                  color: "#f7c221",
-                  fontWeight: "bold",
-                  backgroundColor: "transparent",
-                }}
-              >
-                Search
-              </Button>
-            </Form> */}
           </div>
 
           <Navbar.Toggle aria-controls="navbarScroll" className="ms-auto" />

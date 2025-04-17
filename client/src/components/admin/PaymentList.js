@@ -32,6 +32,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const PaymentList = () => {
     const [payments, setPayments] = useState([]);
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         fetchPayments();
@@ -39,7 +40,7 @@ const PaymentList = () => {
 
     const fetchPayments = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/getAllPayments');
+            const response = await axios.get(`${API_BASE}/getAllPayments`);
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);

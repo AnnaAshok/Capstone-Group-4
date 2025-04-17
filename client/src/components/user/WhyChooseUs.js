@@ -23,16 +23,17 @@ function Home() {
     users: 0,
     categories: 0,
   });
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:5000/getCourses")
+      fetch(`${API_BASE}/getCourses`)
         .then((res) => res.json())
         .catch((err) => {
           console.error("Error fetching courses:", err);
           return { count: 0 };
         }),
-      fetch("http://localhost:5000/getUsers", {
+      fetch(`${API_BASE}/getUsers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       })
@@ -41,7 +42,7 @@ function Home() {
           console.error("Error fetching users:", err);
           return { count: 0 };
         }),
-      fetch("http://localhost:5000/getCategory", {
+      fetch(`${API_BASE}/getCategory`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       })

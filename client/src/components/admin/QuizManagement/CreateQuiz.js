@@ -15,10 +15,11 @@ const CreateQuiz = () => {
   const [mark, setMark] = useState();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const API_BASE = process.env.REACT_APP_API_URL;
 
 
   useEffect(() => {
-    axios.get("http://localhost:5000/getCourses")
+    axios.get(`${API_BASE}/getCourses`)
       .then(response => setCourses(response.data))
       .catch(error => console.error("Error fetching courses:", error));
   }, []);
@@ -70,7 +71,7 @@ const CreateQuiz = () => {
     };
 
     try {
-      await axios.post("http://localhost:5000/questions", newQuestion);
+      await axios.post(`${API_BASE}/questions`, newQuestion);
       navigate("/admin/Questions");
     } catch (error) {
       console.error("Error creating quiz:", error);

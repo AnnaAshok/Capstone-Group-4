@@ -26,28 +26,29 @@ function Home() {
   const [userPaymentsData, setUserPaymentsData] = useState([]);
   const [enrollmentData, setEnrollmentData] = useState([]);
   const [interval, setInterval] = useState("day");
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:5000/getCourses").then((res) => res.json()).catch((err) => {
+      fetch(`${API_BASE}/getCourses`).then((res) => res.json()).catch((err) => {
         console.error("Error fetching courses:", err);
         return { count: 0 };
       }),
-      fetch("http://localhost:5000/getUsers", {
+      fetch(`${API_BASE}/getUsers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       }).then((res) => res.json()).catch((err) => {
         console.error("Error fetching users:", err);
         return { count: 0 };
       }),
-      fetch("http://localhost:5000/getCategory", {
+      fetch(`${API_BASE}/getCategory`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       }).then((res) => res.json()).catch((err) => {
         console.error("Error fetching categories:", err);
         return { categories: [] };
       }),
-      fetch("http://localhost:5000/getAllPayments")
+      fetch(`${API_BASE}/getAllPayments`)
         .then((res) => res.json())
         .catch((err) => {
           console.error("Error fetching user payments:", err);
@@ -73,7 +74,7 @@ function Home() {
 
   // Fetch enrollment chart data
   useEffect(() => {
-    fetch(`http://localhost:5000/enrollments/summary?interval=${interval}`)
+    fetch(`${API_BASE}/enrollments/summary?interval=${interval}`)
       .then((res) => res.json())
       .then((data) => setEnrollmentData(data))
       .catch((err) => console.error("Error fetching enrollment summary:", err));

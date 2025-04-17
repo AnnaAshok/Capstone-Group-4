@@ -7,6 +7,7 @@ const PaymentForm = ({ amount, userId,courseId ,setEnrolled,setShowPaymentForm,s
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const handlePayment = async (e) => {
         e.preventDefault();
@@ -39,7 +40,7 @@ const PaymentForm = ({ amount, userId,courseId ,setEnrolled,setShowPaymentForm,s
             alert(result.error.message);
         } else {
             // Send transaction details to backend
-            const response = await axios.post("http://localhost:5000/update-payment-status", {
+            const response = await axios.post(`${API_BASE}/update-payment-status`, {
                 userId,
                 amount,
                 currency: "usd",
@@ -54,7 +55,7 @@ const PaymentForm = ({ amount, userId,courseId ,setEnrolled,setShowPaymentForm,s
 
                     setShowPaymentForm(false); 
                     try {
-                        const enrolled = await fetch('http://localhost:5000/enroll', {
+                        const enrolled = await fetch(`${API_BASE}/enroll`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

@@ -2,7 +2,6 @@ import React from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { motion } from "framer-motion";
 import BannerPng from "../../Assets/images/banner-img-icon-1.png";
-import Blob from "../../Assets/images/blob.png";
 import { useNavigate } from "react-router-dom";
 
 // Animation Variant
@@ -87,14 +86,7 @@ const Main = () => {
           alt: "",
           className: "w-[400px] xl:w-[600px] relative z-10 drop-shadow", // Adjusted image width
         }),
-        // React.createElement(motion.img, {
-        //   initial: { x: -50, opacity: 0 },
-        //   animate: { x: 0, opacity: 1 },
-        //   transition: { duration: 0.6, delay: 0.2, ease: "easeInOut" },
-        //   src: Blob,
-        //   alt: "",
-        //   className: "absolute -bottom-32 w-[700px] md:w-[1200px] z-[1] hidden md:block", // Adjusted image width
-        // })
+
       )
     )
   );

@@ -26,6 +26,7 @@ function UpdateCourse() {
   const { id } = useParams();
   const navigate = useNavigate();
   const fileInputRef = useRef(null); // Reference for file input
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
@@ -85,19 +86,10 @@ function UpdateCourse() {
     setIsExistingVideo(false);
   };
 
-  // Generate video thumbnail from cloudinary URL
-  const getVideoThumbnail = (videoUrl) => {
-    // For Cloudinary URLs, we can replace /video/upload/ with /video/upload/c_thumb,w_200,h_120/ to get a thumbnail
-    if (videoUrl && videoUrl.includes('cloudinary.com')) {
-      return videoUrl.replace('/video/upload/', '/video/upload/c_thumb,w_200,h_120/');
-    }
-    return null;
-  };
-
   // Fetch course details
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/getCourseById/${id}`)
+      .get(`${API_BASE}/getCourseById/${id}`)
       .then((response) => {
         const course = response.data;
         if (course) {
@@ -125,7 +117,7 @@ function UpdateCourse() {
 
   // Fetch categories
   useEffect(() => {
-    axios.post("http://localhost:5000/getCategory")
+    axios.post(`${API_BASE}/getCategory`)
       .then(response => {
         setCategories(response.data.categories);
       })
@@ -189,6 +181,80 @@ function UpdateCourse() {
       });
     },
   });
+
+  // Handle form submission
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     // Handle image upload if a new one is provided
+  //     let imageUrl = formData.existingImage;
+  //     if (formData.courseImage && formData.courseImage !== formData.existingImage) {
+  //       const uploadData = new FormData();
+  //       uploadData.append("file", formData.courseImage);
+  //       uploadData.append("upload_preset", "eduSphere");
+
+  //       const cloudinaryResponse = await axios.post(
+  //         "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
+  //         uploadData,
+  //         {
+  //           onUploadProgress: (progressEvent) => {
+  //             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+  //             setImageUploadProgress(percent);
+  //           },
+  //         }
+  //       );
+  //       imageUrl = cloudinaryResponse.data.secure_url;
+  //     }
+
+  //     // Start with existing videos
+  //     const videoUrls = [...formData.existingVideos];
+
+  //     // Upload new videos if provided
+  //     if (formData.videos && formData.videos.length > 0) {
+  //       for (let i = 0; i < formData.videos.length; i++) {
+  //         const video = formData.videos[i];
+  //         const uploadData = new FormData();
+  //         uploadData.append("file", video);
+  //         uploadData.append("upload_preset", "eduSphere");
+
+  //         const cloudinaryVideoResponse = await axios.post(
+  //           "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
+  //           uploadData,
+  //           {
+  //             onUploadProgress: (progressEvent) => {
+  //               const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+  //               setUploadProgress(prev => {
+  //                 const updated = [...prev];
+  //                 updated[i] = percentCompleted;
+  //                 return updated;
+  //               });
+  //             },
+  //           }
+  //         );
+  //         videoUrls.push(cloudinaryVideoResponse.data.secure_url);
+  //       }
+  //     }
+
+  //     const courseData = {
+  //       title: formData.title,
+  //       shortDescription: formData.shortDescription,
+  //       heading: formData.heading,
+  //       longDescription: formData.longDescription,
+  //       categoryID: formData.categoryID,
+  //       duration: formData.duration,
+  //       price: formData.price,
+  //       courseImage: imageUrl,
+  //       videos: videoUrls,
+  //     };
+
+  //     //await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
+  //     axios.post(`${API_BASE}/updateCourse/${id}`, courseData);
+  //     navigate("/admin/courses");
+  //   } catch (error) {
+  //     console.error("Error updating course:", error);
+  //   }
+  // };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -256,29 +322,12 @@ function UpdateCourse() {
         videos: videoUrls,
       };
 
-      await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
+      await axios.post(`${API_BASE}/updateCourse/${id}`, courseData);
       navigate("/admin/courses");
     } catch (error) {
       console.error("Error updating course:", error);
     }
-  };
-
-  // Extract video ID from Cloudinary URL (for video name display)
-  const getVideoName = (url) => {
-    if (!url) return "Unknown Video";
-    try {
-      // Extract the filename from the URL
-      const matches = url.match(/\/v\d+\/([^/]+)\.\w+$/);
-      if (matches && matches[1]) {
-        // Replace underscores with spaces and truncate if too long
-        const name = matches[1].replace(/_/g, ' ');
-        return name.length > 25 ? name.substring(0, 25) + '...' : name;
-      }
-    } catch (error) {
-      console.error("Error parsing video name:", error);
-    }
-    return "Video";
-  };
+  }; // This closing bracket was missing
 
   return (
     <main className="main-container">
@@ -625,13 +674,13 @@ function UpdateCourse() {
             )}
           </Box>
 
-             <Box display="flex" gap={2} marginTop={2}>
+          <Box display="flex" gap={2} marginTop={2}>
             <Button type="submit" variant="contained" sx={{ backgroundColor: "#0F3460" }}>
               Update Course
             </Button>
             <Button
               variant="outlined"
-              sx={{ border: "1px solid #0F3460", color: "#0F3460" }} 
+              sx={{ border: "1px solid #0F3460", color: "#0F3460" }}
               onClick={() => navigate("/admin/courses")} // Replace "/courses" with your actual route
             >
               Cancel
