@@ -63,7 +63,7 @@ function Home() {
         });
 
         // ✅ Get latest 10 payments by createdAt
-        const latestPayments = [...allPayments]
+        const latestPayments = [...allPayments.formattedPayments]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 10);
 
@@ -121,8 +121,8 @@ function Home() {
                   dataKey="email"
                   tickFormatter={(email) => email?.split("@")[0]}
                 />
-                <YAxis />
-                <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                <YAxis tickFormatter={(value) => value*100} />
+                <Tooltip formatter={(value) => `$${(value*100)}`} />
                 <Bar dataKey="amount" fill="#00C49F" />
               </BarChart>
             </ResponsiveContainer>

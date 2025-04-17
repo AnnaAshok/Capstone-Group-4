@@ -95,12 +95,16 @@ const updatePaymentStatus =  async (req, res) => {
 }
 const getPaymentsWithUserEmails = async (req, res) => {
     try {
+        const { page = 1, limit = 15 } = req.query; 
+        const skip = (page - 1) * limit;
       const payments = await Payment.find()
         .populate({
           path: "userId",
           select: "email", // Fetch only the email field from User
         })
-        .select("amount currency status userId"); // Select required fields from Payment
+        .select("amount currency status userId").skip(skip).limit(limit); // Select required fields from Payment
+              const totalPayments = await Payment.countDocuments();
+        
       // Formatting response to include user email directly
       const formattedPayments = payments.map(payment => ({
         email: payment.userId?.email, 
@@ -109,7 +113,8 @@ const getPaymentsWithUserEmails = async (req, res) => {
         status: payment.status
       }));
   
-      res.status(200).json(formattedPayments);
+      res.status(200).json({formattedPayments,currentPage: page,
+        totalPages: Math.ceil(totalPayments / limit)});
     } catch (error) {
       console.error("Error fetching payment details:", error);
       res.status(500).json({ error: "Server error while fetching payments" });

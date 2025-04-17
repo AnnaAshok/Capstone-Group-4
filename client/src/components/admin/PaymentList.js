@@ -33,15 +33,28 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const PaymentList = () => {
     const [payments, setPayments] = useState([]);
     const API_BASE = process.env.REACT_APP_API_URL;
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const handlePageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
     useEffect(() => {
         fetchPayments();
-    }, []);
+    }, [currentPage]);
+    const limit = 15;
 
     const fetchPayments = async () => {
         try {
-            const response = await axios.get(`${API_BASE}/getAllPayments`);
-            setPayments(response.data);
+            const response = await axios.get(`${API_BASE}/getAllPayments`,{
+                params: {
+                  page: currentPage,
+                  limit: limit,
+                }
+              });
+            setPayments(response.data.formattedPayments);
+            setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Error fetching payments:', error);
         }
@@ -67,9 +80,9 @@ const PaymentList = () => {
                         {payments.length > 0 ? (
                             payments.map((payment, index) => (
                                 <StyledTableRow key={payment._id}>
-                                    <StyledTableCell>{index + 1}</StyledTableCell>
+                                    <StyledTableCell>{index + 1 + (currentPage - 1) * limit}</StyledTableCell>
                                     <StyledTableCell>{payment.email}</StyledTableCell>
-                                    <StyledTableCell>${payment.amount}</StyledTableCell>
+                                    <StyledTableCell>${(payment.amount)*100}</StyledTableCell>
                                     <StyledTableCell>{payment.currency}</StyledTableCell>
                                     <StyledTableCell>
                                         <span className={`badge ${getStatusClass(payment.status)}`}>
@@ -88,6 +101,39 @@ const PaymentList = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <div className="pagination">
+                <button 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                    style={{
+                      backgroundColor: currentPage === 1 ? '#d3d3d3' : '#0c2a47',
+                      color: currentPage === 1 ? '#666' : '#fff',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      cursor: currentPage === 1? 'not-allowed' : 'pointer',
+                      border: 'none',
+                      marginRight: '10px'
+                    }}
+                >
+                    Previous
+                </button>
+                <span> {currentPage} of {totalPages} </span>
+                <button 
+                    onClick={() => handlePageChange(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                    style={{
+                      backgroundColor: currentPage === totalPages ? '#d3d3d3' : '#0c2a47',
+                      color: currentPage === totalPages ? '#666' : '#fff',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      cursor: currentPage === totalPages? 'not-allowed' : 'pointer',
+                      border: 'none',
+                      marginRight: '10px'
+                    }}
+                >
+                    Next
+                </button>
+            </div>
         </main>
     );
 };
