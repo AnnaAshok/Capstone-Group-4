@@ -55,10 +55,7 @@ const Footer = () => {
               
               </h3>
               <p>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                Tenetur eius architecto error incidunt quas est quos, suscipit
-                iure in, doloribus autem recusandae libero nihil voluptate vel
-                quidem modi nulla illo?
+              EduSphere, a modern Learning Management System designed to make education accessible, engaging, and efficient.
               </p>
               <div className="social-icons">
                 <i className="fa-brands fa-facebook"></i>

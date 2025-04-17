@@ -14,6 +14,7 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showCPassword, setShowCPassword] = useState(false);
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   function SwitchContent() {
     setActiveLogin(!activeLogin);
@@ -31,7 +32,7 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
       return;
     }
     try {
-      const result = await axios.post('http://localhost:5000/resetpassword', { email, password });
+      const result = await axios.post(`${API_BASE}/resetpassword`, { email, password });
       if (result.status === 200) {
         setErrorMessage(result.data.message);
         navigate('/');
@@ -48,7 +49,7 @@ const Forgotpassword = ({ show, handleClose, setModalShow }) => {
       return;
     }
     try {
-      const result = await axios.post('http://localhost:5000/getEmail', { email });
+      const result = await axios.post(`${API_BASE}/getEmail`, { email });
       if (result.data === "Success") {
         setActiveLogin(false); // Show password reset form
         setErrorMessage("");

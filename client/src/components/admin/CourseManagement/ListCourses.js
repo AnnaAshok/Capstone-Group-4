@@ -10,6 +10,7 @@ const ListCourses = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
+  const API_BASE = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
       fetchCourses();
@@ -17,7 +18,7 @@ const ListCourses = () => {
 
   const fetchCourses = async () => {
     try {
-    const response = await axios.get('http://localhost:5000/getCourses', {
+    const response = await axios.get(`${API_BASE}/getCourses`, {
       params: {
         page: currentPage,
         limit: limit,

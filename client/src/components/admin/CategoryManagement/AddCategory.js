@@ -10,13 +10,14 @@ const AddCategory = () => {
   const navigate = useNavigate();
   const location = useLocation(); 
   const [errors, setErrors] = useState({ categoryName: "", categoryImage: "" });
+  const API_BASE = process.env.REACT_APP_API_URL;
 
 
   useEffect(() => {
     const categoryId = location.state?.id; 
     if (categoryId) {
       // If categoryId is passed, fetch category data for editing
-      axios.post(`http://localhost:5000/getCategoryById/${categoryId}`)
+      axios.post(`${API_BASE}/getCategoryById/${categoryId}`)
         .then((response) => {
           const { categoryName, categoryImage } = response.data;
           setCategoryName(categoryName);
@@ -77,7 +78,7 @@ const AddCategory = () => {
         categoryImage: imageUrl, // Use the Cloudinary image URL
       };
 
-      const response = await axios.post("http://localhost:5000/addCategory", categoryData, {
+      const response = await axios.post(`${API_BASE}/addCategory`, categoryData, {
         headers: { "Content-Type": "application/json" }
       });
   

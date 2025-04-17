@@ -42,12 +42,14 @@ const CourseDetailsPage = () => {
     const [attemptCount, setAttemptCount] = useState(0); // Track the number of attempts
     const [hasPassed, setHasPassed] = useState(false);
     const [quizAttemptsFetched, setQuizAttemptsFetched] = useState(false);
+    const API_BASE = process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         const fetchCourseDetails = async () => {
             setLoading(true);
 
             try {
-                const response = await fetch(`http://localhost:5000/courses/${courseId}`);
+                const response = await fetch(`${API_BASE}/courses/${courseId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch course details');
                 }
@@ -67,7 +69,7 @@ const CourseDetailsPage = () => {
                         return;
                     }
 
-                    const enrollmentResponse = await fetch(`http://localhost:5000/enroll/${userID}/${courseId}`, {
+                    const enrollmentResponse = await fetch(`${API_BASE}/enroll/${userID}/${courseId}`, {
                         method: 'GET',
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -77,7 +79,7 @@ const CourseDetailsPage = () => {
 
                     if (userID) {
                         try {
-                            const response = await axios.post(`http://localhost:5000/getUserById/${userID}`);
+                            const response = await axios.post(`${API_BASE}/getUserById/${userID}`);
 
                             if (response.data) {
                                 //setUserName(response.data.firstName || "User");
@@ -119,7 +121,7 @@ const CourseDetailsPage = () => {
 
     useEffect(() => {
         if (showPaymentForm && !clientSecret) {
-            fetch("http://localhost:5000/create-payment-intent", {
+            fetch(`${API_BASE}/create-payment-intent`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount: course?.price, userId: userID }),
@@ -296,7 +298,7 @@ const CourseDetailsPage = () => {
                             </Elements>
                         )}
 
-                        <button onClick={() => window.history.back()} className="back-button">Back</button>
+                        <button onClick={() => navigate('/courses')} className="back-button">Back</button>
                         {successMessage && <p className="success-message">{successMessage}</p>}
                     </div>
                 </div>
@@ -338,7 +340,7 @@ const CourseDetailsPage = () => {
                 </section>
             )}
 
-                {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} />}
+                {/* {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} />} */}
             {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course}/>}
 
 
@@ -381,10 +383,8 @@ const CourseDetailsPage = () => {
                 </section>
             )} */}
 
-            {showQuiz && <Quiz courseId={courseId} onQuizComplete={handleQuizCompletion} userName={userName} course={course}/>}
 
 
-            {quizPassed && <Certificate userName={userName} courseName={course.title} quizPassed={quizPassed} />}
 
 
             {loginModalShow && (

@@ -5,7 +5,6 @@ const ProtectedRoute = ({ element,allowedRoles  }) => {
   const isAuthenticated = localStorage.getItem("token"); 
   const role = localStorage.getItem("role");
 
-  // return isAuthenticated ? element : <Navigate to="/" />;
   if (!isAuthenticated) {
     // Not logged in
     return <Navigate to="/" />;

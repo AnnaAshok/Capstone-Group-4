@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import '../../home.css';
 import { useNavigate } from 'react-router-dom';
+import LoginSignup from './LoginSignup';
 
 const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, hideCategoryButtons, hidePagination, showViewAll }) => {
     const [courses, setCourses] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1); 
     const navigate = useNavigate();  
+    const [loginModalShow, setLoginModalShow] = useState(false);
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const coursesPerPage = 6;
 
@@ -24,7 +27,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                     : `?categoryID=${selectedCategoryID}&page=${currentPage}&limit=${coursesPerPage}`;
 
 
-                const response = await fetch(`http://localhost:5000/courses${categoryParam}`);
+                const response = await fetch(`${API_BASE}/courses${categoryParam}`);
 
                 const data = await response.json();
 
@@ -69,7 +72,15 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
         ? filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse) // Show courses based on pagination
         : filteredCourses.slice(0, limit); // Show limited courses if no pagination is needed
 
-
+    const handleDetailedView =(id)=>{
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setLoginModalShow(true);
+            return;
+        }else{
+            navigate(`/courses/${id}`)
+        }
+    }
     return (
         <section className='courses-section'>
             <div>
@@ -137,7 +148,7 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                                         {/* <button className="view-details-btn">View Details</button> */}
                                         <button
                                             className="view-details-btn"
-                                            onClick={() => navigate(`/courses/${course._id}`)}  // Navigate to course details
+                                            onClick={()=>handleDetailedView(course._id)}  // Navigate to course details
                                         >
                                             View Details
                                         </button>
@@ -173,6 +184,9 @@ const CourseList = ({ selectedCategory, setSelectedCategory, categories, limit, 
                     </div>
                 )}
             </div>
+              {loginModalShow && (
+                <LoginSignup show={loginModalShow} handleClose={() => setLoginModalShow(false)} />
+            )}
         </section>
     );
 };

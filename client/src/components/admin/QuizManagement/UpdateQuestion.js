@@ -14,17 +14,18 @@ const UpdateQuestion = () => {
   const navigate = useNavigate();
   const location = useLocation(); 
   const [errors, setErrors] = useState({}); // State for error messages
+  const API_BASE = process.env.REACT_APP_API_URL;
 
 
   useEffect(() => {
-    axios.get("http://localhost:5000/getCourses")
+    axios.get(`${API_BASE}/getCourses`)
       .then(response => setCourses(response.data))
       .catch(error => console.error("Error fetching courses:", error));
   }, []);
 
   useEffect(() => {
     const questionId = location.state?.id; 
-    axios.get(`http://localhost:5000/details/questions/${questionId}`)
+    axios.get(`${API_BASE}/details/questions/${questionId}`)
       .then(response => {
         const { courseID, question, options, answer, mark } = response.data;
         setSelectedCourse(courseID._id);
@@ -81,7 +82,7 @@ const UpdateQuestion = () => {
     };
 
     try {
-      await axios.put(`http://localhost:5000/questions/${location.state?.id}`, updatedQuestion);
+      await axios.put(`${API_BASE}/questions/${location.state?.id}`, updatedQuestion);
       navigate("/admin/Questions");
     } catch (error) {
       console.error("Error updating question:", error);

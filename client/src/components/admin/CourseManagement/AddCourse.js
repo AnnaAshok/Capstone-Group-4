@@ -21,10 +21,11 @@ function AddCourse() {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   // Fetch categories
   useEffect(() => {
-    axios.post("http://localhost:5000/getCategory")
+    axios.post(`${API_BASE}/getCategory`)
       .then(response => {
         setCategories(response.data.categories);
       })
@@ -126,9 +127,8 @@ function AddCourse() {
         heading: formData.heading,
         videos: videoUrls,
       };
-      console.log(courseData); // Check if videoUrl is present here
 
-      const response = await axios.post("http://localhost:5000/addCourse", courseData, {
+      const response = await axios.post(`${API_BASE}/addCourse`, courseData, {
         headers: { "Content-Type": "application/json" }
       });
 

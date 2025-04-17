@@ -7,6 +7,7 @@ const AddUser = () => {
     const navigate = useNavigate();
     const location = useLocation(); 
     const [roles, setRoles] = useState([]);
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const [userData, setUserData] = useState({
         firstName: "",
@@ -42,7 +43,7 @@ const AddUser = () => {
     event.preventDefault();
     if (validate()) {
       try {
-        const emailCheck = await axios.post("http://localhost:5000/getEmail", { email: userData.email });
+        const emailCheck = await axios.post(`${API_BASE}/getEmail`, { email: userData.email });
         // const hashedPassword = await bcrypt.hash(userData.password, 10);
         
         // const userDataWithHashedPassword = { ...userData, password: hashedPassword };
@@ -52,7 +53,7 @@ const AddUser = () => {
             email: "Email already exists",
           }));
       } else {
-        await axios.post("http://localhost:5000/addUser", userData);
+        await axios.post(`${API_BASE}/addUser`, userData);
         navigate("/admin/Users");
       }
     } catch (error) {
@@ -65,7 +66,7 @@ const AddUser = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/roles"); // Adjust the URL to match your backend
+        const response = await axios.get(`${API_BASE}/roles`); // Adjust the URL to match your backend
         setRoles(response.data); 
       } catch (error) {
         console.error("Error fetching roles:", error);

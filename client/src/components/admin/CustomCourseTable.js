@@ -43,6 +43,7 @@ const CustomTable = ({ courses, setCourses }) => {
   const navigate = useNavigate(); 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   const handleEdit = (id) => {
     navigate(`/admin/updateCourse/${id}`);
@@ -50,7 +51,7 @@ const CustomTable = ({ courses, setCourses }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.post(`http://localhost:5000/deleteCourse/${selectedCourseId}`);
+      await axios.post(`${API_BASE}/deleteCourse/${selectedCourseId}`);
       setCourses((prevCourses) =>
         prevCourses.filter((course) => course._id !== selectedCourseId)
       );

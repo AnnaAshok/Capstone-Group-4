@@ -24,6 +24,7 @@ import Main from '././Main'
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   // For accordian in why choose us section
   const toggleAccordion = (e) => {
@@ -52,13 +53,13 @@ const Home = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:5000/getCourses")
+      fetch(`${API_BASE}/getCourses`)
         .then((res) => res.json())
         .catch((err) => {
           console.error("Error fetching courses:", err);
           return { count: 0 };
         }),
-      fetch("http://localhost:5000/getUsers", {
+      fetch(`${API_BASE}/getUsers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       })
@@ -67,7 +68,7 @@ const Home = () => {
           console.error("Error fetching users:", err);
           return { count: 0 };
         }),
-      fetch("http://localhost:5000/getCategory", {
+      fetch(`${API_BASE}/getCategory`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       })
@@ -79,8 +80,8 @@ const Home = () => {
     ])
       .then(([courses, users, categories]) => {
         setStats({
-          courses: courses.count ?? (Array.isArray(courses) ? courses.length : 0),
-          users: users.count ?? (Array.isArray(users) ? users.length : 0),
+          courses: courses?.courses.count ?? (Array.isArray(courses.courses) ? courses?.courses.length : 0),
+          users: users?.filteredUsers.count ?? (Array.isArray(users?.filteredUsers) ? users?.filteredUsers.length : 0),
           categories: Array.isArray(categories.categories) ? categories.categories.length : 0,
         });
       })
@@ -90,7 +91,7 @@ const Home = () => {
 
   // Fetch categories from backend
   useEffect(() => {
-    fetch("http://localhost:5000/categories")
+    fetch(`${API_BASE}/categories`)
       .then(response => (response.json())
       )
       .then(data => {

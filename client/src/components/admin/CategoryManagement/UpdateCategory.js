@@ -11,13 +11,14 @@ const UpdateCategory = () => {
   const location = useLocation(); 
   const [existingImage, setExistingImage] = useState("");
   const [errors, setErrors] = useState({ categoryName: "", categoryImage: "" });
+  const API_BASE = process.env.REACT_APP_API_URL;
 
 
   useEffect(() => {
     const categoryId = location.state?.id; 
     if (categoryId) {
       // If categoryId is passed, fetch category data for editing
-      axios.post(`http://localhost:5000/getCategoryById/${categoryId}`)
+      axios.post(`${API_BASE}/getCategoryById/${categoryId}`)
         .then((response) => {
           const { categoryName, categoryImage } = response.data;
           setCategoryName(categoryName);
@@ -87,7 +88,7 @@ const UpdateCategory = () => {
   };
     try {
       const response = await axios.post(
-        `http://localhost:5000/updateCategory/${location.state.id}`,
+        `${API_BASE}/updateCategory/${location.state.id}`,
         categoryData,
         {
           headers: { "Content-Type": "application/json" },

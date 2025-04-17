@@ -19,6 +19,7 @@ function UpdateCourse() {
   const { id } = useParams();
   const navigate = useNavigate();
   const fileInputRef = useRef(null); // Reference for file input
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
@@ -38,7 +39,7 @@ function UpdateCourse() {
   // Fetch course details
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/getCourseById/${id}`)
+      .get(`${API_BASE}/getCourseById/${id}`)
       .then((response) => {
         const course = response.data;
         if (course) {
@@ -70,7 +71,7 @@ function UpdateCourse() {
 
   // Fetch categories
   useEffect(() => {
-    axios.post("http://localhost:5000/getCategory")
+    axios.post(`${API_BASE}/getCategory`)
       .then(response => {
         setCategories(response.data.categories);
       })
@@ -202,7 +203,7 @@ function UpdateCourse() {
       videos: videoUrls,
     };
 
-    await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
+    await axios.post(`${API_BASE}/updateCourse/${id}`, courseData);
     navigate("/admin/courses");
   }
   // } catch (error) {

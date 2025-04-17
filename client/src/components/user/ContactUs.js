@@ -15,6 +15,7 @@ const ContactUs = () => {
         subject: '',
         message: ''
     });
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const [message, setMessage] = useState('');
 
@@ -26,9 +27,8 @@ const ContactUs = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/send-email', formData);
+            const response = await axios.post(`${API_BASE}/send-email`, formData);
             //alert(response.data.message);
-            console.log(response.data);
             setMessage('Your message has been sent successfully!');
 
             // Clear the form fields after successful email sending

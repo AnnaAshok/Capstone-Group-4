@@ -32,6 +32,7 @@ const Profile = () => {
   const [errors, setErrors] = useState({});
   
   const navigate = useNavigate(); // Use useNavigate for redirection
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -50,7 +51,7 @@ const Profile = () => {
   const fetchUserDetails = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/details",
+        `${API_BASE}/user/details`,
         { email },
         {
           headers: {
@@ -80,7 +81,7 @@ const Profile = () => {
   const fetchEnrolledCourses = async () => {
     if (!userId) return;
     try {
-      const response = await axios.get(`http://localhost:5000/enrollments/user/${userId}`, {
+      const response = await axios.get(`${API_BASE}/enrollments/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -90,7 +91,7 @@ const Profile = () => {
       if (response.data && response.data.length > 0) {
         const courseDetails = await Promise.all(
           response.data.map(async (enrollment) => {
-            const courseResponse = await axios.get(`http://localhost:5000/courses/${enrollment._id}`);
+            const courseResponse = await axios.get(`${API_BASE}/courses/${enrollment._id}`);
             return courseResponse.data;
           })
         );
@@ -193,7 +194,7 @@ const Profile = () => {
         updateData.image = imageUrl;
       }
       const response = await axios.post(
-        `http://localhost:5000/user/update/${userId}`,
+        `${API_BASE}/user/update/${userId}`,
         updateData,
         {
           headers: {
@@ -208,10 +209,6 @@ const Profile = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token from localStorage
-    navigate("/"); // Redirect to home page after logout
-  };
 
   return (
     <>

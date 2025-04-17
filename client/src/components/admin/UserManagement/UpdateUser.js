@@ -18,6 +18,7 @@ const UpdateUser = () => {
         
  const [errors, setErrors] = useState({});
         
+ const API_BASE = process.env.REACT_APP_API_URL;
 
 const userId = location.state?.id; // Access the id passed via state
 
@@ -34,7 +35,7 @@ const userId = location.state?.id; // Access the id passed via state
 useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/roles"); // Adjust the URL to match your backend
+        const response = await axios.get(`${API_BASE}/roles`); // Adjust the URL to match your backend
         setRoles(response.data); 
       } catch (error) {
         console.error("Error fetching roles:", error);
@@ -43,7 +44,7 @@ useEffect(() => {
 
     const fetchUserData = async () => {
       try {
-        const response = await axios.post(`http://localhost:5000/getUserById/${userId}`);
+        const response = await axios.post(`${API_BASE}/getUserById/${userId}`);
         setUserData(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -57,7 +58,6 @@ useEffect(() => {
     fetchRoles();
   }, [userId]);
 
-  console.log(userData)
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -65,7 +65,7 @@ useEffect(() => {
             console.error("User ID not found");
             return;
           }
-          const response = await axios.post(`http://localhost:5000/updateUser/${userId}`, userData);
+          const response = await axios.post(`${API_BASE}/updateUser/${userId}`, userData);
       
           // Redirect or show success message
           navigate("/admin/Users");
@@ -73,7 +73,6 @@ useEffect(() => {
           console.error("Failed to update user:", error.response?.data || error.message);
         }
       };
-      console.log(userData.roleID.role)
   return (
     <main className="main-container">
     <Paper elevation={3} sx={{ padding: 3, margin: "auto" }}>

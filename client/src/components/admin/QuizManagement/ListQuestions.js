@@ -49,6 +49,7 @@ const ListQuestions = () => {
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     const limit = 10;
 
@@ -59,7 +60,7 @@ const ListQuestions = () => {
 
     const fetchQuestions = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/getallquestions', {
+            const response = await axios.post(`${API_BASE}/getallquestions`, {
                 page: currentPage,
                 limit: limit,
             });
@@ -71,7 +72,7 @@ const ListQuestions = () => {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:5000/getCourses")
+        axios.get(`${API_BASE}/getCourses`)
           .then(response => setCourses(response.data.courses))
           .catch(error => console.error("Error fetching courses:", error));
       }, []);
@@ -100,7 +101,7 @@ const ListQuestions = () => {
     const handleDelete = async () => {
         try {
             if (questionToDelete) {
-                await axios.post(`http://localhost:5000/questions/${questionToDelete}`);
+                await axios.post(`${API_BASE}/questions/${questionToDelete}`);
                 fetchQuestions(); // Refresh the question list
             }
         } catch (error) {

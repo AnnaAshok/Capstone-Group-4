@@ -45,6 +45,7 @@ const ListUser = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate()
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   const limit = 10;
 
@@ -54,7 +55,7 @@ const ListUser = () => {
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.post('http://localhost:5000/getUsers', {
+    const response = await axios.post(`${API_BASE}/getUsers`, {
       page: currentPage,
       limit: limit,
     });
@@ -84,7 +85,7 @@ const fetchUsers = async () => {
     try {
       if (userToDelete) {
         const deletedUser = await axios.post(
-          `http://localhost:5000/deleteUser/${userToDelete}`
+          `${API_BASE}/deleteUser/${userToDelete}`
         );
         fetchUsers(); // Refresh the user list
       }
