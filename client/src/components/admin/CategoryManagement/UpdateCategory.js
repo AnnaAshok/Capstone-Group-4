@@ -167,7 +167,7 @@ const UpdateCategory = () => {
                 <img
                   src={URL.createObjectURL(categoryImage)}
                   alt="New Category"
-                  style={{ width: "100px", marginTop: "10px" }}
+                  style={{ margin: "10px auto", width: "50%" }}
                 />
                 <p>New Image Selected</p>
               </div>
@@ -178,7 +178,7 @@ const UpdateCategory = () => {
                 <img
                   src={existingImage}
                   alt="Existing Category"
-                  style={{ marginTop: "10px" }}
+                  style={{ margin: "10px auto", width: "50%" }}
                 />
               </div>
             )}
@@ -189,7 +189,7 @@ const UpdateCategory = () => {
           )}
           </Box>
           <Box display="flex" gap={2} marginTop={2}>
-            <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" sx={{ backgroundColor: "#0F3460" }}>
               Update
             </Button>
             <Button variant="outlined" sx={{ border: "1px solid #0F3460", color: "#0F3460" }} onClick={handleCancel}>

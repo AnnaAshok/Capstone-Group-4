@@ -14,6 +14,13 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDropzone } from "react-dropzone";
+import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
+} from '@mui/material';
 
 function UpdateCourse() {
   const { id } = useParams();
@@ -35,10 +42,57 @@ function UpdateCourse() {
     videos: [],
   });
 
+  // Video progress tracking state
+  const [uploadProgress, setUploadProgress] = useState([]);
   const [imageUploadProgress, setImageUploadProgress] = useState(0);
 
-  
+  // Delete confirmation dialog state
+  const [openDialog, setOpenDialog] = useState(false);
+  const [videoToDeleteIndex, setVideoToDeleteIndex] = useState(null);
+  const [isExistingVideo, setIsExistingVideo] = useState(false);
 
+  const handleDeleteIconClick = (e, index, isExisting = false) => {
+    e.stopPropagation(); // prevent file input popup
+    setVideoToDeleteIndex(index);
+    setIsExistingVideo(isExisting);
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setVideoToDeleteIndex(null);
+    setIsExistingVideo(false);
+  };
+
+  const handleDelete = () => {
+    if (videoToDeleteIndex !== null) {
+      if (isExistingVideo) {
+        // Delete from existing videos
+        const updatedExistingVideos = formData.existingVideos.filter((_, index) => index !== videoToDeleteIndex);
+        setFormData({ ...formData, existingVideos: updatedExistingVideos });
+      } else {
+        // Delete from new videos
+        const updatedVideos = formData.videos.filter((_, index) => index !== videoToDeleteIndex);
+        setFormData({ ...formData, videos: updatedVideos });
+
+        const updatedProgress = uploadProgress.filter((_, index) => index !== videoToDeleteIndex);
+        setUploadProgress(updatedProgress);
+      }
+    }
+
+    setOpenDialog(false);
+    setVideoToDeleteIndex(null);
+    setIsExistingVideo(false);
+  };
+
+  // Generate video thumbnail from cloudinary URL
+  const getVideoThumbnail = (videoUrl) => {
+    // For Cloudinary URLs, we can replace /video/upload/ with /video/upload/c_thumb,w_200,h_120/ to get a thumbnail
+    if (videoUrl && videoUrl.includes('cloudinary.com')) {
+      return videoUrl.replace('/video/upload/', '/video/upload/c_thumb,w_200,h_120/');
+    }
+    return null;
+  };
 
   // Fetch course details
   useEffect(() => {
@@ -61,17 +115,13 @@ function UpdateCourse() {
             courseImage: null,
             existingVideos: course.videos
               ? course.videos
-              : "",
-            videos: null,
+              : [],
+            videos: [],
           });
         }
       })
       .catch((error) => console.error("Error fetching course:", error));
   }, [id]);
-
-  console.log("new uploaded image: ", formData.courseImage);
-  console.log("Existing videos fetched from DB: ", formData.existingVideos);
-
 
   // Fetch categories
   useEffect(() => {
@@ -107,7 +157,9 @@ function UpdateCourse() {
 
   // Dropzone for drag-and-drop file uploads
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: {
+      'image/*': ['.jpg', '.jpeg', '.png']
+    },
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
         setFormData({ ...formData, courseImage: acceptedFiles[0] });
@@ -117,43 +169,39 @@ function UpdateCourse() {
 
   // Handle video upload
   const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
-    accept: "video/*",
+    accept: {
+      'video/*': []
+    },
     multiple: true, // Allow multiple video selection
     onDrop: (acceptedFiles) => {
       setFormData((prevData) => ({
         ...prevData,
         videos: [...prevData.videos || [], ...acceptedFiles], // Append new videos
       }));
+
+      // Initialize progress for new videos
+      setUploadProgress(prev => {
+        const newProgress = [...prev];
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          newProgress.push(0);
+        }
+        return newProgress;
+      });
     },
   });
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("title", formData.title);
-    data.append("shortDescription", formData.shortDescription);
-    data.append("heading", formData.heading);
-    data.append("longDescription", formData.longDescription);
-    data.append("categoryID", formData.categoryID);
-    data.append("duration", formData.duration);
-    data.append("price", formData.price);
 
-    if (formData.courseImage) {
-      data.append("courseImage", formData.courseImage);
-    }
+    try {
+      // Handle image upload if a new one is provided
+      let imageUrl = formData.existingImage;
+      if (formData.courseImage && formData.courseImage !== formData.existingImage) {
+        const uploadData = new FormData();
+        uploadData.append("file", formData.courseImage);
+        uploadData.append("upload_preset", "eduSphere");
 
-    let imageUrl = formData.existingImage;
-
-    // Check if a new image is uploaded
-    if (formData.courseImage && formData.courseImage !== formData.existingImage) {
-      const uploadData = new FormData();
-      uploadData.append("file", formData.courseImage);
-      uploadData.append("upload_preset", "eduSphere");
-
-      console.log("uploaded image", formData.courseImage);
-
-      try {
         const cloudinaryResponse = await axios.post(
           "https://api.cloudinary.com/v1_1/dnmqu8v7b/image/upload",
           uploadData,
@@ -164,58 +212,73 @@ function UpdateCourse() {
             },
           }
         );
-        console.log("Cloudinary Response", cloudinaryResponse);
         imageUrl = cloudinaryResponse.data.secure_url;
-        console.log("imageURL", imageUrl);
-
-      } catch (error) {
-        console.error("Image upload failed", error);
-        imageUrl = formData.existingImage;
       }
 
-    } else {
-      // If no new image uploaded, use the existing one
-      imageUrl = formData.existingImage;
-    }
+      // Start with existing videos
+      const videoUrls = [...formData.existingVideos];
 
+      // Upload new videos if provided
+      if (formData.videos && formData.videos.length > 0) {
+        for (let i = 0; i < formData.videos.length; i++) {
+          const video = formData.videos[i];
+          const uploadData = new FormData();
+          uploadData.append("file", video);
+          uploadData.append("upload_preset", "eduSphere");
 
-    // Upload video if a new one is provided
-    const videoUrls = formData.existingVideos;
-
-    if (formData.videos && formData.videos.length > 0) {
-      for (const video of formData.videos) {
-        const uploadData = new FormData();
-        uploadData.append("file", video);
-        uploadData.append("upload_preset", "eduSphere");
-
-        try {
           const cloudinaryVideoResponse = await axios.post(
             "https://api.cloudinary.com/v1_1/dnmqu8v7b/video/upload",
-            uploadData
+            uploadData,
+            {
+              onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setUploadProgress(prev => {
+                  const updated = [...prev];
+                  updated[i] = percentCompleted;
+                  return updated;
+                });
+              },
+            }
           );
           videoUrls.push(cloudinaryVideoResponse.data.secure_url);
-        } catch (error) {
-          console.error("Error uploading video:", error);
         }
       }
+
+      const courseData = {
+        title: formData.title,
+        shortDescription: formData.shortDescription,
+        heading: formData.heading,
+        longDescription: formData.longDescription,
+        categoryID: formData.categoryID,
+        duration: formData.duration,
+        price: formData.price,
+        courseImage: imageUrl,
+        videos: videoUrls,
+      };
+
+      await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
+      navigate("/admin/courses");
+    } catch (error) {
+      console.error("Error updating course:", error);
     }
+  };
 
-
-    const courseData = {
-      title: formData.title,
-      shortDescription: formData.shortDescription,
-      heading: formData.heading,
-      longDescription: formData.longDescription,
-      categoryID: formData.categoryID,
-      duration: formData.duration,
-      price: formData.price,
-      courseImage: imageUrl,
-      videos: videoUrls,
-    };
-
-    await axios.post(`http://localhost:5000/updateCourse/${id}`, courseData);
-    navigate("/admin/courses");
-  }
+  // Extract video ID from Cloudinary URL (for video name display)
+  const getVideoName = (url) => {
+    if (!url) return "Unknown Video";
+    try {
+      // Extract the filename from the URL
+      const matches = url.match(/\/v\d+\/([^/]+)\.\w+$/);
+      if (matches && matches[1]) {
+        // Replace underscores with spaces and truncate if too long
+        const name = matches[1].replace(/_/g, ' ');
+        return name.length > 25 ? name.substring(0, 25) + '...' : name;
+      }
+    } catch (error) {
+      console.error("Error parsing video name:", error);
+    }
+    return "Video";
+  };
 
   return (
     <main className="main-container">
@@ -306,11 +369,12 @@ function UpdateCourse() {
               name="duration"
               value={formData.duration}
               onChange={handleChange}
-              fullWidth
+              sx={{ width: "50%" }}
             >
               <MenuItem value="2 weeks">2 Weeks</MenuItem>
               <MenuItem value="1 month">1 Month</MenuItem>
               <MenuItem value="3 months">3 Months</MenuItem>
+              <MenuItem value="6 months">6 Months</MenuItem>
             </Select>
           </Box>
 
@@ -356,45 +420,82 @@ function UpdateCourse() {
               style={{ display: "none" }}
             />
 
+            {/* Display new image with progress bar to the right */}
             {formData.courseImage && (
-              <img
-                src={URL.createObjectURL(formData.courseImage)}
-                alt="Preview"
-                style={{
-                  marginTop: "10px",
-                  maxWidth: "100px",
-                  maxHeight: "100px",
-                }}
-              />
-            )}
-
-            {formData.existingImage && !formData.courseImage && (
-              <img
-                src={formData.existingImage}
-                alt="Existing"
-                style={{
-                  marginTop: "10px",
-                  maxWidth: "100px",
-                  maxHeight: "100px",
-                }}
-              />
-            )}
-
-            {imageUploadProgress > 0 && imageUploadProgress < 100 && (
-              <Box sx={{ mt: 1 }}>
-                <Typography variant="body2" sx={{ color: "#0F3460", mb: 0.5 }}>
-                  Uploading Image: {imageUploadProgress}%
-                </Typography>
-                <Box sx={{ height: 10, backgroundColor: "#ccc", borderRadius: 5 }}>
-                  <Box
-                    sx={{
-                      height: "100%",
-                      width: `${imageUploadProgress}%`,
-                      backgroundColor: "#0F3460",
-                      borderRadius: 5,
+              <Box sx={{
+                marginTop: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: "green", mb: 1, textAlign: "left" }}>
+                    {formData.courseImage.name}
+                  </Typography>
+                  <img
+                    src={URL.createObjectURL(formData.courseImage)}
+                    alt="Preview"
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
                     }}
                   />
                 </Box>
+
+                {/* Progress bar to the right */}
+                {imageUploadProgress > 0 && (
+                  <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "50%",
+                    ml: 2
+                  }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box
+                          sx={{
+                            height: 10,
+                            backgroundColor: "#ccc",
+                            borderRadius: 5,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              height: "100%",
+                              width: `${imageUploadProgress || 0}%`,
+                              backgroundColor: "#0F3460",
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                      <Typography variant="caption">{imageUploadProgress || 0}%</Typography>
+                    </Box>
+                  </Box>
+                )}
+              </Box>
+            )}
+
+            {/* Display existing image */}
+            {formData.existingImage && !formData.courseImage && (
+              <Box sx={{ marginTop: 1, textAlign: "left" }}>
+                <Typography variant="body2" sx={{ color: "green", mb: 1 }}>
+                  Current Image
+                </Typography>
+                <img
+                  src={formData.existingImage}
+                  alt="Existing"
+                  style={{
+                    maxWidth: "100px",
+                    maxHeight: "100px",
+                  }}
+                />
               </Box>
             )}
           </Box>
@@ -421,26 +522,141 @@ function UpdateCourse() {
               Drag & drop videos here, or click to upload
             </Typography>
 
-            {/* Display selected video names */}
+            {/* Display existing videos with thumbnails */}
+            {formData.existingVideos && formData.existingVideos.length > 0 && (
+              <Box sx={{ marginTop: 1 }}>
+                <Typography variant="body2" sx={{ color: "green", mb: 1, textAlign: "left" }}>
+                  Existing Videos:
+                </Typography>
+
+                {formData.existingVideos.map((videoUrl, index) => (
+                  <Box
+                    key={`existing-${index}`}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 2,
+                      mb: 2,
+                      border: "1px solid #eee",
+                      p: 1,
+                      borderRadius: 1,
+                    }}
+                  >
+                    {/* Video Thumbnail */}
+                    <Box sx={{ width: "120px", height: "80px", overflow: "hidden", position: "relative" }}>
+                      <video
+                        src={videoUrl}
+                        alt={`Video ${index + 1}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        muted
+                        playsInline
+                        loop
+                        autoPlay
+                      />
+                    </Box>
+
+                    {/* Delete Icon */}
+                    <DeleteIcon
+                      sx={{ color: "#D32F2F", cursor: "pointer" }}
+                      onClick={(e) => handleDeleteIconClick(e, index, true)}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            {/* Display selected new videos */}
             {formData.videos && formData.videos.length > 0 && (
               <Box sx={{ marginTop: 1 }}>
-                <Typography variant="body2" sx={{ color: "green" }}>Selected Videos:</Typography>
+                <Typography variant="body2" sx={{ color: "green", mb: 1, textAlign: "left" }}>
+                  New Videos:
+                </Typography>
+
                 {formData.videos.map((video, index) => (
-                  <Typography key={index} variant="body2" sx={{ color: "#0F3460" }}>
-                    {video.name}
-                  </Typography>
+                  <Box
+                    key={`new-${index}`}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 1,
+                    }}
+                  >
+                    {/* Video Name */}
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#0F3460", minWidth: "150px", wordBreak: "break-word", textAlign: "left" }}
+                    >
+                      {video.name}
+                    </Typography>
+
+                    {/* Progress Bar */}
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Box sx={{ height: 10, backgroundColor: "#ccc", borderRadius: 5 }}>
+                        <Box
+                          sx={{
+                            height: "100%",
+                            width: `${uploadProgress[index] || 0}%`,
+                            backgroundColor: "#0F3460",
+                            borderRadius: 5,
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    {/* Percentage */}
+                    <Typography variant="caption" sx={{ minWidth: "35px" }}>
+                      {uploadProgress[index] || 0}%
+                    </Typography>
+
+                    {/* Delete Icon */}
+                    <DeleteIcon
+                      sx={{ color: "#D32F2F", cursor: "pointer" }}
+                      onClick={(e) => handleDeleteIconClick(e, index, false)}
+                    />
+                  </Box>
                 ))}
               </Box>
             )}
           </Box>
 
+             <Box display="flex" gap={2} marginTop={2}>
+            <Button type="submit" variant="contained" sx={{ backgroundColor: "#0F3460" }}>
+              Update Course
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ border: "1px solid #0F3460", color: "#0F3460" }} 
+              onClick={() => navigate("/admin/courses")} // Replace "/courses" with your actual route
+            >
+              Cancel
+            </Button>
+          </Box>
 
-
-
-          <Button type="submit" variant="contained" color="primary">
-            Update Course
-          </Button>
         </form>
+
+        {/* Confirmation Dialog */}
+        <Dialog
+          open={openDialog}
+          onClose={handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+          <DialogContent>
+            Are you sure you want to delete this video?
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">Cancel</Button>
+            <Button onClick={handleDelete} color="warning" autoFocus>Confirm</Button>
+          </DialogActions>
+        </Dialog>
+
       </Paper>
     </main>
   );

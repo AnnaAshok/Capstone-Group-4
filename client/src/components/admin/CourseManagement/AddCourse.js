@@ -497,9 +497,19 @@ function AddCourse() {
 
           </Box>
 
-          <Button variant="contained" type="submit" sx={{ backgroundColor: "#0F3460" }}>
-            Add Course
-          </Button>
+             <Box display="flex" gap={2} marginTop={2}>
+            <Button type="submit" variant="contained" sx={{ backgroundColor: "#0F3460" }}>
+              Add Course
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ border: "1px solid #0F3460", color: "#0F3460" }} 
+              onClick={() => navigate("/admin/courses")} // Replace "/courses" with your actual route
+            >
+              Cancel
+            </Button>
+          </Box>
+
         </form>
 
         {/* Confirmation Dialog */}

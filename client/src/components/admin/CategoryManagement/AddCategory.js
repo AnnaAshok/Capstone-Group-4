@@ -152,17 +152,13 @@ const AddCategory = () => {
             {categoryImage  && (
               <div>
                 <img
-                   src={URL.createObjectURL(categoryImage)}
+                  src={URL.createObjectURL(categoryImage)}
                   alt="Category Image"
-                  style={{ marginTop: "10px" }}
+                  style={{ margin: "10px auto", width: "50%" }}
                 />
               </div>
             )}
-            {/* {categoryImage && (
-              <Typography variant="body2" sx={{ marginTop: 1, color: "green" }}>
-                {categoryImage.name}
-              </Typography>
-            )} */}
+
           </Box>
           {errors.categoryImage && (
             <Typography variant="body2" sx={{ color: "red", marginBottom: 2 }}>
@@ -170,8 +166,8 @@ const AddCategory = () => {
             </Typography>
           )}
           <Box display="flex" gap={2} marginTop={2}>
-            <Button type="submit" variant="contained">
-              Save
+            <Button type="submit" variant="contained" sx={{ backgroundColor: "#0F3460" }} >
+              Add Category
             </Button>
             <Button variant="outlined" sx={{ border: "1px solid #0F3460", color: "#0F3460" }} onClick={handleCancel}>
               Cancel
